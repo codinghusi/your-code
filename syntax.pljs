@@ -1,0 +1,153 @@
+!import('./tokens')
+!runUntilEOF(command)
+
+#preOperators [ '+', '-', '++', '--', '!', '~' ]
+
+#precedence [
+    ['=', '+=', '-=', '/=', '*=', '%='],
+    ['||'],
+    ['&&'],
+    ['<', '>', '<=', '>=', '==', '!='],
+    ['+', '-'],
+    ['*', '/', '%']
+]
+
+#allChars /[.\n]/
+#endOfCommand ';'
+#name {name} identifier
+
+
+
+@string:
+    #!openClose [ '"', "'" ]
+    #notEscaped <!='\\'> -> $openClose
+    $openClose => {value} $allChars <= $notEscaped
+
+@number:
+    {value} /-?\d+(?:\.\d+)/
+
+@boolean:
+    [ 'true', 'false' ]
+
+@comment:
+    {content} [
+        '//' => {} $allChars <= '\n',
+        '/*' => {} $allChars <= '*/'
+    ]
+
+@ifCondition:
+    '(' -> {} expression -> ')'
+
+@if:
+    #condition {condition} condition
+    #thenBlock {then} command
+    #elseBlock {else} command
+    'if' -> $ifCondition -> $thenBlock ~> ('else' -> $elseBlock)
+
+@functionCall:
+    #expr {} expression
+    {parameters} '(' ==> $expr | ',' <== ')'
+
+@arrayAccessor:
+    '[' -> {index} expression -> ']'
+
+@accessors:
+    {} [
+        {call} functionCall,
+        {index} arrayAccessor
+    ]
+
+@identifier:
+    /[a-zA-Z]\w*/
+
+@chainable:
+    #key {key} identifier
+    #accessors {accessors} accessors
+    #chain {chain} chain
+    $key ~> $accessors ~> $chain
+
+@chain:
+    '.' -> chainable
+
+@expression:
+    #inBraces '(' -> {} expression -> ')' 
+    {base} [
+        instanciation,
+        operation,
+        value,
+        $inBraces,
+        function
+    ]
+    ~> {accessors} accessors
+    ~> {chain} chain
+
+@operation:
+    #leftHand {left} value
+    ...
+
+    .register(new SegmentSequence('operation')
+        .parse('value').as('left')
+        .parse(new Segment((tokenStream, context, result) => {
+            const left = result.data.left;
+            const operation = next_operation(-1, left).run(tokenStream);
+            if (!operation.data || !('right' in operation.data)) {
+                return new Result(tokenStream).setMatch(false);
+            }
+            return operation;
+        })).flatten()
+    )
+
+@map:
+    #key {key} [ identifier, string ]
+    #value {value} expression
+    {entries} '{' => $key -> ':' -> $value | ',' <= '}'
+
+@array:
+    {entries} '[' => expression | ',' <= ']'
+
+@value:
+    ~ {preOperator} $preOperator
+    {content} [ number, string, boolean, chainable ]
+    ~ {postOperator} $postOperator
+
+@assignment:
+    '=' -> {} expression
+
+@argument:
+    $name ~> {default} assignment
+
+@arguments:
+    {} '(' => {} argument | ',' <= ')'
+
+@function:
+    $name -> {arguments} arguments -> {body} codeblock
+
+@functionStandalone:
+    'function' -> {} functionBody
+
+@variableDeclarationWithInit:
+    ()=> $name -> {init} assignment | ',' <=()
+
+@let:
+    'let'   -> {variables} ()=> $name ~> {init} assignment | ',' <=()
+
+@const:
+    'const' -> {variables} variableDeclarationWithInit
+
+@class:
+    {members} 'class' -> $name -> '{' => [
+        {variable} variableDeclarationWithInit -> $endOfCommand,
+        {function} function
+    ] <= '}'
+
+@instanciation:
+    'new' -> {class} identifier -> {call} functionCall
+
+@command:
+    {} [
+        {} [ if, functionStandalone, class, codeblock ],
+        {} [ let, const, expression ] -> ';'
+    ]
+
+@codeblock:
+    {commands} '{' => command <= '}'
