@@ -1,10 +1,26 @@
 import { InputStream } from "./input-stream";
 
+const whitespace = /[\s\n]/;
+
 type Predicate = (char: string) => boolean;
 
-interface Token {
+export interface Token {
     type: string;
-    value: string | number;
+    value: string;
+}
+
+export interface VariableDeclarationToken extends Token {
+    type: 'variable-declaration';
+    isConstant: boolean;
+}
+
+export interface FunctionDeclarationToken extends Token {
+    type: 'function-declaration';
+}
+
+export interface StringToken extends Token {
+    type: 'string';
+    char: string;
 }
 
 export class TokenInputStream {
@@ -14,9 +30,8 @@ export class TokenInputStream {
 
     private readWhile(predicate: Predicate, skipLast = false) {
         let result = '';
-        let char;
-        while (!this.stream.eof() && predicate(char = this.stream.peek())) {
-            result += char;
+        while (!this.stream.eof() && predicate(this.stream.peek())) {
+            result += this.stream.peek();
             this.stream.next();
         }
         if (skipLast) {
@@ -34,9 +49,16 @@ export class TokenInputStream {
         return result;
     }
 
-    private skipWhitespace() {
-        const whitespace = /[\s\n]/;
-        this.readWhile(whitespace.test);
+    private isWhitespace() {
+        return whitespace.test(this.stream.peek());
+    }
+
+    private readWhitespace() {
+        const value = this.readWhile(char => whitespace.test(char));
+        return {
+            type: 'whitespace',
+            value
+        };
     }
 
     private skipComment() {
@@ -55,6 +77,20 @@ export class TokenInputStream {
             type: 'string',
             value,
             char
+        };
+    }
+
+    private isRegexBegin() {
+        const char = this.stream.peek();
+        return char === '/';
+    }
+
+    private readRegex() {
+        // TODO: add modifier support
+        const regex = this.readUntil('/', true, '\\');
+        return {
+            type: 'regex',
+            value: new RegExp(regex)
         };
     }
 
@@ -94,17 +130,17 @@ export class TokenInputStream {
         return this.stream.matchNext('#', false);
     }
 
-    private readVariableDeclaration() {
-        let isConst = false;
+    private readVariableDeclaration(): VariableDeclarationToken {
+        let isConstant = false;
         this.stream.next();
         if (this.stream.matchNext('!')) {
-            isConst = true;
+            isConstant = true;
         }
         const name = this.readIdentifierName();
         return {
             type: 'variable-declaration',
             value: name,
-            isConst
+            isConstant
         };
     }
 
@@ -121,22 +157,25 @@ export class TokenInputStream {
         };
     }
 
-    private isFunction() {
+    private isFunctionDeclaration() {
         return this.stream.matchNext('@', false);
     }
 
-    private readFunction() {
+    private readFunctionDeclaration(): FunctionDeclarationToken {
         this.stream.next();
         const name = this.readIdentifierName();
         return {
-            type: 'variable',
+            type: 'function-declaration',
             value: name
         };
     }
 
 
-    _next() {
-        this.skipWhitespace();
+    private _next() {
+        // whitespace
+        if (this.isWhitespace()) {
+            return this.readWhitespace();
+        }
         
         // check file end
         if (this.stream.eof()) {
@@ -154,10 +193,9 @@ export class TokenInputStream {
             return this.readString();
         }
 
-        // punctuations
-        const punctuation = this.readPunctuation();
-        if (punctuation) {
-            return punctuation;
+        // regex
+        if (this.isRegexBegin()) {
+            return this.readRegex();
         }
 
         // identifier
@@ -176,8 +214,14 @@ export class TokenInputStream {
         }
 
         // function
-        if (this.isFunction()) {
-            return this.readFunction();
+        if (this.isFunctionDeclaration()) {
+            return this.readFunctionDeclaration();
+        }
+
+        // punctuations
+        const punctuation = this.readPunctuation();
+        if (punctuation) {
+            return punctuation;
         }
 
         // nothing matched
@@ -189,14 +233,21 @@ export class TokenInputStream {
         this.stream.croak(message);
     }
 
-    peek() {
-        return this.current ?? (this.current = this._next());
+    peek(skipWhitespace = true) {
+        // TODO: Important: peek removes whitespace in default (it actually shouldn't), currently nothing will break though
+        const token = this.current ?? (this.current = this._next());
+        if (skipWhitespace && token.type === 'whitespace') {
+            this.next(false);
+            this.current = this.next(false);
+        }
+        return token;
     }
 
-    next() {
+    next(skipWhitespace = true) {
+        this.peek(skipWhitespace);
         const token = this.current;
         this.current = null;
-        return token ?? this._next();
+        return token;
     }
 
     eof() {
