@@ -44,8 +44,8 @@
 `$varname`
 - in the actual pattern it will be just replaced with the value and also in braces
 - use always the same pattern, once selected
-`#!quotes [ '"', "'" ]
-$quotes -> 'hello' <- $quotes`
+`#!quotes [ '"', "'" ]`
+`$quotes -> 'hello' <- $quotes`
 matches
 `"hello"` and `'hello'`, but not
 `"hello'` or `'hello"`

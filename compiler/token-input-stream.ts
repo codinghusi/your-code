@@ -2,7 +2,14 @@ import { InputStream } from "./input-stream";
 
 type Predicate = (char: string) => boolean;
 
+interface Token {
+    type: string;
+    value: string | number;
+}
+
 export class TokenInputStream {
+    public current: Token;
+
     constructor(protected stream: InputStream) { }
 
     private readWhile(predicate: Predicate, skipLast = false) {
@@ -18,9 +25,10 @@ export class TokenInputStream {
         return result;
     }
 
-    private readUntil(str: string, skipLast = true) {
+    private readUntil(str: string, skipLast = true, escaping?: string) {
         let result = '';
-        while (!this.stream.eof() && !this.stream.hasNext(str, skipLast)) {
+        while (!this.stream.eof()
+            && (escaping && this.stream.matchNext(escaping, false) || !this.stream.matchNext(str, skipLast))) {
             result += this.stream.next();
         }
         return result;
@@ -42,7 +50,7 @@ export class TokenInputStream {
 
     private readString() {
         const char = this.stream.next()
-        const value = this.readUntil(char);
+        const value = this.readUntil(char, true, '\\');
         return {
             type: 'string',
             value,
@@ -50,12 +58,84 @@ export class TokenInputStream {
         };
     }
 
-    private isPunctuation() {
-        return [ '||', '=>', '<=', '~>', '->', '~', '-', '|', '{', '}', '[', ']', '(', ')', ',', ':' ]
+    private readPunctuation() {
+        const value = this.stream.matchOneOf([
+            '<!=',
+            '||', '=>', '<=', '~>', '->',
+            '~', '-', '|', '{', '}', '[', ']', '(', ')', ',', ':',
+            '#', '@', '$'
+        ]);
+        if (value) {
+            return {
+                type: 'punctuation',
+                value
+            }
+        }
+        return null;
+    }
+
+    private isIdentifierBeginning() {
+        return /[_a-z]/i.test(this.stream.peek());
+    }
+
+    private readIdentifierName() {
+        return this.readWhile(char => /[_\w]/.test(char));
+    }
+
+    private readIdentifier() {
+        const name = this.readIdentifierName();
+        return {
+            type: 'identifier',
+            value: name
+        }
+    }
+
+    private isVariableDeclaration() {
+        return this.stream.matchNext('#', false);
+    }
+
+    private readVariableDeclaration() {
+        let isConst = false;
+        this.stream.next();
+        if (this.stream.matchNext('!')) {
+            isConst = true;
+        }
+        const name = this.readIdentifierName();
+        return {
+            type: 'variable-declaration',
+            value: name,
+            isConst
+        };
+    }
+
+    private isVariable() {
+        return this.stream.matchNext('$', false);
+    }
+
+    private readVariable() {
+        this.stream.next();
+        const name = this.readIdentifierName();
+        return {
+            type: 'variable',
+            value: name
+        };
+    }
+
+    private isFunction() {
+        return this.stream.matchNext('@', false);
+    }
+
+    private readFunction() {
+        this.stream.next();
+        const name = this.readIdentifierName();
+        return {
+            type: 'variable',
+            value: name
+        };
     }
 
 
-    next() {
+    _next() {
         this.skipWhitespace();
         
         // check file end
@@ -64,9 +144,9 @@ export class TokenInputStream {
         }
 
         // single line comment
-        if (this.stream.hasNext('//')) {
+        if (this.stream.matchNext('//')) {
             this.skipComment();
-            return this.next();
+            return this._next();
         }
 
         // string
@@ -75,7 +155,51 @@ export class TokenInputStream {
         }
 
         // punctuations
+        const punctuation = this.readPunctuation();
+        if (punctuation) {
+            return punctuation;
+        }
 
+        // identifier
+        if (this.isIdentifierBeginning()) {
+            return this.readIdentifier();
+        }
 
+        // variable declaration
+        if (this.isVariableDeclaration()) {
+            return this.readVariableDeclaration();
+        }
+
+        // variable
+        if (this.isVariable()) {
+            return this.readVariable();
+        }
+
+        // function
+        if (this.isFunction()) {
+            return this.readFunction();
+        }
+
+        // nothing matched
+        this.croak(`unexpected character '${this.stream.peek()}`);
+
+    }
+
+    croak(message: string) {
+        this.stream.croak(message);
+    }
+
+    peek() {
+        return this.current ?? (this.current = this._next());
+    }
+
+    next() {
+        const token = this.current;
+        this.current = null;
+        return token ?? this._next();
+    }
+
+    eof() {
+        return this.peek() === null;
     }
 }

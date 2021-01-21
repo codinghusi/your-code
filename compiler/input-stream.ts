@@ -18,7 +18,7 @@ export class InputStream {
         return char;
     }
 
-    hasNext(str: string, skip = true) {
+    matchNext(str: string, skip = true) {
         const length = str.length;
         if (this.input.substr(this.position, length) === str) {
             if (skip) {
@@ -29,6 +29,10 @@ export class InputStream {
             return true;
         }
         return false;
+    }
+
+    matchOneOf(items: string[]) {
+        return items.find(punctuation => this.matchNext(punctuation));
     }
 
     peek() {
