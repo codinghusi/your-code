@@ -24,7 +24,7 @@ export interface StringToken extends Token {
 }
 
 export class TokenInputStream {
-    public current: Token;
+    public peekStack: Token[] = [];
 
     constructor(protected stream: InputStream) { }
 
@@ -100,7 +100,7 @@ export class TokenInputStream {
             '<!=',
             '||', '=>', '<=', '~>', '->',
             '~', '-', '|', '{', '}', '[', ']', '(', ')', ',', ':',
-            '#', '@', '$'
+            '#', '@', '$', '!', '>'
         ]);
         if (value) {
             return {
@@ -234,32 +234,49 @@ export class TokenInputStream {
         this.stream.croak(message);
     }
 
-    peek(skipWhitespace = true, fail = true) {
-        const token = this.current ?? (this.current = this._next());
-        // TODO: Important: peek removes whitespace in default (it actually shouldn't), currently nothing will break though
-        if (skipWhitespace && token.type === 'whitespace') {
-            this.next(false);
-            this.current = this.next(false, fail);
+    peekNext() {
+        const token = this._next();
+        if (token) {
+            this.peekStack.push(token);
+            return token;
         }
-        if (this.current) {
-            return this.current;
-        }
-        return this.current = {
+        return {
             type: 'eof',
-            value: ''
+            value: 'reached end of line!'
         };
     }
 
+    peek(skipWhitespace = true, fail = true) {
+        let token;
+        if (this.peekStack.length) {
+            token = this.peekStack[0];
+        } else {
+            token = this.peekNext();
+        }
+        
+        let i = 1;
+        while (skipWhitespace && token.type === 'whitespace') {
+            if (this.peekStack.length >= i + 1) {
+                token = this.peekStack[i++];
+            } else {
+                token = this.peekNext();
+            }
+        }
+
+        return token;
+    }
+
     next(skipWhitespace = true, fail = true) {
-        this.peek(skipWhitespace);
         // if (fail && this.stream.eof()) {
         //     this.croak('unexpected reached end of file');
         // }
-        const token = this.current;
-        this.current = null;
-        if (token.value === '=>') {
-            debugger;
+        
+        let token = this.peek(false);
+        while (skipWhitespace && token.type === 'whitespace') {
+            this.peekStack.splice(0, 1);
+            token = this.peek(false);
         }
+        this.peekStack.splice(0, 1);
         return token;
     }
 

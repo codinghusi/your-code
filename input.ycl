@@ -1,5 +1,5 @@
 !import('./tokens')
-!runUntilEOF(command)
+!entryPoint(command)
 
 #preOperators [ '+', '-', '++', '--', '!', '~' ]
 
@@ -46,7 +46,7 @@
 
 @functionCall:
     #expr {} expression
-    {parameters} '(' ==> $expr | ',' <== ')'
+    {parameters} '(' => $expr | ',' <= ')'
 
 @arrayAccessor:
     '[' -> {index} expression -> ']'
@@ -81,21 +81,21 @@
     ~> {accessors} accessors
     ~> {chain} chain
 
-@operation:
-    #leftHand {left} value
-    ...
-
-    .register(new SegmentSequence('operation')
-        .parse('value').as('left')
-        .parse(new Segment((tokenStream, context, result) => {
-            const left = result.data.left;
-            const operation = next_operation(-1, left).run(tokenStream);
-            if (!operation.data || !('right' in operation.data)) {
-                return new Result(tokenStream).setMatch(false);
-            }
-            return operation;
-        })).flatten()
-    )
+// @operation:
+//    #leftHand {left} value
+//    ...
+//
+//    .register(new SegmentSequence('operation')
+//        .parse('value').as('left')
+//        .parse(new Segment((tokenStream, context, result) => {
+//            const left = result.data.left;
+//            const operation = next_operation(-1, left).run(tokenStream);
+//            if (!operation.data || !('right' in operation.data)) {
+//                return new Result(tokenStream).setMatch(false);
+//            }
+//            return operation;
+//        })).flatten()
+//    )
 
 @map:
     #key {key} [ identifier, string ]
@@ -107,7 +107,7 @@
 
 @value:
     ~ {preOperator} $preOperator
-    {content} [ number, string, boolean, chainable ]
+    - {content} [ number, string, boolean, chainable ]
     ~ {postOperator} $postOperator
 
 @assignment:

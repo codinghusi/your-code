@@ -1,7 +1,18 @@
+import { Language } from "./language";
 import { FunctionDeclarationToken, StringToken, Token, TokenInputStream, VariableDeclarationToken } from "./token-input-stream";
 
 interface Item {
     type: string;
+}
+
+interface ValueItem extends Item {
+    fullWords?: boolean;
+    patternType: string;
+}
+
+interface DefinitionItem extends Item {
+    name: string;
+    value: Item
 }
 
 interface VariableDeclarationItem extends Item {
@@ -87,7 +98,7 @@ export class Parser {
         return list;
     }
 
-    parse() {
+    parse(): Language {
         const definitions: Item[] = [];
         while (!this.stream.eof()) {
             let definition: Item;
@@ -106,13 +117,15 @@ export class Parser {
             }
             definitions.push(definition);
         }
-        return definitions;
+        const language = new Language(definitions);
+        return language;
     }
 
     parseVariableDeclaration(): VariableDeclarationItem {
         const variableStart = this.stream.next() as VariableDeclarationToken;
         const { value: name, isConstant } = variableStart;
         const patterns = this.maybeParsePatterns();
+
         return {
             type: 'variable-declaration',
             name,
@@ -123,8 +136,10 @@ export class Parser {
 
     isIdented() {
         const whitespace = this.stream.peek(false);
+        const value = whitespace.value;
         if (whitespace.type === 'whitespace'
-        &&  whitespace.value.charAt(-1) !== '\n') {
+        &&  value.indexOf('\n') !== -1
+        &&  value.charAt(value.length - 1) !== '\n') {
             return true;
         }
         return false;
@@ -136,19 +151,23 @@ export class Parser {
         const { value: name } = functionStart;
         const variables = [];
         let patterns;
-        
+
         this.skip('punctuation', ':');
         while (this.isIdented()) {
             if (this.isType('variable-declaration')) {
                 variables.push(this.parseVariableDeclaration());
                 continue;
             }
-            if (patterns) {
-                this.croak(`you already defined your pattern! (only variables and one pattern are allowed here)`);
+            const readPatterns = this.maybeParsePatterns();
+            if (readPatterns.length) {
+                if (patterns) {
+                    this.croak(`you already defined your pattern! (only variables and one pattern are allowed here)`);
+                }
+                patterns = readPatterns;
+            } else {
+                this.croak(`either declare a variable or a pattern inside the function '${name}'`);
             }
-            patterns = this.maybeParsePatterns();
         }
-
         return {
             type: 'function-declaration',
             name,
@@ -157,18 +176,34 @@ export class Parser {
         }
     }
 
-    parseDefinition(): Item {
+    parseDefinition(): DefinitionItem {
         this.stream.next();
-        const definitionStart = this.stream.next();
-        const { value: name } = definitionStart;
-        // TODO: implement
+        const { value: name } = this.stream.next();
+
+        this.skip('punctuation', '(');
+
+        let value;
+        const fn = this.maybeParsePatternFunction();
+        if (fn) {
+            value = fn;
+        } else {
+            const str = this.maybeParseValue();
+            if (str && str.patternType === 'string') {
+                value = str;
+            } else {
+                this.croak(`definitions may only contain a string or a function`);
+            }
+        }
+        this.skip('punctuation', ')');
         return {
-            type: 'definition, implement me!'
+            type: 'definition',
+            name,
+            value
         };
     }
 
 
-    maybeParse(type: string, item: (token: Token) => Item) {
+    maybeParse(type: string, item: (token: Token) => any) {
         if (this.isType(type)) {
             return item(this.stream.next());
         }
@@ -180,11 +215,11 @@ export class Parser {
                 type: 'pattern',
                 patternType: type,
                 ...item(token)
-            })
+            } as ValueItem)
         );
     }
 
-    maybeParseValue() {
+    maybeParseValue(): ValueItem {
         return this.maybeParseTokenPattern('string', (token: StringToken) => ({
             value: token.value,
             fullWords: token.char === "'"
@@ -209,8 +244,14 @@ export class Parser {
 
     maybeParseConclude() {
         if (this.is('punctuation', '(')) {
-            this.skip('punctuation', ')')
-            return this.maybeParsePatterns();
+            this.stream.next();
+            const content = this.maybeParsePatterns();
+            this.skip('punctuation', ')');
+            return {
+                type: 'pattern',
+                patternType: 'conclude',
+                content
+            };
         }
         return null;
     }
@@ -381,11 +422,9 @@ export class Parser {
         let first = true;
         while (!this.stream.eof()) {
             // separation
-            if (first) {
-                first = false;
-            } else {
-                const separator = this.maybeParseSeparator();
-                if (!separator) {
+            const separator = this.maybeParseSeparator();
+            if (!separator) {
+                if (!first) {
                     // check for delimiters (also possible)
                     const leftHand = patterns[patterns.length - 1];
                     const delimiter = this.maybeParseDelimiter(leftHand);
@@ -397,9 +436,9 @@ export class Parser {
                     }
                     // remove leftHand value, insert delimiter
                     patterns[patterns.length - 1] = delimiter;
-                } else {
-                    patterns.push(separator);
                 }
+            } else {
+                patterns.push(separator);
             }
 
             // naming
@@ -423,6 +462,8 @@ export class Parser {
             if (!worked) {
                 break;
             }
+            
+            first = false;
         }
 
         return patterns;
