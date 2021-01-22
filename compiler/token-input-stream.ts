@@ -257,6 +257,9 @@ export class TokenInputStream {
         // }
         const token = this.current;
         this.current = null;
+        if (token.value === '=>') {
+            debugger;
+        }
         return token;
     }
 

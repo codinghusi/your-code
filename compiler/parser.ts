@@ -77,7 +77,11 @@ export class Parser {
             if (this.is('punctuation', stop)) {
                 break;
             }
-            list.push(parser.call(this));
+            const result = parser.call(this);
+            if (!result) {
+                break;
+            }
+            list.push(result);
         }
         this.skip('punctuation', stop);
         return list;
@@ -108,7 +112,7 @@ export class Parser {
     parseVariableDeclaration(): VariableDeclarationItem {
         const variableStart = this.stream.next() as VariableDeclarationToken;
         const { value: name, isConstant } = variableStart;
-        const patterns = this.parsePatterns();
+        const patterns = this.maybeParsePatterns();
         return {
             type: 'variable-declaration',
             name,
@@ -142,7 +146,7 @@ export class Parser {
             if (patterns) {
                 this.croak(`you already defined your pattern! (only variables and one pattern are allowed here)`);
             }
-            patterns = this.parsePatterns();
+            patterns = this.maybeParsePatterns();
         }
 
         return {
@@ -206,14 +210,14 @@ export class Parser {
     maybeParseConclude() {
         if (this.is('punctuation', '(')) {
             this.skip('punctuation', ')')
-            return this.parsePatterns();
+            return this.maybeParsePatterns();
         }
         return null;
     }
 
     maybeParseChoice() {
         if (this.is('punctuation', '[')) {
-            const choices = this.delimited('[', ']', ',', this.parsePatterns);
+            const choices = this.delimited('[', ']', ',', this.maybeParsePatterns);
             return {
                 type: 'pattern',
                 patternType: 'choice',
@@ -265,7 +269,7 @@ export class Parser {
     maybeParsePreviousMatching() {
         if (this.is('punctuation', '<=')) {
             this.stream.next();
-            const patterns = this.parsePatterns();
+            const patterns = this.maybeParsePatterns();
             this.skip('punctuation', '>');
             return {
                 type: 'pattern',
@@ -279,7 +283,7 @@ export class Parser {
     maybeParsePreviousNotMatching() {
         if (this.is('punctuation', '<!=')) {
             this.stream.next();
-            const patterns = this.parsePatterns();
+            const patterns = this.maybeParsePatterns();
             this.skip('punctuation', '>');
             return {
                 type: 'pattern',
@@ -322,7 +326,45 @@ export class Parser {
         };
     }
 
-    parsePatterns(): PatternItem[] {
+    maybeParseDelimiter(leftHand: Item) {
+        // TODO: Add support for non-whitespace
+        // TODO: Add min max
+        if (this.is('punctuation', '=>')) {
+            this.stream.next();
+            const valuePatterns = this.maybeParsePatterns();
+            if (!valuePatterns.length) {
+                this.croak('you need to define a pattern between the delimiter');
+            }
+
+            // with separation
+            let separator;
+            if (this.is('punctuation', '|')) {
+                this.stream.next();
+                separator = this.maybeParsePatterns();
+            }
+            this.skip('punctuation', '<=');
+
+            // right hand (not )
+            const rightHand = this.maybeParsePatterns();
+            if (!rightHand.length) {
+                this.croak(`a stop pattern for the delimiter. If you want none, use <=()`);
+            }
+
+
+            return {
+                type: 'pattern',
+                patternType: 'delimitter',
+                withSeparation: !!separator,
+                separator,
+                start: leftHand,
+                values: valuePatterns,
+                stop: rightHand
+            };
+        }
+        return null;
+    }
+
+    maybeParsePatterns(): PatternItem[] {
         const patterns = [];
         // delimited: ... => ... | ... <= ...
         // separation: -, ~, ->, ~>
@@ -333,7 +375,7 @@ export class Parser {
             this.maybeParseConclude,
             this.maybeParseChoice,
             this.maybeParsePreviousMatching,
-            this.maybeParsePreviousNotMatching,
+            this.maybeParsePreviousNotMatching
         ];
 
         let first = true;
@@ -344,15 +386,27 @@ export class Parser {
             } else {
                 const separator = this.maybeParseSeparator();
                 if (!separator) {
-                    break;
+                    // check for delimiters (also possible)
+                    const leftHand = patterns[patterns.length - 1];
+                    const delimiter = this.maybeParseDelimiter(leftHand);
+                    if (!delimiter) {
+                        break;
+                    }
+                    if (!leftHand) {
+                        this.croak(`You need a starting point for the delimiter. If you want none, use '()=>'`);
+                    }
+                    // remove leftHand value, insert delimiter
+                    patterns[patterns.length - 1] = delimiter;
+                } else {
+                    patterns.push(separator);
                 }
-                patterns.push(separator);
             }
 
             // naming
+            const namings = [];
             let naming;
             while (naming = this.maybeParseNaming()) {
-                patterns.push(naming);
+                namings.push(naming);
             }
 
             // pattern
@@ -360,15 +414,16 @@ export class Parser {
             const worked = parsers.some(parser => {
                 const pattern = parser.call(self);
                 if (pattern) {
+                    pattern.namings = namings; // add the namings
                     patterns.push(pattern);
                 }
-                return pattern;
+                return !!pattern;
             });
             
             if (!worked) {
                 break;
             }
-        } 
+        }
 
         return patterns;
     }

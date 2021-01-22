@@ -6,16 +6,18 @@
     "patterns": [
       {
         "type": "pattern",
-        "patternType": "naming",
-        "name": {
-          "type": "identifier",
-          "value": "value"
-        }
-      },
-      {
-        "type": "pattern",
         "patternType": "regex",
-        "value": {}
+        "value": {},
+        "namings": [
+          {
+            "type": "pattern",
+            "patternType": "naming",
+            "name": {
+              "type": "identifier",
+              "value": "value"
+            }
+          }
+        ]
       }
     ]
   },
@@ -33,7 +35,8 @@
               "type": "pattern",
               "patternType": "string",
               "value": "true",
-              "fullWords": true
+              "fullWords": true,
+              "namings": []
             }
           ],
           [
@@ -41,10 +44,12 @@
               "type": "pattern",
               "patternType": "string",
               "value": "false",
-              "fullWords": true
+              "fullWords": true,
+              "namings": []
             }
           ]
-        ]
+        ],
+        "namings": []
       }
     ]
   },
@@ -57,7 +62,8 @@
         "type": "pattern",
         "patternType": "string",
         "value": "(",
-        "fullWords": true
+        "fullWords": true,
+        "namings": []
       },
       {
         "type": "pattern",
@@ -67,12 +73,14 @@
       },
       {
         "type": "pattern",
-        "patternType": "emptyNaming"
-      },
-      {
-        "type": "pattern",
         "patternType": "function",
-        "name": "expression"
+        "name": "expression",
+        "namings": [
+          {
+            "type": "pattern",
+            "patternType": "emptyNaming"
+          }
+        ]
       },
       {
         "type": "pattern",
@@ -84,7 +92,103 @@
         "type": "pattern",
         "patternType": "string",
         "value": ")",
-        "fullWords": true
+        "fullWords": true,
+        "namings": []
+      }
+    ]
+  },
+  {
+    "type": "function-declaration",
+    "name": "comment",
+    "variables": [],
+    "patterns": [
+      {
+        "type": "pattern",
+        "patternType": "choice",
+        "choices": [
+          [
+            {
+              "type": "pattern",
+              "patternType": "delimitter",
+              "withSeparation": false,
+              "start": {
+                "type": "pattern",
+                "patternType": "string",
+                "value": "//",
+                "fullWords": true,
+                "namings": []
+              },
+              "values": [
+                {
+                  "type": "pattern",
+                  "patternType": "variable",
+                  "name": "allChars",
+                  "namings": [
+                    {
+                      "type": "pattern",
+                      "patternType": "emptyNaming"
+                    }
+                  ]
+                }
+              ],
+              "stop": [
+                {
+                  "type": "pattern",
+                  "patternType": "string",
+                  "value": "\\n",
+                  "fullWords": true,
+                  "namings": []
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "type": "pattern",
+              "patternType": "delimitter",
+              "withSeparation": false,
+              "start": {
+                "type": "pattern",
+                "patternType": "string",
+                "value": "/*",
+                "fullWords": true,
+                "namings": []
+              },
+              "values": [
+                {
+                  "type": "pattern",
+                  "patternType": "variable",
+                  "name": "allChars",
+                  "namings": [
+                    {
+                      "type": "pattern",
+                      "patternType": "emptyNaming"
+                    }
+                  ]
+                }
+              ],
+              "stop": [
+                {
+                  "type": "pattern",
+                  "patternType": "string",
+                  "value": "*/",
+                  "fullWords": true,
+                  "namings": []
+                }
+              ]
+            }
+          ]
+        ],
+        "namings": [
+          {
+            "type": "pattern",
+            "patternType": "naming",
+            "name": {
+              "type": "identifier",
+              "value": "content"
+            }
+          }
+        ]
       }
     ]
   }

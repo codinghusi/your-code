@@ -14,6 +14,12 @@ const code = `
 @ifCondition:
     '(' -> {} expression -> ')'
 
+@comment:
+    {content} [
+        '//' => {} $allChars <= '\\n',
+        '/*' => {} $allChars <= '*/'
+    ]
+
 `;
 
 const file = 'output.json';
