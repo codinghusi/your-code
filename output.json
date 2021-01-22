@@ -1,0 +1,91 @@
+[
+  {
+    "type": "function-declaration",
+    "name": "number",
+    "variables": [],
+    "patterns": [
+      {
+        "type": "pattern",
+        "patternType": "naming",
+        "name": {
+          "type": "identifier",
+          "value": "value"
+        }
+      },
+      {
+        "type": "pattern",
+        "patternType": "regex",
+        "value": {}
+      }
+    ]
+  },
+  {
+    "type": "function-declaration",
+    "name": "boolean",
+    "variables": [],
+    "patterns": [
+      {
+        "type": "pattern",
+        "patternType": "choice",
+        "choices": [
+          [
+            {
+              "type": "pattern",
+              "patternType": "string",
+              "value": "true",
+              "fullWords": true
+            }
+          ],
+          [
+            {
+              "type": "pattern",
+              "patternType": "string",
+              "value": "false",
+              "fullWords": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function-declaration",
+    "name": "ifCondition",
+    "variables": [],
+    "patterns": [
+      {
+        "type": "pattern",
+        "patternType": "string",
+        "value": "(",
+        "fullWords": true
+      },
+      {
+        "type": "pattern",
+        "patternType": "separator",
+        "whitespace": true,
+        "optional": false
+      },
+      {
+        "type": "pattern",
+        "patternType": "emptyNaming"
+      },
+      {
+        "type": "pattern",
+        "patternType": "function",
+        "name": "expression"
+      },
+      {
+        "type": "pattern",
+        "patternType": "separator",
+        "whitespace": true,
+        "optional": false
+      },
+      {
+        "type": "pattern",
+        "patternType": "string",
+        "value": ")",
+        "fullWords": true
+      }
+    ]
+  }
+]

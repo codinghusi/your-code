@@ -86,6 +86,7 @@ export class TokenInputStream {
     }
 
     private readRegex() {
+        this.stream.next();
         // TODO: add modifier support
         const regex = this.readUntil('/', true, '\\');
         return {
@@ -233,24 +234,33 @@ export class TokenInputStream {
         this.stream.croak(message);
     }
 
-    peek(skipWhitespace = true) {
-        // TODO: Important: peek removes whitespace in default (it actually shouldn't), currently nothing will break though
+    peek(skipWhitespace = true, fail = true) {
         const token = this.current ?? (this.current = this._next());
+        // TODO: Important: peek removes whitespace in default (it actually shouldn't), currently nothing will break though
         if (skipWhitespace && token.type === 'whitespace') {
             this.next(false);
-            this.current = this.next(false);
+            this.current = this.next(false, fail);
         }
-        return token;
+        if (this.current) {
+            return this.current;
+        }
+        return this.current = {
+            type: 'eof',
+            value: ''
+        };
     }
 
-    next(skipWhitespace = true) {
+    next(skipWhitespace = true, fail = true) {
         this.peek(skipWhitespace);
+        // if (fail && this.stream.eof()) {
+        //     this.croak('unexpected reached end of file');
+        // }
         const token = this.current;
         this.current = null;
         return token;
     }
 
-    eof() {
-        return this.peek() === null;
+    eof(skipWhitespace = true) {
+        return this.peek(skipWhitespace, false).type === 'eof';
     }
 }

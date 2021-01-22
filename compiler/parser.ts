@@ -7,12 +7,12 @@ interface Item {
 interface VariableDeclarationItem extends Item {
     name: string;
     isConstant: boolean;
-    patterns: PatternsItem;
+    patterns: PatternItem[];
 }
 
 interface FunctionDeclarationItem extends Item {
     name: string;
-    pattern: PatternItem;
+    patterns: PatternItem[];
     variables: VariableDeclarationItem[];
 }
 
@@ -21,12 +21,7 @@ interface PatternItem extends Item {
     patternType: string;
 }
 
-interface PatternsItem extends Item {
-    type: 'patterns';
-    patterns: PatternItem[];
-}
-
-type ParserThing = () => Item;
+type ParserThing = () => Item | any;
 
 export class Parser {
     constructor(protected stream: TokenInputStream) {
@@ -82,7 +77,7 @@ export class Parser {
             if (this.is('punctuation', stop)) {
                 break;
             }
-            list.push(parser());
+            list.push(parser.call(this));
         }
         this.skip('punctuation', stop);
         return list;
@@ -92,7 +87,6 @@ export class Parser {
         const definitions: Item[] = [];
         while (!this.stream.eof()) {
             let definition: Item;
-            console.log('checking all types', this.stream.peek().type);
             if (this.isType('variable-declaration')) {
                 definition = this.parseVariableDeclaration();
             }
@@ -137,8 +131,7 @@ export class Parser {
         const functionStart = this.stream.next() as FunctionDeclarationToken;
         const { value: name } = functionStart;
         const variables = [];
-        let pattern;
-        console.log('parsing function');
+        let patterns;
         
         this.skip('punctuation', ':');
         while (this.isIdented()) {
@@ -146,17 +139,17 @@ export class Parser {
                 variables.push(this.parseVariableDeclaration());
                 continue;
             }
-            if (pattern) {
+            if (patterns) {
                 this.croak(`you already defined your pattern! (only variables and one pattern are allowed here)`);
             }
-            pattern = this.parsePatterns();
+            patterns = this.parsePatterns();
         }
 
         return {
             type: 'function-declaration',
             name,
             variables,
-            pattern
+            patterns
         }
     }
 
@@ -190,7 +183,7 @@ export class Parser {
     maybeParseValue() {
         return this.maybeParseTokenPattern('string', (token: StringToken) => ({
             value: token.value,
-            fullWords: token.char === '"'
+            fullWords: token.char === "'"
         })) ??
         this.maybeParseTokenPattern('regex', (token: StringToken) => ({
             value: token.value
@@ -329,7 +322,7 @@ export class Parser {
         };
     }
 
-    parsePatterns(): PatternsItem {
+    parsePatterns(): PatternItem[] {
         const patterns = [];
         // delimited: ... => ... | ... <= ...
         // separation: -, ~, ->, ~>
@@ -339,13 +332,13 @@ export class Parser {
             this.maybeParsePatternFunction,
             this.maybeParseConclude,
             this.maybeParseChoice,
-            this.maybeParseNaming,
             this.maybeParsePreviousMatching,
             this.maybeParsePreviousNotMatching,
         ];
 
         let first = true;
         while (!this.stream.eof()) {
+            // separation
             if (first) {
                 first = false;
             } else {
@@ -355,18 +348,29 @@ export class Parser {
                 }
                 patterns.push(separator);
             }
+
+            // naming
+            let naming;
+            while (naming = this.maybeParseNaming()) {
+                patterns.push(naming);
+            }
+
+            // pattern
             const self = this;
-            const pattern = parsers.find(parser => parser.call(self));
-            if (!pattern) {
+            const worked = parsers.some(parser => {
+                const pattern = parser.call(self);
+                if (pattern) {
+                    patterns.push(pattern);
+                }
+                return pattern;
+            });
+            
+            if (!worked) {
                 break;
             }
-            patterns.push(pattern);
         } 
 
-        return {
-            type: 'patterns',
-            patterns
-        };
+        return patterns;
     }
 
     croak(message: string) {

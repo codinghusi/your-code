@@ -1,11 +1,12 @@
 import { InputStream } from "./input-stream"
 import { Parser } from "./parser";
 import { TokenInputStream } from "./token-input-stream";
+import * as fs from 'fs';
 
 const code = `
 
 @number:
-//    {value} /-?\\d+(?:\\.\\d+)/
+    {value} /-?\\d+(?:\\.\\d+)/
 
 @boolean:
     [ 'true', 'false' ]
@@ -13,7 +14,9 @@ const code = `
 @ifCondition:
     '(' -> {} expression -> ')'
 
-`
+`;
+
+const file = 'output.json';
 
 function parse(code: string) {
     try {
@@ -22,7 +25,9 @@ function parse(code: string) {
         const parser = new Parser(tokenInputStream);
         
         const result = parser.parse();
-        console.log(result);
+        const json = JSON.stringify(result, undefined, 2);
+        fs.writeFileSync(file, json);
+        console.log('wrote file to ' + file);
     } catch (e) {
         console.log(e);
     }
