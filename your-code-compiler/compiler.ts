@@ -1,28 +1,18 @@
 import { InputStream } from "../your-code-language-parser/input-stream"
-import { Parser } from "../your-code-language-parser/parser";
-import { TokenInputStream } from "../your-code-language-parser/token-input-stream";
+import { YCLParser } from "../your-code-language-parser/parser";
 import * as fs from 'fs';
 
 const outputFile = 'output.json';
 const inputFile = 'input.ycl';
 
-function parse(code: string) {
+async function parse() {
     try {
-        const inputStream = new InputStream(code);
-        const tokenInputStream = new TokenInputStream(inputStream);
-        const parser = new Parser(tokenInputStream);
-        
-        const result = parser.parse();
-        const json = JSON.stringify(result, undefined, 2);
-        fs.writeFileSync(outputFile, json);
-        console.log('wrote file to ' + outputFile);
+        const parser = YCLParser.onFile(inputFile);
+        const language = await parser.parse();
+        language.saveAsJSON(outputFile);
     } catch (e) {
         console.log(e);
     }
-    // console.log(tokenInputStream.next());
 }
 
-const code = fs.readFileSync(inputFile, {
-    encoding: 'utf-8'
-});
-parse(code);
+parse();

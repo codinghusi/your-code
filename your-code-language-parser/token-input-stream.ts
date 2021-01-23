@@ -23,6 +23,11 @@ export interface StringToken extends Token {
     char: string;
 }
 
+export interface IdentifierToken extends Token {
+    type: 'identifier';
+}
+
+
 export class TokenInputStream {
     public peekStack: Token[] = [];
 

@@ -1,42 +1,56 @@
-import { Language } from "./language";
+import { Language, LanguageVariables } from "./language";
 import { FunctionDeclarationToken, StringToken, Token, TokenInputStream, VariableDeclarationToken } from "./token-input-stream";
+import * as fs from 'fs';
+import { InputStream } from "./input-stream";
 
-interface Item {
+export type AnyItem = ValueItem | DefinitionItem | VariableDeclarationItem | FunctionDeclarationItem | PatternItem
+
+export interface Item {
     type: string;
 }
 
-interface ValueItem extends Item {
+export interface ValueItem extends Item {
     fullWords?: boolean;
     patternType: string;
 }
 
-interface DefinitionItem extends Item {
+export interface DefinitionItem extends Item {
     name: string;
     value: Item
 }
 
-interface VariableDeclarationItem extends Item {
+export interface VariableDeclarationItem extends Item {
     name: string;
     isConstant: boolean;
     patterns: PatternItem[];
 }
 
-interface FunctionDeclarationItem extends Item {
+export interface FunctionDeclarationItem extends Item {
     name: string;
     patterns: PatternItem[];
     variables: VariableDeclarationItem[];
 }
 
-interface PatternItem extends Item {
+export interface PatternItem extends Item {
     type: 'pattern';
     patternType: string;
 }
 
 type ParserThing = () => Item | any;
 
-export class Parser {
-    constructor(protected stream: TokenInputStream) {
+export class YCLParser {
+    private constructor(protected stream: TokenInputStream) { }
 
+    static onFile(path: string) {
+        const code = fs.readFileSync(path, { encoding: 'utf-8' });
+        return this.onCode(code);
+    }
+
+    static onCode(code: string) {
+        const inputStream = new InputStream(code);
+        const stream = new TokenInputStream(inputStream);
+        const parser = new YCLParser(stream);
+        return parser;
     }
 
     is(type: string, value: string) {
@@ -98,10 +112,50 @@ export class Parser {
         return list;
     }
 
-    parse(): Language {
-        const definitions: Item[] = [];
+    async parse() {
+        const raw = await this.preParse();
+
+        function convertVariables(variables: VariableDeclarationItem[]): LanguageVariables {
+            return variables.reduce((variables, variable: VariableDeclarationItem) => {
+                    const { name, patterns } = variable;
+                    variables[name] = patterns;
+                    return variables;
+                }, {});
+        }
+
+        // convert definitions to | name: value
+        const definitions = raw
+            .filter(expr => expr.type === 'definition')
+            .reduce((definitions, definition: DefinitionItem) => {
+                const { name, value } = definition;
+                definitions[name] = value;
+                return definitions;
+            }, {});
+
+
+        // FIXME: Fix naming convention of pattern (maybe one is a matcher, the whole is a pattern)
+        // convert functions to | name: { variables, pattern }
+        const functions = raw
+            .filter(expr => expr.type === 'function-declaration')
+            .reduce((functions, fn: FunctionDeclarationItem) => {
+                const { name, variables: rawVariables, patterns } = fn;
+                const variables = convertVariables(rawVariables);
+                functions[name] = {
+                    variables,
+                    pattern: patterns
+                };
+                return functions;
+            }, {});
+
+        // convert variables to | name: pattern
+        const globalVariables = convertVariables(raw.filter(expr => expr.type === 'variable-declaration') as VariableDeclarationItem[]);
+        return new Language(definitions, functions, globalVariables);
+    }
+
+    private async preParse() {
+        const definitions: AnyItem[] = [];
         while (!this.stream.eof()) {
-            let definition: Item;
+            let definition: AnyItem;
             if (this.isType('variable-declaration')) {
                 definition = this.parseVariableDeclaration();
             }
@@ -117,8 +171,7 @@ export class Parser {
             }
             definitions.push(definition);
         }
-        const language = new Language(definitions);
-        return language;
+        return definitions;
     }
 
     parseVariableDeclaration(): VariableDeclarationItem {
@@ -203,14 +256,14 @@ export class Parser {
     }
 
 
-    maybeParse(type: string, item: (token: Token) => any) {
+    maybeParse<T>(type: string, item: (token: Token) => T) {
         if (this.isType(type)) {
             return item(this.stream.next());
         }
         return null;
     }
 
-    maybeParseTokenPattern(type: string, item: (token: any) => any) {
+    maybeParseTokenPattern<T>(type: string, item: (token: any) => T) {
         return this.maybeParse(type, token => ({
                 type: 'pattern',
                 patternType: type,
