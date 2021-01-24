@@ -1,38 +1,96 @@
 
+class Checkpoint {
+    constructor(public position: number,
+                public line: number,
+                public column: number) { }
+}
 
 export class InputStream {
-    protected position = 0;
-    protected line = 1;
-    protected column = 0;
+    checkpoints: Checkpoint[] = [];
 
-    constructor(public input: string) { }
+    constructor(public input: string) {
+        this.checkpoints.push(new Checkpoint(0, 1, 0));
+    }
+
+    get checkpoint() {
+        return this.checkpoints[this.checkpoints.length - 1];
+    }
+
+    get position() {
+        return this.checkpoint.position;
+    }
+
+    set position(position: number) {
+        this.checkpoint.position = position;
+    }
+
+    get line() {
+        return this.checkpoint.line;
+    }
+
+    set line(line: number) {
+        this.checkpoint.line = line;
+    }
+
+    get column() {
+        return this.checkpoint.column;
+    }
+
+    set column(column: number) {
+        this.checkpoint.column = column;
+    }
+    
+    pushCheckPoint() {
+        this.checkpoints.push(new Checkpoint(this.position, this.line, this.column));
+    }
+
+    popCheckPoint() {
+        this.checkpoints.pop();
+    }
 
     next() {
         const char = this.input.charAt(this.position++);
-        if (char === '\n') {
-            this.line ++;
-            this.column = 0;
-        } else {
-            this.column ++;
-        }
+        this.skip(1);
         return char;
     }
 
-    matchNext(str: string, skip = true) {
+    skip(count = 1) {
+        for (let i = 0; i < count; ++i) {
+            const char = this.input.charAt(this.position++)
+            if (char === '\n') {
+                this.line ++;
+                this.column = 0;
+            } else {
+                this.column ++;
+            }
+        }
+    }
+
+    matchNextString(str: string, skip = true) {
         const length = str.length;
         if (this.input.substr(this.position, length) === str) {
             if (skip) {
-                for (let i = 0; i < length; ++i) {
-                    this.next();
-                }
+                this.skip(length);
             }
             return true;
         }
         return false;
     }
 
+    matchNextRegex(regex: RegExp, skip = true) {
+        const [match] = this.input.slice(this.position).match(regex);
+        if (match) {
+            const length = match.length;
+            if (skip) {
+                this.skip(length);
+            }
+            return match;
+        }
+        return null;
+    }
+
     matchOneOf(items: string[]) {
-        return items.find(punctuation => this.matchNext(punctuation));
+        return items.find(punctuation => this.matchNextString(punctuation));
     }
 
     peek() {

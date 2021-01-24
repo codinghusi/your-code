@@ -17,6 +17,19 @@ export class BlockScope<T> {
         return value;
     }
 
+    set(name: string, value: T) {
+        this.members[name] = value;
+        return this;
+    }
+
+    collect() {
+        return Object.entries(this.members).map(([key, value]) => ({name: key, value}));
+    }
+
+    collectValues() {
+        return Object.values(this.members);
+    }
+
     newScope(members?: Members<T>) {
         return new BlockScope(this, members);
     }

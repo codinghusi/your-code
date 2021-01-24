@@ -23,6 +23,10 @@ export interface StringToken extends Token {
     char: string;
 }
 
+export interface RegexToken extends Token {
+    type: 'regex';
+}
+
 export interface IdentifierToken extends Token {
     type: 'identifier';
 }
@@ -48,7 +52,7 @@ export class TokenInputStream {
     private readUntil(str: string, skipLast = true, escaping?: string) {
         let result = '';
         while (!this.stream.eof()
-            && (escaping && this.stream.matchNext(escaping, false) || !this.stream.matchNext(str, skipLast))) {
+            && (escaping && this.stream.matchNextString(escaping, false) || !this.stream.matchNextString(str, skipLast))) {
             result += this.stream.next();
         }
         return result;
@@ -133,13 +137,13 @@ export class TokenInputStream {
     }
 
     private isVariableDeclaration() {
-        return this.stream.matchNext('#', false);
+        return this.stream.matchNextString('#', false);
     }
 
     private readVariableDeclaration(): VariableDeclarationToken {
         let isConstant = false;
         this.stream.next();
-        if (this.stream.matchNext('!')) {
+        if (this.stream.matchNextString('!')) {
             isConstant = true;
         }
         const name = this.readIdentifierName();
@@ -151,7 +155,7 @@ export class TokenInputStream {
     }
 
     private isVariable() {
-        return this.stream.matchNext('$', false);
+        return this.stream.matchNextString('$', false);
     }
 
     private readVariable() {
@@ -164,7 +168,7 @@ export class TokenInputStream {
     }
 
     private isFunctionDeclaration() {
-        return this.stream.matchNext('@', false);
+        return this.stream.matchNextString('@', false);
     }
 
     private readFunctionDeclaration(): FunctionDeclarationToken {
@@ -189,7 +193,7 @@ export class TokenInputStream {
         }
 
         // single line comment
-        if (this.stream.matchNext('//')) {
+        if (this.stream.matchNextString('//')) {
             this.skipComment();
             return this._next();
         }

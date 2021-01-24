@@ -6,16 +6,17 @@ interface KeyValue<T> {
     [key: string]: T;
 }
 
-export type LanguageDefinitionsValue = StringToken | IdentifierToken;
-export type LanguageFunctionsValue = { variables: LanguageVariables, pattern: PatternItem[] };
-export type LanguageVariablesValue = PatternItem[];
+export type LanguageRawDefinitionValue = StringToken | IdentifierToken;
+export type LanguageDefinitionValue = String | LanguageFunctionValue;
+export type LanguageFunctionValue = { name: string, variables: LanguageVariables, pattern: PatternItem[] };
+export type LanguageVariableValue = PatternItem[];
 
-export type LanguageDefinitions = KeyValue<LanguageDefinitionsValue>;
-export type LanguageFunctions = KeyValue<LanguageFunctionsValue>;
-export type LanguageVariables = KeyValue<LanguageVariablesValue>;
+export type LanguageRawDefinitions = KeyValue<LanguageRawDefinitionValue>;
+export type LanguageFunctions = KeyValue<LanguageFunctionValue>;
+export type LanguageVariables = KeyValue<LanguageVariableValue>;
 
 export class Language {
-    constructor(public definitions: LanguageDefinitions,
+    constructor(public definitions: LanguageRawDefinitions,
                 public functions: LanguageFunctions,
                 public globalVariables: LanguageVariables) {}
 

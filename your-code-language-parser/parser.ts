@@ -1,17 +1,24 @@
 import { Language, LanguageVariables } from "./language";
-import { FunctionDeclarationToken, StringToken, Token, TokenInputStream, VariableDeclarationToken } from "./token-input-stream";
+import { FunctionDeclarationToken, RegexToken, StringToken, Token, TokenInputStream, VariableDeclarationToken } from "./token-input-stream";
 import * as fs from 'fs';
 import { InputStream } from "./input-stream";
+import { CheckParser } from "./check-parser";
 
-export type AnyItem = ValueItem | DefinitionItem | VariableDeclarationItem | FunctionDeclarationItem | PatternItem
+export type AnyItem = PatternStringItem | PatternRegexItem | DefinitionItem | VariableDeclarationItem | FunctionDeclarationItem | PatternItem
 
 export interface Item {
     type: string;
 }
 
-export interface ValueItem extends Item {
+export interface PatternStringItem extends Item {
+    patternType: 'string';
     fullWords?: boolean;
-    patternType: string;
+    value: string;
+}
+
+export interface PatternRegexItem extends Item {
+    patternType: 'regex';
+    value: RegExp;
 }
 
 export interface DefinitionItem extends Item {
@@ -23,6 +30,14 @@ export interface VariableDeclarationItem extends Item {
     name: string;
     isConstant: boolean;
     patterns: PatternItem[];
+}
+
+export interface PatternVariableItem extends PatternItem {
+    name: string;
+}
+
+export interface PatternFunctionItem extends PatternItem {
+    name: string;
 }
 
 export interface FunctionDeclarationItem extends Item {
@@ -141,6 +156,7 @@ export class YCLParser {
                 const { name, variables: rawVariables, patterns } = fn;
                 const variables = convertVariables(rawVariables);
                 functions[name] = {
+                    name,
                     variables,
                     pattern: patterns
                 };
@@ -149,7 +165,12 @@ export class YCLParser {
 
         // convert variables to | name: pattern
         const globalVariables = convertVariables(raw.filter(expr => expr.type === 'variable-declaration') as VariableDeclarationItem[]);
-        return new Language(definitions, functions, globalVariables);
+        
+        // generate the language and check with a modified parser (check-parser)
+        const language = new Language(definitions, functions, globalVariables);
+        const checkParser = new CheckParser(language, null);
+        checkParser.check();
+        return language;
     }
 
     private async preParse() {
@@ -240,7 +261,7 @@ export class YCLParser {
         if (fn) {
             value = fn;
         } else {
-            const str = this.maybeParseValue();
+            const str = this.maybeParseString();
             if (str && str.patternType === 'string') {
                 value = str;
             } else {
@@ -268,31 +289,34 @@ export class YCLParser {
                 type: 'pattern',
                 patternType: type,
                 ...item(token)
-            } as ValueItem)
+            })
         );
     }
 
-    maybeParseValue(): ValueItem {
+    maybeParseString(): PatternStringItem {
         return this.maybeParseTokenPattern('string', (token: StringToken) => ({
             value: token.value,
             fullWords: token.char === "'"
-        })) ??
-        this.maybeParseTokenPattern('regex', (token: StringToken) => ({
+        })) as PatternStringItem;
+    }
+
+    maybeParseRegex(): PatternRegexItem {
+        return this.maybeParseTokenPattern('regex', (token: RegexToken) => ({
             value: token.value
-        }));
+        })) as unknown as PatternRegexItem;
     }
 
     maybeParsePatternVariable() {
         return this.maybeParseTokenPattern('variable', (token: StringToken) => ({
             name: token.value
-        }));
+        })) as unknown as PatternVariableItem;
     }
 
     maybeParsePatternFunction() {
         return this.maybeParseTokenPattern('identifier', (token: StringToken) => ({
             patternType: 'function',
             name: token.value
-        }));
+        })) as unknown as PatternFunctionItem;
     }
 
     maybeParseConclude() {
@@ -463,7 +487,7 @@ export class YCLParser {
         // delimited: ... => ... | ... <= ...
         // separation: -, ~, ->, ~>
         const parsers = [
-            this.maybeParseValue,
+            this.maybeParseString,
             this.maybeParsePatternVariable,
             this.maybeParsePatternFunction,
             this.maybeParseConclude,
