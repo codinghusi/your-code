@@ -49,6 +49,12 @@ export interface FunctionDeclarationItem extends Item {
 export interface PatternItem extends Item {
     type: 'pattern';
     patternType: string;
+    isLookback?: boolean;
+}
+
+export interface LookbackItem extends PatternItem {
+    patternType: 'lookbacks';
+    lookbacks: PatternItem[];
 }
 
 type ParserThing = () => Item | any;
@@ -377,8 +383,8 @@ export class YCLParser {
             this.skip('punctuation', '}');
             return {
                 type: 'pattern',
-                    patternType: 'naming',
-                    name: name
+                patternType: 'naming',
+                name: name
             }
         }
         return null;
@@ -392,7 +398,8 @@ export class YCLParser {
             return {
                 type: 'pattern',
                 patternType: 'previousMatching',
-                match: patterns 
+                match: patterns,
+                isLookback: true
             };
         }
         return null;
@@ -406,7 +413,8 @@ export class YCLParser {
             return {
                 type: 'pattern',
                 patternType: 'previousNotMatching',
-                dontMatch: patterns 
+                dontMatch: patterns,
+                isLookback: true
             };
         }
         return null;
@@ -484,6 +492,7 @@ export class YCLParser {
 
     maybeParsePatterns(): PatternItem[] {
         const patterns = [];
+        let lookbacks = [];
         // delimited: ... => ... | ... <= ...
         // separation: -, ~, ->, ~>
         const parsers = [
@@ -530,8 +539,23 @@ export class YCLParser {
             const worked = parsers.some(parser => {
                 const pattern = parser.call(self);
                 if (pattern) {
-                    pattern.namings = namings; // add the namings
-                    patterns.push(pattern);
+                    // catch lookbacks
+                    if (pattern.isLookback) {
+                        lookbacks.push(pattern);
+                    } else {
+                        // push all lookbacks if some were declared
+                        // TODO: naming in lookbacks? 
+                        if (lookbacks.length) {
+                            patterns.push({
+                                type: 'pattern',
+                                patternType: 'lookbacks',
+                                lookbacks
+                            });
+                            lookbacks = [];
+                        }
+                        pattern.namings = namings; // add the namings
+                        patterns.push(pattern);
+                    }
                 }
                 return !!pattern;
             });

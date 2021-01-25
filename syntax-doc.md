@@ -74,3 +74,5 @@ matches
     - suggestion, with min=1, max=2:
     `<1=> pattern <=2>`
 - how define full words?
+- how define whitespace?
+- naming whitespace not implemented

@@ -1,14 +1,8 @@
 import { InputStream } from "../your-code-language-parser/input-stream";
 import { Language, LanguageRawDefinitions, LanguageDefinitionValue, LanguageFunctionValue, LanguageVariableValue } from "../your-code-language-parser/language";
-import { AnyItem, PatternFunctionItem, PatternItem, PatternStringItem } from "../your-code-language-parser/parser";
+import { LookbackItem, PatternFunctionItem, PatternItem, PatternStringItem } from "../your-code-language-parser/parser";
 import { BlockScope } from "./block-scope";
-
-interface PatternParams {
-    stream: InputStream;
-    varScope: BlockScope<LanguageVariableValue>;
-    matcher: AnyItem;
-}
-
+import { LookbackChecker } from "./lookback-checker";
 
 export class YCParser {
     protected rawDefinitions: LanguageRawDefinitions;
@@ -93,25 +87,83 @@ export class YCParser {
         this.parseWithPattern(scope, fn.pattern);
     }
 
-    parseWithPattern(varScope: BlockScope<LanguageVariableValue>, pattern: PatternItem[]) {
+    parseWhitespace() {
+        return this.stream.matchNextRegex(/[\s\n]+/);
+    }
+
+    isLookbackMatcher(matcher: PatternItem) {
+        return !!matcher.isLookback;
+    }
+
+    parseWithPattern(varScope: BlockScope<LanguageVariableValue>, pattern: PatternItem[], parentLookbackChecker?: LookbackChecker) {
+        pattern = pattern.slice(); // clone the array 'cause it will be modified
         const results = [];
-        for (const matcher in pattern) {
+        let i = 0;
+
+        let optional = false;
+        let lookbackChecker = new LookbackChecker(this.stream);
+        let justGotLookback = false;
+
+        // FIXME: two lookback matcher in a row leads to wrong results. Use queue
+        // FIXME: first matcher can't be a lookback matcher
+        // TODO: add namings!
+
+        for (const matcher of pattern) {
+            // preparation
             this.stream.pushCheckPoint();
-            const parser = this.getMatcherParser(varScope, matcher);
-            const result = parser(matcher);
-            if (result) {
-                results.push(result);
-            } else {
-                this.stream.popCheckPoint();
-                return null;
+            parentLookbackChecker?.check();
+
+            // check for 'previous-matching'/'previous-not-matching' in parallel
+            if (pattern.length > i + 1) {
+                const nextMatcher = pattern[i + 1];
+                if (this.isLookbackMatcher(nextMatcher)) {
+                    const lookbackParsers = (nextMatcher as LookbackItem).lookbacks.map(lb => this.getMatcherParser(varScope, lb, lookbackChecker))
+                    lookbackChecker.set(lookbackParsers, varScope);
+                    lookbackChecker.check();
+                    pattern.splice(i + 1);
+                    justGotLookback = true;
+                } else {
+                    break;
+                }
             }
+
+            // get the corresponding parser
+            const parser = this.getMatcherParser(varScope, matcher, lookbackChecker);
+
+            // parse it
+            const result = parser(matcher);
+
+            // check and process the result
+            if (result && (justGotLookback || lookbackChecker.result())) {
+                // parsing succeed!
+                // > handle separators specially
+                if (matcher.patternType === 'separator') {
+                    optional = result.optional;
+                    if (result.whitespace) {
+                        // TODO: add naming to whitespace if so wanted
+                        this.parseWhitespace();
+                    }
+                } else {
+                    results.push(result);
+                }
+            } else {
+                // parsing failed
+                this.stream.popCheckPoint();
+                if (!optional) {
+                    return null;
+                } else {
+                    continue;
+                }
+            }
+
+            ++i;
         }
         return results;
     }
 
 
 
-    getMatcherParser(varScope: BlockScope<LanguageVariableValue>, matcher: PatternItem) {
+    getMatcherParser(varScope: BlockScope<LanguageVariableValue>, matcher: PatternItem, lookbackChecker: LookbackChecker) {
         const self = this;
         const stream = this.stream;
         const parsers = {
@@ -151,8 +203,11 @@ export class YCParser {
             previousNotMatching() {
                 throw 'previousNotMatching not implemented, sry not sry';
             },
-            separator() {
-                throw 'separator not implemented, sry not sry';
+            separator({optional, whitespace}) {
+                return {
+                    optional,
+                    whitespace
+                };
             },
             delimitter() {
                 throw 'delimitter not implemented, sry not sry';

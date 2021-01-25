@@ -8,8 +8,8 @@
     ['||'],
     ['&&'],
     ['<', '>', '<=', '>=', '==', '!='],
-    ['+', '-'],
     ['*', '/', '%']
+    ['+', '-'],
 ]
 
 #allChars /[.\n]/
@@ -69,33 +69,26 @@
 @chain:
     '.' -> chainable
 
-@expression:
+@expressionWithoutOperation:
     #inBraces '(' -> {} expression -> ')' 
     {base} [
         instanciation,
-        operation,
         value,
-        $inBraces,
-        function
+        $inBraces
     ]
     ~> {accessors} accessors
     ~> {chain} chain
 
-// @operation:
-//    #leftHand {left} value
-//    ...
-//
-//    .register(new SegmentSequence('operation')
-//        .parse('value').as('left')
-//        .parse(new Segment((tokenStream, context, result) => {
-//            const left = result.data.left;
-//            const operation = next_operation(-1, left).run(tokenStream);
-//            if (!operation.data || !('right' in operation.data)) {
-//                return new Result(tokenStream).setMatch(false);
-//            }
-//            return operation;
-//        })).flatten()
-//    )
+@expression: // with operation
+    #leftHand {leftHand} $expr
+    #operator {operator} $precedence
+    #rightHand {rightHand} $expr
+    #operation $leftHand -> $operator -> $rightHand
+    #expr {} [
+        {type: 'operation'} ($operation),
+        {} expressionWithoutOperation
+    ]
+    $expr
 
 @map:
     #key {key} [ identifier, string ]
