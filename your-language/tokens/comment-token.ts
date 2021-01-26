@@ -1,4 +1,4 @@
-import { InputStream } from "../input-stream";
+import { LanguageInputStream } from "./language-input-stream";
 import { Token } from "./token";
 
 
@@ -7,8 +7,8 @@ export class CommentToken extends Token {
         super();
     }
 
-    static parse(stream: InputStream) {
-        const result = stream.matchNextRegex(/\/\/.*/);
+    static parse(stream: LanguageInputStream) {
+        const result = stream.matchNextRegex(/\/\/.*/, undefined, undefined, false);
         return new CommentToken(result);
     }
 }

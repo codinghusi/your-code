@@ -1,4 +1,4 @@
-import { InputStream } from "../input-stream";
+import { LanguageInputStream } from "./language-input-stream";
 import { NameToken } from "./name-token";
 import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
@@ -13,7 +13,7 @@ export class FunctionDeclarationToken extends Token {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('@', false)) {
             // parse the name
             const result = NameToken.parse(stream);

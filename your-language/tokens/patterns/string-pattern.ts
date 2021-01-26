@@ -1,4 +1,4 @@
-import { InputStream } from "../../input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { Pattern } from "./pattern";
 
 
@@ -8,7 +8,7 @@ export class StringPattern extends Pattern {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         const char = stream.matchOneOf([ `"`, `'` ]);
         if (char) {
             const result = stream.readUntil(char, true, '\\');

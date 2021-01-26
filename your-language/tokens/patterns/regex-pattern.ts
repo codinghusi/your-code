@@ -1,4 +1,4 @@
-import { InputStream } from "../../input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { Pattern } from "./pattern";
 
 
@@ -7,7 +7,7 @@ export class RegexPattern extends Pattern {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('/')) {
             const result = stream.readUntil('/', true, '\\');
             const regex = new RegExp(result);

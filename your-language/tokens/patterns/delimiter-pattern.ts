@@ -1,35 +1,35 @@
-import { InputStream } from "../../input-stream";
-import { ParserToken } from "./parser-pattern";
 import { Pattern } from "./pattern";
+import { LanguageInputStream } from "../language-input-stream";
+import { ParserPattern } from "./parser-pattern";
 
 
 export class DelimiterPattern extends Pattern {
-    constructor(public start: ParserToken,
-                public value: ParserToken,
-                public stop: ParserToken,
-                public separator?: ParserToken) {
+    constructor(public start: ParserPattern,
+                public value: ParserPattern,
+                public stop: ParserPattern,
+                public separator?: ParserPattern) {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         stream.pushCheckPoint();
-        let separator: ParserToken;
+        let separator: ParserPattern;
         // start parser
-        const leftHandParser = ParserToken.parse(stream);
+        const leftHandParser = ParserPattern.parse(stream);
         if (!stream.matchNextString('=>')) {
             stream.popCheckPoint();
             return null;
         }
         
         // value parser
-        const valueParser = ParserToken.parse(stream);
+        const valueParser = ParserPattern.parse(stream);
         if (!valueParser) {
             stream.croak(`the delimiter needs a value parser`);
         }
 
         // separator parser
         if (stream.matchNextString('|')) {
-            separator = ParserToken.parse(stream);
+            separator = ParserPattern.parse(stream);
             if (!separator) {
                 stream.croak(`with a '|' you want to use a separator. But the separator is missing`);
             }
@@ -39,7 +39,7 @@ export class DelimiterPattern extends Pattern {
         if (!stream.matchNextString('<=')) {
             stream.croak(`you need to end the delimiter with a <= plus a stop parser`);
         }
-        const rightHandParser = ParserToken.parse(stream);
+        const rightHandParser = ParserPattern.parse(stream);
         if (!rightHandParser) {
             stream.croak(`please define a stop parser`);
         }

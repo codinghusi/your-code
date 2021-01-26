@@ -1,4 +1,4 @@
-import { InputStream } from "../../input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { NameToken } from "../name-token";
 import { StringPattern } from "./string-pattern";
 
@@ -13,9 +13,9 @@ export class KeyValueNaming extends Naming {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         return stream.testOut(() => {
-            let key, value;
+            let key: string, value: string;
             const worked = stream.matchNextString('{') &&
                 (key = NameToken.parse(stream)?.name) &&
                 stream.matchNextString(':') &&
@@ -39,7 +39,7 @@ export class KeyNaming extends Naming {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         return stream.testOut(() => {
             let key;
             const worked = stream.matchNextString('{') &&
@@ -58,7 +58,7 @@ export class KeyNaming extends Naming {
 }
 
 export class FlattenNaming extends Naming {
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         return stream.testOut(() => {
             const worked = stream.matchNextString('{') && stream.matchNextString('}');
             if (!worked) {
@@ -86,7 +86,7 @@ export class Namings {
         return this.namings.reduce((finished, naming) => ({ ...finished, ...naming.onToResult(result) }));
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         const namings = [];
         let worked = true;
 
@@ -105,6 +105,6 @@ export class Namings {
             }
         }
 
-        return namings;
+        return new Namings(namings);
     }
 }

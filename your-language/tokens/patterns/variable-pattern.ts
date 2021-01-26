@@ -1,4 +1,4 @@
-import { InputStream } from "../../input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { NameToken } from "../name-token";
 import { Pattern } from "./pattern";
 
@@ -7,7 +7,7 @@ export class VariablePattern extends Pattern {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('$', false)) {
             const result = NameToken.parse(stream);
             if (!result) {

@@ -1,16 +1,16 @@
-import { InputStream } from "../../input-stream";
-import { ParserToken } from "./parser-pattern";
+import { ParserPattern } from "./parser-pattern";
 import { Pattern } from "./pattern";
+import { LanguageInputStream } from "../language-input-stream";
 
 
 export class ConcludePattern extends Pattern {
-    constructor(public content: string) {
+    constructor(public content: ParserPattern) {
         super();
     }
 
-    static parse(stream: InputStream) {
+    static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('(')) {
-            const content = ParserToken.parse(stream);
+            const content = ParserPattern.parse(stream);
             if (!stream.matchNextString(')')) {
                 stream.croak(`missing closing )`);
             }
