@@ -29,7 +29,7 @@ export interface DefinitionItem extends Item {
 export interface VariableDeclarationItem extends Item {
     name: string;
     isConstant: boolean;
-    patterns: PatternItem[];
+    pattern: PatternItem[];
 }
 
 export interface PatternVariableItem extends PatternItem {
@@ -59,20 +59,10 @@ export interface LookbackItem extends PatternItem {
 
 type ParserThing = () => Item | any;
 
-export class YCLParser {
-    private constructor(protected stream: TokenInputStream) { }
+export class YourLanguagePreParser {
+    constructor(protected stream: TokenInputStream) { }
 
-    static onFile(path: string) {
-        const code = fs.readFileSync(path, { encoding: 'utf-8' });
-        return this.onCode(code);
-    }
-
-    static onCode(code: string) {
-        const inputStream = new InputStream(code);
-        const stream = new TokenInputStream(inputStream);
-        const parser = new YCLParser(stream);
-        return parser;
-    }
+    // -- utils
 
     is(type: string, value: string) {
         const token = this.stream.peek();
@@ -106,6 +96,9 @@ export class YCLParser {
         return token;
     }
 
+    
+    // -- special utils
+
     delimited(start: string, stop: string, separator: string, parser: ParserThing) {
         const list = [];
         let first = true;
@@ -132,6 +125,9 @@ export class YCLParser {
         this.skip('punctuation', stop);
         return list;
     }
+
+    
+    // -- core
 
     async parse() {
         const raw = await this.preParse();

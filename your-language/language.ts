@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { DefinitionItem, FunctionDeclarationItem, PatternItem, VariableDeclarationItem } from './parser';
+import { DefinitionItem, FunctionDeclarationItem, PatternItem, VariableDeclarationItem } from './pre-parser';
 import { IdentifierToken, StringToken } from './token-input-stream';
 
 interface KeyValue<T> {

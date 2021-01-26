@@ -1,5 +1,5 @@
-import { InputStream } from "../your-code-language-parser/input-stream";
-import { LanguageVariableValue } from "../your-code-language-parser/language";
+import { InputStream } from "../your-language/input-stream";
+import { LanguageVariableValue } from "../your-language/language";
 import { BlockScope } from "./block-scope";
 
 export class LookbackChecker {

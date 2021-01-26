@@ -1,6 +1,6 @@
-import { InputStream } from "../your-code-language-parser/input-stream";
-import { Language, LanguageRawDefinitions, LanguageDefinitionValue, LanguageFunctionValue, LanguageVariableValue } from "../your-code-language-parser/language";
-import { LookbackItem, PatternFunctionItem, PatternItem, PatternStringItem } from "../your-code-language-parser/parser";
+import { InputStream } from "../your-language/input-stream";
+import { Language, LanguageRawDefinitions, LanguageDefinitionValue, LanguageFunctionValue, LanguageVariableValue } from "../your-language/language";
+import { LookbackItem, PatternFunctionItem, PatternItem, PatternStringItem } from "../your-language/pre-parser";
 import { BlockScope } from "./block-scope";
 import { LookbackChecker } from "./lookback-checker";
 

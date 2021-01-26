@@ -1,7 +1,7 @@
-import { BlockScope } from "../your-code-parser/block-scope";
-import { YCParser } from "../your-code-parser/parser";
+import { BlockScope } from "../your-code/block-scope";
+import { YCParser } from "../your-code/parser";
 import { LanguageFunctionValue, LanguageVariableValue } from "./language";
-import { PatternFunctionItem, PatternVariableItem } from "./parser";
+import { PatternFunctionItem, PatternVariableItem } from "./pre-parser";
 
 
 // FIXME: So dirtyy!
