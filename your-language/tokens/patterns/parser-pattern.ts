@@ -14,7 +14,6 @@ export class ParserPattern extends Pattern {
     static parsers = [
         StringPattern.parse,
         RegexPattern.parse,
-        SeparatorPattern.parse,
         VariablePattern.parse,
         FunctionPattern.parse,
         ConcludePattern.parse,
@@ -41,14 +40,22 @@ export class ParserPattern extends Pattern {
 
     static parse(stream: LanguageInputStream) {
         const patterns: Pattern[] = [];
+        let first = true;
         while (true) {
+            const separator = SeparatorPattern.parse(stream);
+            if (first) {
+                if (!separator) {
+                    stream.croak(`please separate your patterns`);
+                }
+                patterns.push(separator);
+            }
             const namings = Namings.parse(stream);
             const pattern = this.parsePattern(stream);
             if (!pattern) {
                 break;
             }
             pattern.setNamings(namings);
-            patterns.push(pattern)
+            patterns.push(pattern);
         }
         return new ParserPattern(patterns);
     }
