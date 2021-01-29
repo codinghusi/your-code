@@ -59,22 +59,31 @@ export class InputStream {
         return result;
     }
 
-    next() {
-        const char = this.input.charAt(this.position++);
-        this.skip(1);
-        return char;
-    }
-
-    skip(count = 1) {
-        for (let i = 0; i < count; ++i) {
-            const char = this.input.charAt(this.position++)
+    seek(offset = 1) {
+        // go forward
+        while (offset > 0) {
+            const char = this.peek();
             if (char === '\n') {
                 this.line ++;
                 this.column = 0;
             } else {
                 this.column ++;
             }
+            offset--;
         }
+
+        // go backward (negative offset)
+        while (offset < 0) {
+            throw new Error("negative seeking currently not implemented");
+        }
+
+        return this;
+    }
+
+    next() {
+        const char = this.peek();
+        this.seek(1);
+        return char;
     }
 
     matchWhitespace() {
@@ -90,7 +99,7 @@ export class InputStream {
         const length = str.length;
         if (this.input.substr(this.position, length) === str) {
             if (skip) {
-                this.skip(length);
+                this.seek(length);
             }
             return str;
         }
@@ -113,7 +122,7 @@ export class InputStream {
             // check if was from start
             if (this.input.substr(this.position, length) === match) {
                 if (skip) {
-                    this.skip(length);
+                    this.seek(length);
                 }
                 return match;
             }

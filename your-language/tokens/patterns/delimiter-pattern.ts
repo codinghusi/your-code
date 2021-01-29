@@ -1,25 +1,23 @@
 import { Pattern } from "./pattern";
 import { LanguageInputStream } from "../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
+import { CodeInputStream } from '../../../your-parser/code-input-stream';
+import { PatternFail } from './pattern-fail';
 
 
 export class DelimiterPattern extends Pattern {
-    constructor(public start: ParserPattern,
-                public value: ParserPattern,
-                public stop: ParserPattern,
+    constructor(public value: ParserPattern,
                 public separator?: ParserPattern) {
         super();
     }
 
     static parse(stream: LanguageInputStream) {
-        stream.pushCheckPoint();
-        let separator: ParserPattern;
-        // start parser
-        const leftHandParser = ParserPattern.parse(stream);
+        // check if it delimiter
         if (!stream.matchNextString('=>')) {
-            stream.popCheckPoint();
             return null;
         }
+
+        let separator: ParserPattern;
         
         // value parser
         const valueParser = ParserPattern.parse(stream);
@@ -31,7 +29,7 @@ export class DelimiterPattern extends Pattern {
         if (stream.matchNextString('|')) {
             separator = ParserPattern.parse(stream);
             if (!separator) {
-                stream.croak(`with a '|' you want to use a separator. But the separator is missing`);
+                stream.croak(`with a '|' you want to use a separator. But you forgot the separator`);
             }
         }
         
@@ -39,11 +37,49 @@ export class DelimiterPattern extends Pattern {
         if (!stream.matchNextString('<=')) {
             stream.croak(`you need to end the delimiter with a <= plus a stop parser`);
         }
-        const rightHandParser = ParserPattern.parse(stream);
-        if (!rightHandParser) {
-            stream.croak(`please define a stop parser`);
+
+        return new DelimiterPattern(valueParser, separator);
+    }
+
+    * _parse(stream: CodeInputStream) {
+        const values = [];
+        let first = true;
+
+        // collect values
+        while (true) {
+            // separator
+            if (this.separator) {
+                const separator = this.separator.softParse(stream);
+                if (!separator && !first) {
+                    break;
+                }
+                first = false;
+            }
+            
+            // value
+            const value = this.value.softParse(stream);
+            if (!value) {
+                break;
+            }
+            values.push(value);
         }
 
-        return new DelimiterPattern(leftHandParser, valueParser, rightHandParser, separator);
+        // merge all results into arrays
+        const result = {};
+        values.forEach(item => {
+            Object.keys(item).forEach(key => {
+                if (!(key in result)) {
+                    result[key] = [];
+                }
+                const value = item[key];
+                result[key].push(value);
+            });
+        });
+
+        return result;
+    }
+
+    checkFirstWorking(stream: CodeInputStream) {
+        return !!this.value.softParse(stream);
     }
 }

@@ -4,11 +4,12 @@ import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
 import { VariableDeclarationToken } from "./variable-declaration-token";
 import { WhitespaceToken } from "./whitespace-token";
+import { VariableCollection } from '../collections';
 
 
 export class FunctionDeclarationToken extends Token {
     constructor(public name: string,
-                public variables: VariableDeclarationToken[],
+                public variables: VariableCollection,
                 public parser: ParserPattern) {
         super();
     }
@@ -48,7 +49,9 @@ export class FunctionDeclarationToken extends Token {
                 }
                 fnParser = parser;
             }
-            return new FunctionDeclarationToken(name, variables, fnParser);
+
+            const variableCollection = new VariableCollection(variables);
+            return new FunctionDeclarationToken(name, variableCollection, fnParser);
         }
         return null;
     }

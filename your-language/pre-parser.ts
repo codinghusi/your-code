@@ -1,6 +1,6 @@
 import { Language, LanguageVariables } from "./language";
 import { FunctionDeclarationToken, RegexToken, StringToken, Token, TokenInputStream, VariableDeclarationToken } from "./token-input-stream";
-import * as fs from 'fs';
+import * as fs from '../your-parser/node_modules/fs';
 import { InputStream } from "./input-stream";
 import { CheckParser } from "./check-parser";
 

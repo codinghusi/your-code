@@ -5,8 +5,8 @@ type Members<T> = { [key: string]: T };
 export class BlockScope<T> {
     
     
-    constructor(protected parent?: BlockScope<T>,
-                protected members: Members<T> = {},
+    constructor(protected members: Members<T> = {},
+                public parent?: BlockScope<T>,
                 protected errorMessage?: (name: string) => string) { }
 
     get(name: string): T {
@@ -31,6 +31,11 @@ export class BlockScope<T> {
     }
 
     newScope(members?: Members<T>) {
-        return new BlockScope(this, members);
+        return new BlockScope(members, this);
+    }
+
+    setParent(parent: BlockScope<T>) {
+        this.parent = parent;
+        return this;
     }
 }

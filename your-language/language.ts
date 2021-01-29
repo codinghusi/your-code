@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from '../your-parser/node_modules/fs';
 import { DefinitionItem, FunctionDeclarationItem, PatternItem, VariableDeclarationItem } from './pre-parser';
 import { IdentifierToken, StringToken } from './token-input-stream';
 

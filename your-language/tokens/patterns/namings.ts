@@ -78,7 +78,7 @@ export class Namings {
         KeyNaming.parse,
         FlattenNaming.parse,
         KeyValueNaming.parse,
-    ]
+    ];
 
     constructor(protected namings: Naming[]) { }
 

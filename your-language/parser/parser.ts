@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from '../../your-parser/node_modules/fs';
 import { CheckParser } from '../check-parser';
 import { InputStream } from '../input-stream';
 import { LanguageVariables, Language } from '../language';
