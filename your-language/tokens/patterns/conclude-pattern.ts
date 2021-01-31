@@ -19,8 +19,8 @@ export class ConcludePattern extends Pattern {
         }
     }
 
-    _parse(stream: CodeInputStream) {
-        return this.content._parse(stream);
+    parse(stream: CodeInputStream) {
+        return this.namings.onToResult(this.content.parse(stream), true);
     }
 
     checkFirstWorking(stream: CodeInputStream) {

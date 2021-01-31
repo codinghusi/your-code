@@ -41,28 +41,32 @@ export class DelimiterPattern extends Pattern {
         return new DelimiterPattern(valueParser, separator);
     }
 
-    * _parse(stream: CodeInputStream) {
+    parse(stream: CodeInputStream) {
         const values = [];
         let first = true;
 
-        // collect values
-        while (true) {
-            // separator
-            if (this.separator) {
-                const separator = this.separator.softParse(stream);
-                if (!separator && !first) {
+        stream.tempNextPattern(this.separator, () => {
+            
+            // collect values
+            while (true) {
+
+                // separator
+                if (this.separator) {
+                    const separator = this.separator.softParse(stream);
+                    if (!separator && !first) {
+                        break;
+                    }
+                    first = false;
+                }
+                
+                // value
+                const value = this.value.softParse(stream);
+                if (!value) {
                     break;
                 }
-                first = false;
+                values.push(value);
             }
-            
-            // value
-            const value = this.value.softParse(stream);
-            if (!value) {
-                break;
-            }
-            values.push(value);
-        }
+        });
 
         // merge all results into arrays
         const result = {};

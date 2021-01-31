@@ -36,7 +36,7 @@ export class LookbackCollection {
 
     test(stream: CodeInputStream) {
         const self = this;
-        const myCheck = stream.testOut(() => self.lookbacks.every(lookback => lookback._parse(stream)));
+        const myCheck = stream.testOut(() => self.lookbacks.every(lookback => lookback.parse(stream)));
         this.worked = myCheck && this.parent?.test(stream);
         return this.worked;
     }

@@ -1,17 +1,13 @@
-import { VariableCollection, FunctionCollection } from '../your-language/collections';
 import { InputStream } from "../your-language/input-stream";
-import { LookbackCollection } from '../your-language/tokens/patterns/lookback-collection-pattern';
 import { Pattern } from '../your-language/tokens/patterns/pattern';
 import { PatternFail } from '../your-language/tokens/patterns/pattern-fail';
 import { BlockScope } from '../your-code/block-scope';
 import { VariableDeclarationToken } from '../your-language/tokens/variable-declaration-token';
 import { FunctionDeclarationToken } from '../your-language/tokens/function-declaration-token';
-import { VariableDeclarationItem } from '../your-language/pre-parser';
 
 type StreamCallback<T> = (stream: CodeInputStream) => T
 
 export class CodeInputStream extends InputStream {
-    lookbacks: LookbackCollection;
     nextPattern: Pattern;
     
 
@@ -37,50 +33,31 @@ export class CodeInputStream extends InputStream {
         variables.setParent(parent);
         this.variables = variables;
 
+        const result = callback(this);
 
         this.variables = previously;
-    }
 
-    setNextPattern(nextPattern: Pattern) {
-        this.nextPattern = nextPattern;
-        return this;
-    }
-
-    resetNextPattern() {
-        this.setNextPattern(null);
+        return result;
     }
 
     checkNextPattern() {
         const nextPattern = this.nextPattern;
-        this.resetNextPattern();
+        this.nextPattern = null;
         const result = nextPattern?.checkFirstWorking(this);
-        this.setNextPattern(nextPattern);
+        this.nextPattern = nextPattern;
         return result;
     }
 
-    testLookback() {
-        this.lookbacks?.test(this);
-        return this;
-    }
+    tempNextPattern<T>(nextPattern: Pattern, callback: StreamCallback<T>) {
+        // swap the blockscope to current function scope
+        const previously = this.nextPattern;
+        this.nextPattern = nextPattern;
 
-    useLookbacks<T>(lookbacks: LookbackCollection, callback: StreamCallback<T>) {
-        // push lookbacks
-        const parent = this.lookbacks;
-        lookbacks.setParent(parent);
-        this.lookbacks = lookbacks;
-
-        // use callback
         const result = callback(this);
-        
-        // pop lookbacks
-        this.lookbacks = parent;
 
-        // return the result
+        this.nextPattern = previously;
+
         return result;
-    }
-
-    doesLookbackWork() {
-        return this.lookbacks?.works();
     }
 
     fail(message?: string) {

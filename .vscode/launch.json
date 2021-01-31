@@ -7,7 +7,7 @@
         "request": "launch",
         "cwd": "${workspaceRoot}",
         "runtimeArgs": ["-r", "ts-node/register"],
-        "args": ["${workspaceRoot}/your-code-compiler/compiler.ts"]
+        "args": ["${workspaceRoot}/your-parser/compiler.ts"]
       }
     ]
   }

@@ -1,5 +1,6 @@
+import { CommentToken } from "./tokens/comment-token";
 
-class Checkpoint {
+export class Checkpoint {
     constructor(public position: number,
                 public line: number,
                 public column: number) { }
@@ -9,6 +10,7 @@ type Predicate = (char: string) => boolean;
 
 export class InputStream {
     checkpoints: Checkpoint[] = [];
+    skippedWhitespace = false;
 
     constructor(public input: string) {
         this.checkpoints.push(new Checkpoint(0, 1, 0));
@@ -42,8 +44,9 @@ export class InputStream {
         this.checkpoint.column = column;
     }
     
-    pushCheckPoint() {
-        this.checkpoints.push(new Checkpoint(this.position, this.line, this.column));
+    pushCheckPoint(checkpoint?: Checkpoint) {
+        checkpoint = checkpoint ?? new Checkpoint(this.position, this.line, this.column);
+        this.checkpoints.push(checkpoint);
     }
 
     popCheckPoint() {
@@ -69,6 +72,7 @@ export class InputStream {
             } else {
                 this.column ++;
             }
+            this.position++;
             offset--;
         }
 
@@ -87,13 +91,15 @@ export class InputStream {
     }
 
     matchWhitespace() {
-        return this.matchNextRegex(/[\s\n]+/, false);
+        return this.matchNextRegex(/[\s\r\n]+/, false);
     }
 
     matchNextString(str: string, skipWhitespace = true, skip = true) {
         if (skipWhitespace) {
-            this.pushCheckPoint();
             this.matchWhitespace();
+        }
+        if (skipWhitespace || !skip) {
+            this.pushCheckPoint();
         }
 
         const length = str.length;
@@ -104,7 +110,7 @@ export class InputStream {
             return str;
         }
 
-        if (skipWhitespace) {
+        if (skipWhitespace || !skip) {
             this.popCheckPoint();
         }
         return null;
@@ -204,6 +210,6 @@ export class InputStream {
     }
 
     croak(message: string) {
-        throw new Error(`${message} (${this.line}:${this.column})`);
+        throw new Error(`${message} (${this.line}:${this.column}), near '${this.input.substr(this.position, 10)}'`);
     }
 }

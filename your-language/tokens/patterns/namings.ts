@@ -82,8 +82,15 @@ export class Namings {
 
     constructor(protected namings: Naming[]) { }
 
-    onToResult(result: any) {
-        return this.namings.reduce((finished, naming) => ({ ...finished, ...naming.onToResult(result) }));
+    onToResult(result: any, keepResultAsDefault = false) {
+        if (this.available() || !keepResultAsDefault) {
+            return this.namings.reduce((finished, naming) => ({ ...finished, ...naming.onToResult(result) }));
+        }
+        return result;
+    }
+
+    available() {
+        return this.namings.length > 0;
     }
 
     static parse(stream: LanguageInputStream) {

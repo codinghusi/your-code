@@ -1,5 +1,6 @@
 import { InputStream } from "../input-stream";
 import { Token } from "./token";
+import { CodeInputStream } from '../../your-parser/code-input-stream';
 
 
 export class WhitespaceToken extends Token {

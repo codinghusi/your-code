@@ -3,6 +3,7 @@ import { ParserPattern } from "./parser-pattern";
 import { Pattern } from "./pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
+import { Checkpoint } from "../../input-stream";
 
 
 export class ChoicePattern extends Pattern {
@@ -15,12 +16,30 @@ export class ChoicePattern extends Pattern {
         return new ChoicePattern(result);
     }
 
-    * _parse(stream: CodeInputStream) {
+    parse(stream: CodeInputStream) {
+        return this.namings.onToResult(this.parseRaw(stream));
+    }
+
+    protected parseRaw(stream: CodeInputStream) {
+        let partiallyWorked: any;
+        let partialCheckPoint: Checkpoint;
         for (const choice of this.choices) {
-            const result = choice.softParse(stream);
-            if (result) {
-                yield result;
-            }
+            stream.pushCheckPoint();
+            try {
+                const result = choice.parse(stream);
+                if (stream.checkNextPattern()) {
+                    return result;
+                }
+                if (!partiallyWorked) {
+                    partialCheckPoint = stream.checkpoint;
+                    partiallyWorked = result;
+                }
+            } catch(e) { }
+            stream.popCheckPoint();
+        }
+        if (partiallyWorked) {
+            stream.pushCheckPoint(partialCheckPoint);
+            return partiallyWorked;
         }
         throw new PatternFail();
     }

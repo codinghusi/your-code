@@ -26,8 +26,8 @@ export class FunctionPattern extends Pattern {
         return this;
     }
 
-    _parse(stream: CodeInputStream) {
-        const result = this.declaration.parser._parse(stream);
+    parse(stream: CodeInputStream) {
+        const result = this.declaration.parser.parse(stream);
         return {
             type: this.name,
             ...result

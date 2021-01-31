@@ -27,7 +27,7 @@ export class LookbackMatchingPattern extends Pattern {
         return new LookbackMatchingPattern(parser, negated);
     }
 
-    _parse(stream: CodeInputStream) {
+    parse(stream: CodeInputStream) {
         return stream.testOut(() => {
             stream.position -= this.parser.value.length;
             return this.parser.softParse(stream);
@@ -35,6 +35,6 @@ export class LookbackMatchingPattern extends Pattern {
     }
 
     checkFirstWorking(stream: CodeInputStream): boolean {
-        return this._parse(stream);
+        return this.parse(stream);
     }
 }

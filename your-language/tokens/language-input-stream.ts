@@ -2,26 +2,34 @@ import { InputStream } from "../input-stream";
 import { CommentToken } from "./comment-token";
 
 export class LanguageInputStream extends InputStream {
-   
-
-    skipComments(enabled = true) {
-        if (enabled) {
-            while (CommentToken.parse(this));
+    matchWhitespace() {
+        let whitespaces = "";
+        let whitespace;
+        while (true) {
+            if (whitespace = super.matchWhitespace()) {
+                whitespaces += whitespace;
+                console.log(`collecting whitespace ${whitespaces}`);
+                continue;
+            }
+            if (CommentToken.parse(this)) {
+                continue;
+            }
+            break;
         }
+        return whitespaces;
     }
     
-    next(skipComments = true) {
-        this.skipComments(skipComments);
+    next() {
         return super.next();
     }
 
-    matchNextRegex(regex: RegExp, skipWhitespace = true, skip = true, skipComments = true) {
-        this.skipComments(skipComments);
-        return super.matchNextRegex(regex, skipWhitespace, skip);
+    matchNextRegex(regex: RegExp, skipWhitespace = true, skip = true) {
+        const result = super.matchNextRegex(regex, skipWhitespace, skip);
+        return result;
     }
 
-    matchNextString(str: string, skipWhitespace = true, skip = true, skipComments = true) {
-        this.skipComments(skipComments);
-        return super.matchNextString(str, skipWhitespace, skip);
+    matchNextString(str: string, skipWhitespace = true, skip = true) {
+        const result = super.matchNextString(str, skipWhitespace, skip);
+        return result;
     }
 }

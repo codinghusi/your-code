@@ -1,8 +1,11 @@
+import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../language-input-stream";
 import { Pattern } from "./pattern";
 
 
 export class StringPattern extends Pattern {
+    static type = 'string';
+
     constructor(public value: string,
                 public wholeWordsOnly: boolean) {
         super();
@@ -16,5 +19,14 @@ export class StringPattern extends Pattern {
             return new StringPattern(result, wholeWordsOnly);
         }
         return null;
+    }
+
+    parse(stream: CodeInputStream) {
+        const raw = stream.matchNextString(this.value);
+        return this.namings.onToResult(raw); 
+    }
+    
+    checkFirstWorking(stream: CodeInputStream): boolean {
+        return !!this.parse(stream);
     }
 }

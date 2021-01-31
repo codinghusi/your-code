@@ -8,10 +8,10 @@ export class NameToken extends Token {
     }
 
     static parse(stream: InputStream) {
-        if (stream.matchNextRegex(/[a-z_]/i)) {
-            const result = stream.matchNextRegex(/[\w]+/i);
-            return new NameToken(result);
+        const result = stream.matchNextRegex(/[\w]+/i);
+        if (!result) {
+            return;
         }
-        return null;
+        return new NameToken(result);
     }
 }
