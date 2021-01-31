@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { DefinitionToken } from './tokens/definition-token';
 import { FunctionDeclarationToken } from './tokens/function-declaration-token';
-import { LanguageInputStream } from './tokens/language-input-stream';
+import { LanguageInputStream } from './language-input-stream';
 import { ParserPattern } from './tokens/patterns/parser-pattern';
 import { Pattern } from './tokens/patterns/pattern';
 import { VariableDeclarationToken } from './tokens/variable-declaration-token';
@@ -41,12 +41,14 @@ export class YourLanguageParser {
 
         const declarations = [];
 
+        mainLoop:
         while(!this.stream.eof()) {
             for (const parser of mainParsers) {
                 const declaration = parser(this.stream);
+                console.log(`declaration: `, declaration);
                 if (declaration) {
                     declarations.push(declaration);
-                    break;
+                    continue mainLoop;
                 }
             }
             this.stream.croak(`bumped into unexpected character`);

@@ -1,4 +1,4 @@
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { NameToken } from "../name-token";
 import { StringPattern } from "./string-pattern";
 

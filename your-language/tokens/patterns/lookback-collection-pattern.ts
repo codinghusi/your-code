@@ -1,7 +1,7 @@
 import { Pattern } from './pattern';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
-import { LanguageInputStream } from '../language-input-stream';
+import { LanguageInputStream } from '../../language-input-stream';
 
 
 export class LookbackCollection {

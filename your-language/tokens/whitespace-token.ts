@@ -10,6 +10,9 @@ export class WhitespaceToken extends Token {
 
     static parse(stream: InputStream) {
         const result = stream.matchNextRegex(/[\s\n]+/);
+        if (!result) {
+            return null;
+        }
         return new WhitespaceToken(result);
     }
 

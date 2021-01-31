@@ -1,5 +1,5 @@
 import { Pattern } from "./pattern";
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
@@ -12,8 +12,10 @@ export class DelimiterPattern extends Pattern {
     }
 
     static parse(stream: LanguageInputStream) {
+        console.log(`looking for delimiter`);
         // check if it delimiter
         if (!stream.matchNextString('=>')) {
+            console.log(`found no delimiter`);
             return null;
         }
 

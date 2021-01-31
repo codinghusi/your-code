@@ -1,4 +1,4 @@
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { ChoicePattern } from "./choice-pattern";
 import { ConcludePattern } from "./conclude-pattern";
 import { DelimiterPattern } from "./delimiter-pattern";
@@ -10,7 +10,7 @@ import { SeparatorPattern } from "./separator-pattern";
 import { StringPattern } from "./string-pattern";
 import { VariablePattern } from "./variable-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
-import { WhitespaceToken } from '../whitespace-token';
+import { LookbackMatchingPattern } from './lookback-matching-pattern';
 
 export class ParserPattern extends Pattern {
     static parsers = [
@@ -20,6 +20,7 @@ export class ParserPattern extends Pattern {
         FunctionPattern.parse,
         ConcludePattern.parse,
         ChoicePattern.parse,
+        LookbackMatchingPattern.parse
     ];
     
     // TODO: fill
@@ -28,6 +29,7 @@ export class ParserPattern extends Pattern {
     }
     
     static parsePattern(stream: LanguageInputStream) {
+        stream.matchWhitespace();
         const namings = Namings.parse(stream);
         for (const parser of this.parsers) {
             const pattern = parser(stream);
@@ -41,29 +43,29 @@ export class ParserPattern extends Pattern {
     
     static parse(stream: LanguageInputStream) {
         const patterns: Pattern[] = [];
-        let first = true;
         while (true) {
             // separation
+            // let separatorMissing = false;
             const separator = SeparatorPattern.parse(stream);
             if (!separator) {
                 
                 // delimiter
                 const delimiter = DelimiterPattern.parse(stream);
                 if (delimiter) {
+                    console.log(`got delimiter`, delimiter);
                     patterns.push(delimiter);
                 } else {
                     
                     // both, separator and delimiter not set
-                    if (!first) {
-                        stream.croak(`please separate your patterns`);
-                    }                
+                    if (patterns.length) {
+                        // separatorMissing = true;
+                        // TODO: add 'latest error'. If nothing works, that can be displayed
+                        // here: 'you need to separate patterns' (maybe)
+                        break;
+                    }               
                 }
-                
-            } else {
-                // patterns.push(separator);
             }
             
-            const namings = Namings.parse(stream);
             const pattern = this.parsePattern(stream);
             if (!pattern) {
                 if (separator) {
@@ -71,11 +73,13 @@ export class ParserPattern extends Pattern {
                 }
                 break;
             }
-            pattern.setNamings(namings);
+            // } else if (separatorMissing) {
+            //     console.log(pattern);
+            //     stream.croak(`please separate your patterns`);
+            // }
             pattern.setSeparator(separator);
             patterns.push(pattern);
-            
-            first = false;
+            console.log(`got pattern `, pattern);
         }
         return new ParserPattern(patterns);
     }

@@ -1,4 +1,4 @@
-import { LanguageInputStream } from "./language-input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { Token } from "./token";
 
 

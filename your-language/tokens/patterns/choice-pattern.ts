@@ -1,5 +1,5 @@
-import { LanguageInputStream } from "../language-input-stream";
-import { ParserPattern } from "./parser-pattern";
+import { LanguageInputStream } from "../../language-input-stream";
+import { ParserPattern } from './parser-pattern';
 import { Pattern } from "./pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
@@ -12,7 +12,10 @@ export class ChoicePattern extends Pattern {
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse);
+        const result = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse.bind(ParserPattern)) as ParserPattern[];
+        if (!result) {
+            return null;
+        }
         return new ChoicePattern(result);
     }
 

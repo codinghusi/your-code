@@ -1,6 +1,6 @@
 import { ParserPattern } from "./parser-pattern";
 import { Pattern } from "./pattern";
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 
 

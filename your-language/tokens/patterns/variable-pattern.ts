@@ -1,5 +1,5 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { NameToken } from "../name-token";
 import { Pattern } from "./pattern";
 import { VariableDeclarationToken } from '../variable-declaration-token';

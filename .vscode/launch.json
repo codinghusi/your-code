@@ -2,12 +2,14 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Debug compiler.ts",
         "type": "node",
         "request": "launch",
-        "cwd": "${workspaceRoot}",
-        "runtimeArgs": ["-r", "ts-node/register"],
-        "args": ["${workspaceRoot}/your-parser/compiler.ts"]
+        "name": "compiler.ts",
+        "program": "${workspaceFolder}/your-parser/compiler.ts",
+        "preLaunchTask": "tsc: build - tsconfig.json",
+        "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+        "internalConsoleOptions": "neverOpen",
+        "sourceMaps": true
       }
     ]
   }

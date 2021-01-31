@@ -1,4 +1,4 @@
-import { LanguageInputStream } from "./language-input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { NameToken } from "./name-token";
 import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
@@ -15,7 +15,10 @@ export class FunctionDeclarationToken extends Token {
     }
 
     static parse(stream: LanguageInputStream) {
-        if (stream.matchNextString('@', false)) {
+        if (stream.matchNextString('@')) {
+            if (stream.hasWhitespace()) {
+                stream.croak(`don't do whitespace between @ and function name`)
+            }
             // parse the name
             const result = NameToken.parse(stream);
             if (!result) {

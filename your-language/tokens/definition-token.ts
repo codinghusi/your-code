@@ -1,8 +1,9 @@
-import { LanguageInputStream } from './language-input-stream';
+import { LanguageInputStream } from '../language-input-stream';
 import { Token } from "./token";
 import { Pattern } from './patterns/pattern';
 import { NameToken } from './name-token';
 import { StringPattern } from './patterns/string-pattern';
+import { FunctionPattern } from './patterns/function-pattern';
 
 interface TypeParsers {
     [key: string]: TypeParser
@@ -15,7 +16,7 @@ interface TypeParser {
 
 const TYPE_PARSERS: TypeParsers = {
     import: StringPattern,
-    entrypoint: StringPattern,
+    entrypoint: FunctionPattern,
 };
 
 export class DefinitionToken extends Token {

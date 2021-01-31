@@ -1,4 +1,4 @@
-import { LanguageInputStream } from "./language-input-stream";
+import { LanguageInputStream } from "../language-input-stream";
 import { NameToken } from "./name-token";
 import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
@@ -12,8 +12,14 @@ export class VariableDeclarationToken extends Token {
     }
 
     static parse(stream: LanguageInputStream) {
-        if (stream.matchNextString('#', false)) {
+        if (stream.matchNextString('#')) {
+            if (stream.hasWhitespace()) {
+                stream.croak(`you aren't allowed to put whitespace here`);
+            }
             const isConstant = !!stream.matchNextString('!', false);
+            if (stream.hasWhitespace()) {
+                stream.croak(`you aren't allowed to put whitespace here`);
+            }
             const result = NameToken.parse(stream);
             if (!result) {
                 stream.croak(`after a # must follow a variable declaration`);

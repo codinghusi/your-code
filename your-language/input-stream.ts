@@ -1,4 +1,5 @@
 import { CommentToken } from "./tokens/comment-token";
+import { RegexPattern } from './tokens/patterns/regex-pattern';
 
 export class Checkpoint {
     constructor(public position: number,
@@ -53,10 +54,10 @@ export class InputStream {
         this.checkpoints.pop();
     }
 
-    testOut<T>(parser: (stream: InputStream) => T | null): T {
+    testOut<T>(parser: (stream: InputStream) => T | null, successfullSkip = true): T {
         this.pushCheckPoint();
         const result = parser(this);
-        if (!result) {
+        if (!result || !successfullSkip) {
             this.popCheckPoint();
         }
         return result;
@@ -90,18 +91,7 @@ export class InputStream {
         return char;
     }
 
-    matchWhitespace() {
-        return this.matchNextRegex(/[\s\r\n]+/, false);
-    }
-
-    matchNextString(str: string, skipWhitespace = true, skip = true) {
-        if (skipWhitespace) {
-            this.matchWhitespace();
-        }
-        if (skipWhitespace || !skip) {
-            this.pushCheckPoint();
-        }
-
+    matchNextString(str: string, skip = true) {
         const length = str.length;
         if (this.input.substr(this.position, length) === str) {
             if (skip) {
@@ -109,33 +99,31 @@ export class InputStream {
             }
             return str;
         }
-
-        if (skipWhitespace || !skip) {
-            this.popCheckPoint();
-        }
         return null;
     }
 
-    matchNextRegex(regex: RegExp, skipWhitespace = true, skip = true) {
-        if (skipWhitespace) {
-            this.pushCheckPoint();
-            this.matchWhitespace();
+    getRegexParts(regex: RegExp) {
+        const flags = regex.flags;
+        const raw = regex.toString().slice(1, -(flags.length + 1));
+        return {
+            raw,
+            flags
         }
+    }
 
-        const [match] = regex.exec(this.input.slice(this.position));
+    matchNextRegex(regex: RegExp, skip = true) {
+        // modification to the regex
+        const regexParts = this.getRegexParts(regex);
+        regex = new RegExp(`^${regexParts.raw}`, regexParts.flags);
+        // test
+        const match = regex.exec(this.input.slice(this.position))?.[0];
         if (match) {
             const length = match.length;
             // check if was from start
-            if (this.input.substr(this.position, length) === match) {
-                if (skip) {
-                    this.seek(length);
-                }
-                return match;
+            if (skip) {
+                this.seek(length);
             }
-        }
-
-        if (skipWhitespace) {
-            this.popCheckPoint();
+            return match;
         }
         return null;
     }
@@ -161,42 +149,6 @@ export class InputStream {
         return result;
     }
 
-    delimitedWithWhitespace<T>(start: string, stop: string, separator: string, parser: (stream: this) => T) {
-        const list: T[] = [];
-        let first = true;
-        if (!this.matchNextString(start)) {
-            return null;
-        }
-
-        while (!this.eof()) {
-            if (this.matchNextString(stop)) {
-                break;
-            }
-            if (first) {
-                first = false;
-            } else {
-                if (!this.matchNextString(separator)) {
-                    this.croak(`you need to delimit your values with ${separator}`);
-                }
-            }
-            if (this.matchNextString(stop)) {
-                break;
-            }
-
-            this.matchWhitespace();
-
-            const result = parser(this);
-            if (!result) {
-                if (!this.matchNextString(stop)) {
-                    this.croak(`missing unclosed ${stop}`);
-                }
-                break;
-            }
-            list.push(result);
-        }
-        return list;
-    }
-
     matchOneOf(items: string[]) {
         return items.find(punctuation => this.matchNextString(punctuation));
     }
@@ -210,6 +162,6 @@ export class InputStream {
     }
 
     croak(message: string) {
-        throw new Error(`${message} (${this.line}:${this.column}), near '${this.input.substr(this.position, 10)}'`);
+        throw new Error(`${message} (${this.line}:${this.column}), near ${JSON.stringify(this.input.substr(this.position, 10))}`);
     }
 }

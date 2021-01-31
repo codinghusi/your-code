@@ -3,6 +3,13 @@
         "module": "commonjs",
         "target": "ES2019",
         "lib": [ "ES2020", "DOM" ],
-        "sourceMap": true
-    }
+        "sourceMap": true,
+        "outDir": "./dist"
+    },
+    "include": [
+        "**/*"
+    ],
+    "exclude": [
+        "node_modules/**/*"
+    ],
 }

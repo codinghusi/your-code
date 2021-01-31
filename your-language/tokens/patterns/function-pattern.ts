@@ -1,11 +1,12 @@
 import { NameToken } from "../name-token";
 import { Pattern } from "./pattern";
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { FunctionDeclarationToken } from '../function-declaration-token';
 
 
 export class FunctionPattern extends Pattern {
+    static type = "function";
     declaration: FunctionDeclarationToken;
 
     constructor(public name: string) {

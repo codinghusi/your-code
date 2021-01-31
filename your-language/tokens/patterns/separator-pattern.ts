@@ -1,5 +1,5 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
-import { LanguageInputStream } from "../language-input-stream";
+import { LanguageInputStream } from "../../language-input-stream";
 import { Pattern } from "./pattern";
 import { WhitespaceToken } from '../whitespace-token';
 
