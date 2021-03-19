@@ -43,9 +43,9 @@ export class YourLanguageParser {
 
         mainLoop:
         while(!this.stream.eof()) {
+
             for (const parser of mainParsers) {
                 const declaration = parser(this.stream);
-                console.log(`declaration: `, declaration);
                 if (declaration) {
                     declarations.push(declaration);
                     continue mainLoop;

@@ -29,8 +29,8 @@ export class ParserPattern extends Pattern {
     }
     
     static parsePattern(stream: LanguageInputStream) {
-        stream.matchWhitespace();
         const namings = Namings.parse(stream);
+        stream.matchWhitespace();
         for (const parser of this.parsers) {
             const pattern = parser(stream);
             if (pattern) {
@@ -42,6 +42,7 @@ export class ParserPattern extends Pattern {
     }
     
     static parse(stream: LanguageInputStream) {
+        const start = stream.position;
         const patterns: Pattern[] = [];
         while (true) {
             // separation
@@ -52,7 +53,6 @@ export class ParserPattern extends Pattern {
                 // delimiter
                 const delimiter = DelimiterPattern.parse(stream);
                 if (delimiter) {
-                    console.log(`got delimiter`, delimiter);
                     patterns.push(delimiter);
                 } else {
                     
@@ -79,8 +79,10 @@ export class ParserPattern extends Pattern {
             // }
             pattern.setSeparator(separator);
             patterns.push(pattern);
-            console.log(`got pattern `, pattern);
         }
+        const captured = JSON.stringify(stream.input.slice(start, stream.position));
+        console.log("captured: " + captured);
+        console.log("patterns: " + JSON.stringify(patterns))
         return new ParserPattern(patterns);
     }
 

@@ -8,7 +8,7 @@ export class CommentToken extends Token {
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.matchNextRegex(/\/\/.*/, false);
+        const result = stream.matchNextRegex(/\/\/.*/);
         if (!result) {
             return;
         }

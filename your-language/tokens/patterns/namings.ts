@@ -41,7 +41,7 @@ export class KeyNaming extends Naming {
 
     static parse(stream: LanguageInputStream) {
         return stream.testOut(() => {
-            let key;
+            let key: string;
             const worked = stream.matchNextString('{') &&
                 (key = NameToken.parse(stream)?.name) &&
                 stream.matchNextString('}');

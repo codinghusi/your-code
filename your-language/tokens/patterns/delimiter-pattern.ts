@@ -12,10 +12,8 @@ export class DelimiterPattern extends Pattern {
     }
 
     static parse(stream: LanguageInputStream) {
-        console.log(`looking for delimiter`);
         // check if it delimiter
         if (!stream.matchNextString('=>')) {
-            console.log(`found no delimiter`);
             return null;
         }
 

@@ -6,16 +6,16 @@ import { WhitespaceToken } from '../whitespace-token';
 
 export class SeparatorPattern extends Pattern {
     constructor(public whitespace: boolean,
-        public optional: boolean) {
+                public optional: boolean) {
             super();
-        }
+    }
         
-        static parse(stream: LanguageInputStream) {
-            if (stream.matchNextString('->')) {
-                return new SeparatorPattern(true, false);
-            }
-            if (stream.matchNextString('~>')) {
-                return new SeparatorPattern(true, true);
+    static parse(stream: LanguageInputStream) {
+        if (stream.matchNextString('->')) {
+            return new SeparatorPattern(true, false);
+        }
+        if (stream.matchNextString('~>')) {
+            return new SeparatorPattern(true, true);
         }
         if (stream.matchNextString('-')) {
             return new SeparatorPattern(false, false);
@@ -26,8 +26,9 @@ export class SeparatorPattern extends Pattern {
     }
 
     parse(stream: CodeInputStream) {
+        // FIXME: not finished
         if (this.whitespace) {
-            return WhitespaceToken.parse(stream);
+            return stream.matchWhitespace();
         }
         return;
     }

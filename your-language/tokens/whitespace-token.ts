@@ -1,6 +1,7 @@
 import { InputStream } from "../input-stream";
 import { Token } from "./token";
 import { CodeInputStream } from '../../your-parser/code-input-stream';
+import { LanguageInputStream } from "../language-input-stream";
 
 
 export class WhitespaceToken extends Token {
@@ -8,8 +9,8 @@ export class WhitespaceToken extends Token {
         super();
     }
 
-    static parse(stream: InputStream) {
-        const result = stream.matchNextRegex(/[\s\n]+/);
+    static parse(stream: LanguageInputStream) {
+        const result = stream.matchWhitespace();
         if (!result) {
             return null;
         }

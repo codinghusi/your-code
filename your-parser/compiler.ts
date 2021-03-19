@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { InputStream } from '../your-language/input-stream';
 import { YourLanguageParser } from '../your-language/parser';
 
 const outputFile = 'output.json';

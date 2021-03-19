@@ -91,6 +91,10 @@ export class InputStream {
         return char;
     }
 
+    matchWhitespace() {
+        return this.matchNextRegex(/\s+/s);
+    }
+
     matchNextString(str: string, skip = true) {
         const length = str.length;
         if (this.input.substr(this.position, length) === str) {
@@ -112,14 +116,14 @@ export class InputStream {
     }
 
     matchNextRegex(regex: RegExp, skip = true) {
-        // modification to the regex
+        // modification to the regex (must begin at start)
         const regexParts = this.getRegexParts(regex);
         regex = new RegExp(`^${regexParts.raw}`, regexParts.flags);
-        // test
+        // extract
         const match = regex.exec(this.input.slice(this.position))?.[0];
+        // console.log(regex.toString() + ", on: " + JSON.stringify(this.input.substr(this.position, 10)) + ", match: ", match);
         if (match) {
             const length = match.length;
-            // check if was from start
             if (skip) {
                 this.seek(length);
             }
@@ -157,8 +161,12 @@ export class InputStream {
         return this.input.charAt(this.position);
     }
 
+    debugPeekLength(length: number) {
+        return JSON.stringify(this.input.substr(this.position, length));
+    }
+
     eof() {
-        return this.peek() === '';
+        return this.position >= this.input.length;
     }
 
     croak(message: string) {

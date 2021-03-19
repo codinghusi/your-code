@@ -10,10 +10,11 @@ export class LanguageInputStream extends InputStream {
     }
 
     matchWhitespace() {
+        // well this one is kind of a duplicate to WhitespaceToken.parse
         let whitespaces = "";
-        let whitespace;
+        let whitespace: string;
         while (true) {
-            if (whitespace = this.matchNextRegex(/[\s]+/s, false)) {
+            if (whitespace = super.matchWhitespace()) {
                 whitespaces += whitespace;
                 continue;
             }
@@ -29,12 +30,9 @@ export class LanguageInputStream extends InputStream {
         return super.next();
     }
 
-    matchNextRegex(regex: RegExp, skipWhitespace = true, skip = true) {
+    matchNextRegex(regex: RegExp, skip = true) {
         let result = null;
         this.testOut(() => {
-            if (skipWhitespace) {
-                this.matchWhitespace();
-            }
             result = super.matchNextRegex(regex, skip);
             if (skip && result) {
                 return true;
@@ -43,12 +41,9 @@ export class LanguageInputStream extends InputStream {
         return result;
     }
 
-    matchNextString(str: string, skipWhitespace = true, skip = true) {
+    matchNextString(str: string, skip = true) {
         let result = null;
         this.testOut(() => {
-            if (skipWhitespace) {
-                this.matchWhitespace();
-            }
             result = super.matchNextString(str, skip);
             if (skip && result) {
                 return true;
@@ -63,8 +58,9 @@ export class LanguageInputStream extends InputStream {
         if (!this.matchNextString(start)) {
             return null;
         }
-
+        
         while (!this.eof()) {
+            console.log(JSON.stringify(list));
             if (this.matchNextString(stop)) {
                 break;
             }
@@ -78,9 +74,9 @@ export class LanguageInputStream extends InputStream {
             if (this.matchNextString(stop)) {
                 break;
             }
-
+            
             this.matchWhitespace();
-
+            
             const result = parser(this);
             if (!result) {
                 if (!this.matchNextString(stop)) {
