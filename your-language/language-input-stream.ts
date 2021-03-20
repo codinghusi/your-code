@@ -61,12 +61,14 @@ export class LanguageInputStream extends InputStream {
         
         while (!this.eof()) {
             console.log(JSON.stringify(list));
+            this.matchWhitespace();
             if (this.matchNextString(stop)) {
                 break;
             }
             if (first) {
                 first = false;
             } else {
+                this.matchWhitespace();
                 if (!this.matchNextString(separator)) {
                     this.croak(`you need to delimit your values with ${separator}`);
                 }

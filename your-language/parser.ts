@@ -43,7 +43,7 @@ export class YourLanguageParser {
 
         mainLoop:
         while(!this.stream.eof()) {
-
+            this.stream.matchWhitespace();
             for (const parser of mainParsers) {
                 const declaration = parser(this.stream);
                 if (declaration) {

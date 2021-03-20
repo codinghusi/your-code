@@ -34,8 +34,7 @@ export class FunctionDeclarationToken extends Token {
             // parse the variables and parser
             const variables: VariableDeclarationToken[] = [];
             let fnParser: ParserPattern;
-            while (!stream.eof()
-            &&      WhitespaceToken.parse(stream)?.isIdented()) {
+            while (!stream.eof() && WhitespaceToken.parse(stream)?.isIdented()) {
 
                 // parse variable
                 const variable = VariableDeclarationToken.parse(stream);

@@ -1,6 +1,4 @@
-import { InputStream } from "../input-stream";
 import { Token } from "./token";
-import { CodeInputStream } from '../../your-parser/code-input-stream';
 import { LanguageInputStream } from "../language-input-stream";
 
 
@@ -11,6 +9,7 @@ export class WhitespaceToken extends Token {
 
     static parse(stream: LanguageInputStream) {
         const result = stream.matchWhitespace();
+        console.log("tested for whitespace: " + JSON.stringify(result));
         if (!result) {
             return null;
         }
@@ -18,6 +17,8 @@ export class WhitespaceToken extends Token {
     }
 
     isIdented() {
-        return this.whitespace.charAt(this.whitespace.length - 1) !== '\n';
+        console.log(`checking identation: ${this.whitespace}`);
+        const lastChar = this.whitespace.charAt(this.whitespace.length - 1);
+        return lastChar === ' ' || '\t';
     }
 }

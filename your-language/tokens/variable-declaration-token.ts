@@ -24,6 +24,9 @@ export class VariableDeclarationToken extends Token {
             if (!result) {
                 stream.croak(`after a # must follow a variable declaration`);
             }
+            if (!stream.matchWhitespace()) {
+                stream.croak(`please leave a gap between variable name and the value`);
+            }
             const name = result.name;
             const parser = ParserPattern.parse(stream);
             if (!parser) {
