@@ -12,6 +12,10 @@ import { VariablePattern } from "./variable-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
 
+interface Params {
+    patterns: Pattern[];
+}
+
 export class ParserPattern extends Pattern {
     static parsers = [
         StringPattern.parse,
@@ -22,10 +26,13 @@ export class ParserPattern extends Pattern {
         ChoicePattern.parse,
         LookbackMatchingPattern.parse
     ];
+
+    public patterns: Pattern[];
     
     // TODO: fill
-    constructor(public patterns: Pattern[]) {
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
     
     static parsePattern(stream: LanguageInputStream) {
@@ -89,7 +96,7 @@ export class ParserPattern extends Pattern {
         if (!patterns.length) {
             return null;
         }
-        return new ParserPattern(patterns);
+        return new ParserPattern({ patterns });
     }
 
     

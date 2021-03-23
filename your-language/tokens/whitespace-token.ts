@@ -1,18 +1,24 @@
 import { Token } from "./token";
 import { LanguageInputStream } from "../language-input-stream";
 
+interface Params {
+    whitespace: string;
+}
 
 export class WhitespaceToken extends Token {
-    constructor(public whitespace: string) {
+    whitespace: string;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.matchWhitespace();
-        if (!result) {
+        const whitespace = stream.matchWhitespace();
+        if (!whitespace) {
             return null;
         }
-        return new WhitespaceToken(result);
+        return new WhitespaceToken({ whitespace });
     }
 
     isIdented() {

@@ -4,11 +4,17 @@ import { NameToken } from "../name-token";
 import { Pattern } from "./pattern";
 import { VariableDeclarationToken } from '../variable-declaration-token';
 
+interface Params {
+    name: string;
+}
+
 export class VariablePattern extends Pattern {
     protected declaration: VariableDeclarationToken;
+    name: string;
 
-    constructor(public name: string) {
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -18,7 +24,7 @@ export class VariablePattern extends Pattern {
                 stream.croak(`after '$' a variable name must follow`);
             }
             const name = result.name;
-            return new VariablePattern(name);
+            return new VariablePattern({ name });
         }
         return null;
     }

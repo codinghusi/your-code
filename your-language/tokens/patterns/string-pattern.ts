@@ -2,24 +2,28 @@ import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
 import { Pattern } from "./pattern";
 
+interface Params {
+    value: string;
+    wholeWordsOnly: boolean;
+}
 
 export class StringPattern extends Pattern {
-    static type = 'string';
+    static type = "string";
 
-    constructor(public value: string,
-                public wholeWordsOnly: boolean) {
+    value: string;
+    wholeWordsOnly: boolean;
+    
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
         const char = stream.matchOneOf(`"'`.split(""));
         if (char) {
-            if (stream.debugPeekLength(3) === `"//'"`) {
-                debugger;
-            }
-            const result = stream.readUntil(char, true, '\\');
+            const value = stream.readUntil(char, true, '\\');
             const wholeWordsOnly = char === `'`;
-            return new StringPattern(result, wholeWordsOnly);
+            return new StringPattern({ value, wholeWordsOnly });
         }
         return null;
     }

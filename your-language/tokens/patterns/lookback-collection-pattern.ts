@@ -3,12 +3,19 @@ import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LanguageInputStream } from '../../language-input-stream';
 
+interface Params {
+    lookbacks: Pattern[];
+    parent?: LookbackCollection;
+}
 
 export class LookbackCollection {
     protected worked = true;
+    protected lookbacks: Pattern[];
+    protected parent?: LookbackCollection;
 
-    constructor(protected lookbacks: Pattern[],
-                protected parent?: LookbackCollection) { }
+    constructor(params: Params) {
+        Object.assign(this, params);
+    }
 
     static parseList(stream: LanguageInputStream) {
         let lookback: Pattern;
@@ -22,7 +29,7 @@ export class LookbackCollection {
     }
 
     static parse(stream: LanguageInputStream) {
-        return new LookbackCollection(this.parseList(stream));
+        return new LookbackCollection({ lookbacks: this.parseList(stream) });
     }
 
     setParent(parent: LookbackCollection) {

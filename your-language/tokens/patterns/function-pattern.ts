@@ -4,20 +4,26 @@ import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { FunctionDeclarationToken } from '../function-declaration-token';
 
+interface Params {
+    name: string;
+}
 
 export class FunctionPattern extends Pattern {
     static type = "function";
-    declaration: FunctionDeclarationToken;
 
-    constructor(public name: string) {
+    declaration: FunctionDeclarationToken;
+    name: string;
+
+    constructor(params: Params) {
         super();
+        Object.assign(params);
     }
     
     static parse(stream: LanguageInputStream) {
         const result = NameToken.parse(stream);
         if (result) {
             const name = result.name;
-            return new FunctionPattern(name);
+            return new FunctionPattern({ name });
         }
         return null;
     }

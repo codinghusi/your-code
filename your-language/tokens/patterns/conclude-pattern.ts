@@ -3,10 +3,16 @@ import { Pattern } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 
+interface Params {
+    content: ParserPattern;
+}
 
 export class ConcludePattern extends Pattern {
-    constructor(public content: ParserPattern) {
+    content: ParserPattern;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -15,7 +21,7 @@ export class ConcludePattern extends Pattern {
             if (!stream.matchNextString(')')) {
                 stream.croak(`missing closing )`);
             }
-            return new ConcludePattern(content);
+            return new ConcludePattern({ content });
         }
     }
 

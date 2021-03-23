@@ -5,18 +5,24 @@ import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
 import { Checkpoint } from "../../input-stream";
 
+interface Params {
+    choices: ParserPattern[]
+}
 
 export class ChoicePattern extends Pattern {
-    constructor(public choices: ParserPattern[]) {
+    choices: ParserPattern[]
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse.bind(ParserPattern)) as ParserPattern[];
-        if (!result) {
+        const choices = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse.bind(ParserPattern)) as ParserPattern[];
+        if (!choices) {
             return null;
         }
-        return new ChoicePattern(result);
+        return new ChoicePattern({ choices });
     }
 
     parse(stream: CodeInputStream) {

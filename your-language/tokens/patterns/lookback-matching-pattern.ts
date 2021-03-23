@@ -1,17 +1,23 @@
-import { InputStream } from "../../input-stream";
 import { Pattern } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
-import { ParserPattern } from "./parser-pattern";
 import { StringPattern } from './string-pattern';
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
 
 
 // TODO: add support for more complex parsers (fixed length, PatternParser)
 
+interface Params {
+    parser: StringPattern;
+    negated: boolean;
+}
+
 export class LookbackMatchingPattern extends Pattern {
-    constructor(public parser: StringPattern,
-                public negated: boolean) {
+    parser: StringPattern;
+    negated: boolean;
+    
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -24,7 +30,7 @@ export class LookbackMatchingPattern extends Pattern {
         if (!stream.matchNextString('>')) {
             stream.croak(`missing closing '>'`);
         }
-        return new LookbackMatchingPattern(parser, negated);
+        return new LookbackMatchingPattern({ parser, negated });
     }
 
     parse(stream: CodeInputStream) {

@@ -14,15 +14,24 @@ interface TypeParser {
     parse(stream: LanguageInputStream): any;
 }
 
+interface Params {
+    name: string;
+    value: Pattern;
+}
+
 const TYPE_PARSERS: TypeParsers = {
     import: StringPattern,
     entrypoint: FunctionPattern,
 };
 
+
 export class DefinitionToken extends Token {
-    constructor(public name: string,
-                public value: Pattern) {
+    name: string;
+    value: Pattern;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -44,8 +53,8 @@ export class DefinitionToken extends Token {
             stream.croak(`there is no definition called ${name}`);
         }
 
-        const result = parser.parse(stream);
-        if (!result) {
+        const value = parser.parse(stream);
+        if (!value) {
             stream.croak(`expected a value of type ${parser.type}`);
         }
 
@@ -53,6 +62,6 @@ export class DefinitionToken extends Token {
             stream.croak(`missing closing ')'`)
         }
 
-        return new DefinitionToken(name, result);
+        return new DefinitionToken({ name, value });
     }
 }

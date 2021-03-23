@@ -3,25 +3,32 @@ import { LanguageInputStream } from "../../language-input-stream";
 import { Pattern } from "./pattern";
 import { WhitespaceToken } from '../whitespace-token';
 
+interface Params {
+    whitespace: boolean;
+    optional: boolean;
+}
 
 export class SeparatorPattern extends Pattern {
-    constructor(public whitespace: boolean,
-                public optional: boolean) {
-            super();
+    whitespace: boolean;
+    optional: boolean;
+
+    constructor(params: Params) {
+        super();
+        Object.assign(this, params);
     }
         
     static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('->')) {
-            return new SeparatorPattern(true, false);
+            return new SeparatorPattern({ whitespace: true, optional: false });
         }
         if (stream.matchNextString('~>')) {
-            return new SeparatorPattern(true, true);
+            return new SeparatorPattern({ whitespace: true, optional: true });
         }
         if (stream.matchNextString('-')) {
-            return new SeparatorPattern(false, false);
+            return new SeparatorPattern({ whitespace: false, optional: false });
         }
         if (stream.matchNextString('~')) {
-            return new SeparatorPattern(false, true);
+            return new SeparatorPattern({ whitespace: false, optional: true });
         }
     }
 

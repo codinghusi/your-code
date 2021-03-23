@@ -3,12 +3,20 @@ import { NameToken } from "./name-token";
 import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
 
+interface Params {
+    name: string;
+    isConstant: boolean;
+    parser: ParserPattern;
+}
 
 export class VariableDeclarationToken extends Token {
-    constructor(public name: string,
-                public isConstant: boolean,
-                public parser: ParserPattern) {
+    name: string;
+    isConstant: boolean;
+    parser: ParserPattern;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -32,7 +40,7 @@ export class VariableDeclarationToken extends Token {
             if (!parser) {
                 stream.croak(`you need to define a parser as the variable value`);
             }
-            return new VariableDeclarationToken(name, isConstant, parser);
+            return new VariableDeclarationToken({ name, isConstant, parser });
         }
         return null;
     }

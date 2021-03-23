@@ -7,11 +7,19 @@ export abstract class Naming {
     abstract onToResult(result: any): any;
 }
 
+interface KeyValueParams {
+    key: string;
+    value: string;
+}
+
 // example: {mykey: 'myvalue'}
 export class KeyValueNaming extends Naming {
-    constructor(protected key: string,
-                protected value: string) {
+    protected key: string;
+    protected value: string;
+
+    constructor(params: KeyValueParams) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -25,7 +33,7 @@ export class KeyValueNaming extends Naming {
             if (!worked) {
                 return null;
             }
-            return new KeyValueNaming(key, value);
+            return new KeyValueNaming({ key, value });
         });
     }
 
@@ -35,9 +43,17 @@ export class KeyValueNaming extends Naming {
     
 }
 
+
+interface KeyParams {
+    key: string
+}
+
 export class KeyNaming extends Naming {
-    constructor(protected key: string) {
+    protected key: string;
+
+    constructor(params: KeyParams) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -49,7 +65,7 @@ export class KeyNaming extends Naming {
             if (!worked) {
                 return null;
             }
-            return new KeyNaming(key);
+            return new KeyNaming({ key });
         });
     }
 

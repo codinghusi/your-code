@@ -31,7 +31,7 @@ export class LanguageInputStream extends InputStream {
     }
 
     matchNextRegex(regex: RegExp, skip = true) {
-        let result = null;
+        let result: string = null;
         this.testOut(() => {
             result = super.matchNextRegex(regex, skip);
             if (skip && result) {
@@ -42,7 +42,7 @@ export class LanguageInputStream extends InputStream {
     }
 
     matchNextString(str: string, skip = true) {
-        let result = null;
+        let result: string = null;
         this.testOut(() => {
             result = super.matchNextString(str, skip);
             if (skip && result) {

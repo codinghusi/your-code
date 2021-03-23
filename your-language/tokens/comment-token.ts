@@ -1,17 +1,23 @@
 import { LanguageInputStream } from "../language-input-stream";
 import { Token } from "./token";
 
+interface Params {
+    content: string;
+}
 
 export class CommentToken extends Token {
-    constructor(public content: string) {
+    content: string;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.matchNextRegex(/\/\/.*/);
-        if (!result) {
+        const content = stream.matchNextRegex(/\/\/.*/);
+        if (!content) {
             return;
         }
-        return new CommentToken(result);
+        return new CommentToken({ content });
     }
 }

@@ -2,17 +2,23 @@ import { InputStream } from "../input-stream";
 import { LanguageInputStream } from "../language-input-stream";
 import { Token } from "./token";
 
+interface Params {
+    name: string;
+}
 
 export class NameToken extends Token {
-    constructor(public name: string) {
+    name: string;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
-        const result = stream.matchNextRegex(/[\w]+/i);
-        if (!result) {
+        const name = stream.matchNextRegex(/[\w]+/i);
+        if (!name) {
             return;
         }
-        return new NameToken(result);
+        return new NameToken({ name });
     }
 }

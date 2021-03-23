@@ -6,12 +6,20 @@ import { VariableDeclarationToken } from "./variable-declaration-token";
 import { WhitespaceToken } from "./whitespace-token";
 import { VariableCollection } from '../collections';
 
+interface Params {
+    name: string;
+    variables: VariableCollection;
+    parser: ParserPattern;
+}
 
 export class FunctionDeclarationToken extends Token {
-    constructor(public name: string,
-                public variables: VariableCollection,
-                public parser: ParserPattern) {
+    public name: string;
+    public variables: VariableCollection;
+    public parser: ParserPattern;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
 
     static parse(stream: LanguageInputStream) {
@@ -53,7 +61,11 @@ export class FunctionDeclarationToken extends Token {
             }
 
             const variableCollection = new VariableCollection(variables);
-            return new FunctionDeclarationToken(name, variableCollection, fnParser);
+            return new FunctionDeclarationToken({
+                name,
+                variables: variableCollection,
+                parser: fnParser
+            });
         }
         return null;
     }

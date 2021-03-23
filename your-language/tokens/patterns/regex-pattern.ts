@@ -2,17 +2,23 @@ import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
 import { Pattern } from "./pattern";
 
+interface Params {
+    regex: RegExp;
+}
 
 export class RegexPattern extends Pattern {
-    constructor(public regex: RegExp) {
+    regex: RegExp;
+
+    constructor(params: Params) {
         super();
+        Object.assign(this, params);
     }
     
     static parse(stream: LanguageInputStream) {
         if (stream.matchNextString('/')) {
             const result = stream.readUntil('/', true, '\\');
             const regex = new RegExp(result);
-            return new RegexPattern(regex);
+            return new RegexPattern({ regex });
         }
         return null;
     }
