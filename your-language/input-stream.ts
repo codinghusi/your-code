@@ -54,11 +54,18 @@ export class InputStream {
         this.checkpoints.pop();
     }
 
+    applyCheckPoint() {
+        const checkpoint = this.checkpoint;
+        this.checkpoints.splice(-2, 2, checkpoint);
+    }
+
     testOut<T>(parser: (stream: InputStream) => T | null, successfullSkip = true): T {
         this.pushCheckPoint();
         const result = parser(this);
         if (!result || !successfullSkip) {
             this.popCheckPoint();
+        } else {
+            this.applyCheckPoint();
         }
         return result;
     }

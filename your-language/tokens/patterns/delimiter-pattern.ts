@@ -16,6 +16,7 @@ export class DelimiterPattern extends Pattern {
         if (!stream.matchNextString('=>')) {
             return null;
         }
+        stream.matchWhitespace();
 
         let separator: ParserPattern;
         
@@ -26,7 +27,9 @@ export class DelimiterPattern extends Pattern {
         }
 
         // separator parser
+        stream.matchWhitespace();
         if (stream.matchNextString('|')) {
+            stream.matchWhitespace();
             separator = ParserPattern.parse(stream);
             if (!separator) {
                 stream.croak(`with a '|' you want to use a separator. But you forgot the separator`);
@@ -34,6 +37,7 @@ export class DelimiterPattern extends Pattern {
         }
         
         // stop parser
+        stream.matchWhitespace();
         if (!stream.matchNextString('<=')) {
             stream.croak(`you need to end the delimiter with a <= plus a stop parser`);
         }

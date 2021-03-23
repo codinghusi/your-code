@@ -9,7 +9,6 @@ export class WhitespaceToken extends Token {
 
     static parse(stream: LanguageInputStream) {
         const result = stream.matchWhitespace();
-        console.log("tested for whitespace: " + JSON.stringify(result));
         if (!result) {
             return null;
         }
@@ -17,8 +16,8 @@ export class WhitespaceToken extends Token {
     }
 
     isIdented() {
-        console.log(`checking identation: ${this.whitespace}`);
-        const lastChar = this.whitespace.charAt(this.whitespace.length - 1);
-        return lastChar === ' ' || '\t';
+        const result = /[\t ]+$/.test(this.whitespace);
+        console.log("is Idented:", result, JSON.stringify(this.whitespace));
+        return result;
     }
 }

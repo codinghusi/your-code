@@ -7,6 +7,7 @@ export abstract class Naming {
     abstract onToResult(result: any): any;
 }
 
+// example: {mykey: 'myvalue'}
 export class KeyValueNaming extends Naming {
     constructor(protected key: string,
                 protected value: string) {
@@ -17,9 +18,9 @@ export class KeyValueNaming extends Naming {
         return stream.testOut(() => {
             let key: string, value: string;
             const worked = stream.matchNextString('{') &&
-                (key = NameToken.parse(stream)?.name) &&
-                stream.matchNextString(':') &&
-                (value = StringPattern.parse(stream)?.value) &&
+                (stream.matchWhitespace(), key = NameToken.parse(stream)?.name) &&
+                (stream.matchWhitespace(), stream.matchNextString(':')) &&
+                (stream.matchWhitespace(), value = StringPattern.parse(stream)?.value) &&
                 stream.matchNextString('}');
             if (!worked) {
                 return null;
@@ -43,8 +44,8 @@ export class KeyNaming extends Naming {
         return stream.testOut(() => {
             let key: string;
             const worked = stream.matchNextString('{') &&
-                (key = NameToken.parse(stream)?.name) &&
-                stream.matchNextString('}');
+                (stream.matchWhitespace(), key = NameToken.parse(stream)?.name) &&
+                (stream.matchWhitespace(), stream.matchNextString('}'));
             if (!worked) {
                 return null;
             }
@@ -60,7 +61,7 @@ export class KeyNaming extends Naming {
 export class FlattenNaming extends Naming {
     static parse(stream: LanguageInputStream) {
         return stream.testOut(() => {
-            const worked = stream.matchNextString('{') && stream.matchNextString('}');
+            const worked = stream.matchNextString('{') && (stream.matchWhitespace(), stream.matchNextString('}'));
             if (!worked) {
                 return null;
             }

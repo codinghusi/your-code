@@ -25,7 +25,7 @@ export class FunctionDeclarationToken extends Token {
                 stream.croak(`after '@' a function declaration must follow`);
             }
             const name = result.name;
-            if (!stream.matchNextString(':', false)) {
+            if (!stream.matchNextString(':')) {
                 stream.croak(`a function must start with a ':' (at the end of the name)`);
             }
 

@@ -113,7 +113,7 @@ export class YourLanguageParser {
         else if(pattern instanceof FunctionPattern) {
             const fn = functions[pattern.name];
             if (!fn) {
-                this.stream.croak(`couldn't find variable with name '${pattern.name}'`);
+                this.stream.croak(`couldn't find function with name '${pattern.name}'`);
             }
             pattern.setDeclaration(fn);
         }

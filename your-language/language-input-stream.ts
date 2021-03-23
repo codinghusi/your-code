@@ -73,14 +73,15 @@ export class LanguageInputStream extends InputStream {
                     this.croak(`you need to delimit your values with ${separator}`);
                 }
             }
+
+            this.matchWhitespace();
             if (this.matchNextString(stop)) {
                 break;
             }
             
-            this.matchWhitespace();
-            
             const result = parser(this);
             if (!result) {
+                this.matchWhitespace();
                 if (!this.matchNextString(stop)) {
                     this.croak(`missing unclosed ${stop}`);
                 }

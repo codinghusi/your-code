@@ -12,7 +12,7 @@ export class VariablePattern extends Pattern {
     }
 
     static parse(stream: LanguageInputStream) {
-        if (stream.matchNextString('$', false)) {
+        if (stream.matchNextString('$')) {
             const result = NameToken.parse(stream);
             if (!result) {
                 stream.croak(`after '$' a variable name must follow`);

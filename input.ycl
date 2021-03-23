@@ -2,6 +2,7 @@
 !entrypoint(command)
 
 #preOperators [ '+', '-', '++', '--', '!', '~' ]
+#postOperators [ '++', '--' ]
 
 #precedence [
     ['=', '+=', '-=', '/=', '*=', '%='],
@@ -39,10 +40,10 @@
     '(' -> {} expression -> ')'
 
 @if:
-    #condition {condition} condition
+    #condition {condition} ifCondition
     #thenBlock {then} command
     #elseBlock {else} command
-    'if' -> $ifCondition -> $thenBlock ~> ('else' -> $elseBlock)
+    'if' -> $condition -> $thenBlock ~> ('else' -> $elseBlock)
 
 @functionCall:
     #expr {} expression
@@ -99,9 +100,9 @@
     {entries} '[' => expression | ',' <= ']'
 
 @value:
-    ~ {preOperator} $preOperator
+    ~ {preOperator} $preOperators
     - {content} [ number, string, boolean, chainable ]
-    ~ {postOperator} $postOperator
+    ~ {postOperator} $postOperators
 
 @assignment:
     '=' -> {} expression
@@ -116,7 +117,7 @@
     $name -> {arguments} arguments -> {body} codeblock
 
 @functionStandalone:
-    'function' -> {} functionBody
+    'function' -> {} function
 
 @variableDeclarationWithInit:
     ()=> $name -> {init} assignment | ',' <=()

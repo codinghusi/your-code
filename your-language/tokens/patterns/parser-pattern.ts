@@ -46,7 +46,9 @@ export class ParserPattern extends Pattern {
         const patterns: Pattern[] = [];
         while (true) {
             // separation
-            // let separatorMissing = false;
+
+            stream.pushCheckPoint();
+            const ws = stream.matchWhitespace();
             const separator = SeparatorPattern.parse(stream);
             if (!separator) {
                 
@@ -54,35 +56,42 @@ export class ParserPattern extends Pattern {
                 const delimiter = DelimiterPattern.parse(stream);
                 if (delimiter) {
                     patterns.push(delimiter);
+                    stream.applyCheckPoint();
                 } else {
                     
                     // both, separator and delimiter not set
                     if (patterns.length) {
-                        // separatorMissing = true;
                         // TODO: add 'latest error'. If nothing works, that can be displayed
-                        // here: 'you need to separate patterns' (maybe)
+                        // example for error: 'you need to separate patterns' (maybe)
+                        console.log("before popped: ", stream.debugPeekLength(10));
+                        stream.popCheckPoint();
+                        console.log("finished: ", stream.debugPeekLength(10));
                         break;
                     }               
                 }
             }
+
+            stream.pushCheckPoint();
+            stream.matchWhitespace();
             
             const pattern = this.parsePattern(stream);
             if (!pattern) {
                 if (separator) {
                     stream.croak(`trailing separators aren't allowed`);
                 }
+                stream.popCheckPoint();
                 break;
             }
-            // } else if (separatorMissing) {
-            //     console.log(pattern);
-            //     stream.croak(`please separate your patterns`);
-            // }
+
             pattern.setSeparator(separator);
             patterns.push(pattern);
+            stream.applyCheckPoint();
         }
         const captured = JSON.stringify(stream.input.slice(start, stream.position));
         console.log("captured: " + captured);
-        console.log("patterns: " + JSON.stringify(patterns))
+        if (!patterns.length) {
+            return null;
+        }
         return new ParserPattern(patterns);
     }
 

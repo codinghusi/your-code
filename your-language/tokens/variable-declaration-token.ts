@@ -16,7 +16,7 @@ export class VariableDeclarationToken extends Token {
             if (stream.hasWhitespace()) {
                 stream.croak(`you aren't allowed to put whitespace here`);
             }
-            const isConstant = !!stream.matchNextString('!', false);
+            const isConstant = !!stream.matchNextString('!');
             if (stream.hasWhitespace()) {
                 stream.croak(`you aren't allowed to put whitespace here`);
             }
