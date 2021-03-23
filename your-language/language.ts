@@ -18,10 +18,19 @@ export class Language {
                 public globalVariables: Variables) {}
 
     async saveAsJSON(path: string) {
+        const cache = []; // because circular dependencies
         const json = JSON.stringify({
             definitions: this.definitions,
             functions: this.functions,
             globalVariables: this.globalVariables
+        }, (key, value) => {
+            if (value && typeof(value) === "object") {
+                if (cache.includes(value)) {
+                    return;
+                }
+                cache.push(value);
+            }
+            return value;
         });
         fs.writeFileSync(path, json);
     }
