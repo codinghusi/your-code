@@ -60,7 +60,6 @@ export class LanguageInputStream extends InputStream {
         }
         
         while (!this.eof()) {
-            console.log(JSON.stringify(list));
             this.matchWhitespace();
             if (this.matchNextString(stop)) {
                 break;

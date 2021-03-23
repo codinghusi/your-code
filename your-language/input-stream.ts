@@ -128,7 +128,6 @@ export class InputStream {
         regex = new RegExp(`^${regexParts.raw}`, regexParts.flags);
         // extract
         const match = regex.exec(this.input.slice(this.position))?.[0];
-        // console.log(regex.toString() + ", on: " + JSON.stringify(this.input.substr(this.position, 10)) + ", match: ", match);
         if (match) {
             const length = match.length;
             if (skip) {

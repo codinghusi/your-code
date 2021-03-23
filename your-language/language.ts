@@ -26,7 +26,7 @@ export class Language {
         }, (key, value) => {
             if (value && typeof(value) === "object") {
                 if (cache.includes(value)) {
-                    return;
+                    return "[circular]";
                 }
                 cache.push(value);
             }

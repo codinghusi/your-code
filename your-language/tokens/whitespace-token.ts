@@ -17,7 +17,6 @@ export class WhitespaceToken extends Token {
 
     isIdented() {
         const result = /[\t ]+$/.test(this.whitespace);
-        console.log("is Idented:", result, JSON.stringify(this.whitespace));
         return result;
     }
 }

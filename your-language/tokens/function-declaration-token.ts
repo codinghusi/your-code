@@ -29,8 +29,6 @@ export class FunctionDeclarationToken extends Token {
                 stream.croak(`a function must start with a ':' (at the end of the name)`);
             }
 
-            console.log(" ##################### FUNCTION " + name);
-
             // parse the variables and parser
             const variables: VariableDeclarationToken[] = [];
             let fnParser: ParserPattern;
@@ -40,7 +38,6 @@ export class FunctionDeclarationToken extends Token {
                 const variable = VariableDeclarationToken.parse(stream);
                 if (variable) {
                     variables.push(variable);
-                    console.log("- variable: " + variable.name);
                     continue;
                 }
 
@@ -52,7 +49,6 @@ export class FunctionDeclarationToken extends Token {
                 if (fnParser) {
                     stream.croak(`the parser was already declared, you can't create more than one`);
                 }
-                console.log("- parser");
                 fnParser = parser;
             }
 

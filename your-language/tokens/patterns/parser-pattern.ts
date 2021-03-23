@@ -63,9 +63,7 @@ export class ParserPattern extends Pattern {
                     if (patterns.length) {
                         // TODO: add 'latest error'. If nothing works, that can be displayed
                         // example for error: 'you need to separate patterns' (maybe)
-                        console.log("before popped: ", stream.debugPeekLength(10));
                         stream.popCheckPoint();
-                        console.log("finished: ", stream.debugPeekLength(10));
                         break;
                     }               
                 }
@@ -88,7 +86,6 @@ export class ParserPattern extends Pattern {
             stream.applyCheckPoint();
         }
         const captured = JSON.stringify(stream.input.slice(start, stream.position));
-        console.log("captured: " + captured);
         if (!patterns.length) {
             return null;
         }

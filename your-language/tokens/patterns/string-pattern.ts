@@ -17,10 +17,8 @@ export class StringPattern extends Pattern {
             if (stream.debugPeekLength(3) === `"//'"`) {
                 debugger;
             }
-            console.log("sp: ", stream.debugPeekLength(10));
             const result = stream.readUntil(char, true, '\\');
             const wholeWordsOnly = char === `'`;
-            console.log("string-pattern: " + JSON.stringify(result) + ", char: " + char);
             return new StringPattern(result, wholeWordsOnly);
         }
         return null;
