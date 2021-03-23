@@ -1,1 +1,2126 @@
-{"definitions":{"import":[{"value":"./tokens","wholeWordsOnly":true}],"entrypoint":[{"name":"command"}]},"functions":{"string":{"name":"string","variables":{},"parser":{"patterns":[{"name":"openClose","namings":{"namings":[]},"declaration":{"name":"openClose","isConstant":true,"parser":{"patterns":[{"choices":[{"patterns":[{"value":"\"","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"'","wholeWordsOnly":false,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}}},{"value":{"patterns":[{"name":"allChars","namings":{"namings":[{"key":"value"}]}}]}},{"name":"notEscaped","namings":{"namings":[]},"declaration":{"name":"notEscaped","isConstant":false,"parser":{"patterns":[{"parser":{"value":"\\\\","wholeWordsOnly":true},"negated":true,"namings":{"namings":[]}},{"name":"openClose","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}}}]}},"number":{"name":"number","variables":{},"parser":{"patterns":[{"regex":{},"namings":{"namings":[{"key":"value"}]}}]}},"boolean":{"name":"boolean","variables":{},"parser":{"patterns":[{"choices":[{"patterns":[{"value":"true","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"false","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}},"comment":{"name":"comment","variables":{},"parser":{"patterns":[{"choices":[{"patterns":[{"value":"//","wholeWordsOnly":true,"namings":{"namings":[]}},{"value":{"patterns":[{"name":"allChars","namings":{"namings":[{}]}}]}},{"value":"\\n","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"/*","wholeWordsOnly":true,"namings":{"namings":[]}},{"value":{"patterns":[{"name":"allChars","namings":{"namings":[{}]}}]}},{"value":"*/","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[{"key":"content"}]}}]}},"ifCondition":{"name":"ifCondition","variables":{},"parser":{"patterns":[{"value":"(","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"expression","namings":{"namings":[{}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":{"name":"expression","variables":{},"parser":{"patterns":[{"name":"expr","namings":{"namings":[]},"declaration":{"name":"expr","isConstant":false,"parser":{"patterns":[{"choices":[{"patterns":[{"content":{"patterns":[{"name":"operation","namings":{"namings":[]}}]},"namings":{"namings":[{"key":"type","value":"operation"}]}}]},{"patterns":[{"name":"expressionWithoutOperation","namings":{"namings":[{}]}}]}],"namings":{"namings":[{}]}}]}}}]}}},{"value":")","wholeWordsOnly":true,"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]}},"if":{"name":"if","variables":{},"parser":{"patterns":[{"value":"if","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"condition","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":{"name":"condition","isConstant":false,"parser":{"patterns":[{"name":"ifCondition","namings":{"namings":[{"key":"condition"}]},"declaration":"[circular]"}]}}},{"name":"thenBlock","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":{"name":"thenBlock","isConstant":false,"parser":{"patterns":[{"name":"command","namings":{"namings":[{"key":"then"}]},"declaration":{"name":"command","variables":{},"parser":{"patterns":[{"choices":[{"patterns":[{"choices":[{"patterns":[{"name":"if","namings":{"namings":[]}}]},{"patterns":[{"name":"functionStandalone","namings":{"namings":[]}}]},{"patterns":[{"name":"class","namings":{"namings":[]}}]},{"patterns":[{"name":"codeblock","namings":{"namings":[]}}]}],"namings":{"namings":[{}]}}]},{"patterns":[{"choices":[{"patterns":[{"name":"let","namings":{"namings":[]}}]},{"patterns":[{"name":"const","namings":{"namings":[]}}]},{"patterns":[{"name":"expression","namings":{"namings":[]}}]}],"namings":{"namings":[{}]}},{"value":";","wholeWordsOnly":true,"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]}],"namings":{"namings":[{}]}}]}}}]}}},{"content":{"patterns":[{"value":"else","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"elseBlock","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]},"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":true}}]}},"functionCall":{"name":"functionCall","variables":{},"parser":{"patterns":[{"value":"(","wholeWordsOnly":true,"namings":{"namings":[{"key":"parameters"}]}},{"value":{"patterns":[{"name":"expr","namings":{"namings":[]}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"value":")","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"arrayAccessor":{"name":"arrayAccessor","variables":{},"parser":{"patterns":[{"value":"[","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"expression","namings":{"namings":[{"key":"index"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"},{"value":"]","wholeWordsOnly":true,"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]}},"accessors":{"name":"accessors","variables":{},"parser":{"patterns":[{"choices":[{"patterns":[{"name":"functionCall","namings":{"namings":[{"key":"call"}]}}]},{"patterns":[{"name":"arrayAccessor","namings":{"namings":[{"key":"index"}]}}]}],"namings":{"namings":[{}]}}]}},"identifier":{"name":"identifier","variables":{},"parser":{"patterns":[{"regex":{},"namings":{"namings":[]}}]}},"chainable":{"name":"chainable","variables":{},"parser":{"patterns":[{"name":"key","namings":{"namings":[]},"declaration":{"name":"key","isConstant":false,"parser":{"patterns":[{"name":"identifier","namings":{"namings":[{"key":"key"}]},"declaration":"[circular]"}]}}},{"name":"accessors","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":true},"declaration":{"name":"accessors","isConstant":false,"parser":{"patterns":[{"name":"accessors","namings":{"namings":[{"key":"accessors"}]},"declaration":"[circular]"}]}}},{"name":"chain","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":true},"declaration":{"name":"chain","isConstant":false,"parser":{"patterns":[{"name":"chain","namings":{"namings":[{"key":"chain"}]},"declaration":{"name":"chain","variables":{},"parser":{"patterns":[{"value":".","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"chainable","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}}}]}}}]}},"chain":"[circular]","expressionWithoutOperation":{"name":"expressionWithoutOperation","variables":{},"parser":{"patterns":[{"choices":[{"patterns":[{"name":"instanciation","namings":{"namings":[]}}]},{"patterns":[{"name":"value","namings":{"namings":[]}}]},{"patterns":[{"name":"inBraces","namings":{"namings":[]}}]}],"namings":{"namings":[{"key":"base"}]}},{"name":"accessors","namings":{"namings":[{"key":"accessors"}]},"separatorBefore":{"whitespace":true,"optional":true},"declaration":"[circular]"},{"name":"chain","namings":{"namings":[{"key":"chain"}]},"separatorBefore":{"whitespace":true,"optional":true},"declaration":"[circular]"}]}},"expression":"[circular]","map":{"name":"map","variables":{},"parser":{"patterns":[{"value":"{","wholeWordsOnly":true,"namings":{"namings":[{"key":"entries"}]}},{"value":{"patterns":[{"name":"key","namings":{"namings":[]}},{"value":":","wholeWordsOnly":true,"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}},{"name":"value","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"value":"}","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"array":{"name":"array","variables":{},"parser":{"patterns":[{"value":"[","wholeWordsOnly":true,"namings":{"namings":[{"key":"entries"}]}},{"value":{"patterns":[{"name":"expression","namings":{"namings":[]}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"value":"]","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"value":{"name":"value","variables":{},"parser":{"patterns":[{"name":"preOperators","namings":{"namings":[{"key":"preOperator"}]},"separatorBefore":{"whitespace":false,"optional":true},"declaration":{"name":"preOperators","isConstant":false,"parser":{"patterns":[{"choices":[{"patterns":[{"value":"+","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"-","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"++","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"--","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"!","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"~","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}}},{"choices":[{"patterns":[{"name":"number","namings":{"namings":[]}}]},{"patterns":[{"name":"string","namings":{"namings":[]}}]},{"patterns":[{"name":"boolean","namings":{"namings":[]}}]},{"patterns":[{"name":"chainable","namings":{"namings":[]}}]}],"namings":{"namings":[{"key":"content"}]},"separatorBefore":{"whitespace":false,"optional":false}},{"name":"postOperators","namings":{"namings":[{"key":"postOperator"}]},"separatorBefore":{"whitespace":false,"optional":true},"declaration":{"name":"postOperators","isConstant":false,"parser":{"patterns":[{"choices":[{"patterns":[{"value":"++","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"--","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}}}]}},"assignment":{"name":"assignment","variables":{},"parser":{"patterns":[{"value":"=","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"expression","namings":{"namings":[{}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}},"argument":{"name":"argument","variables":{},"parser":{"patterns":[{"name":"name","namings":{"namings":[]},"declaration":{"name":"name","isConstant":false,"parser":{"patterns":[{"name":"identifier","namings":{"namings":[{"key":"name"}]},"declaration":"[circular]"}]}}},{"name":"assignment","namings":{"namings":[{"key":"default"}]},"separatorBefore":{"whitespace":true,"optional":true},"declaration":"[circular]"}]}},"arguments":{"name":"arguments","variables":{},"parser":{"patterns":[{"value":"(","wholeWordsOnly":true,"namings":{"namings":[{}]}},{"value":{"patterns":[{"name":"argument","namings":{"namings":[{}]}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"value":")","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"function":{"name":"function","variables":{},"parser":{"patterns":[{"name":"name","namings":{"namings":[]},"declaration":"[circular]"},{"name":"arguments","namings":{"namings":[{"key":"arguments"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"},{"name":"codeblock","namings":{"namings":[{"key":"body"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":{"name":"codeblock","variables":{},"parser":{"patterns":[{"value":"{","wholeWordsOnly":true,"namings":{"namings":[{"key":"commands"}]}},{"value":{"patterns":[{"name":"command","namings":{"namings":[]}}]}},{"value":"}","wholeWordsOnly":true,"namings":{"namings":[]}}]}}}]}},"functionStandalone":{"name":"functionStandalone","variables":{},"parser":{"patterns":[{"value":"function","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"function","namings":{"namings":[{}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}},"variableDeclarationWithInit":{"name":"variableDeclarationWithInit","variables":{},"parser":{"patterns":[{"content":null,"namings":{"namings":[]}},{"value":{"patterns":[{"name":"name","namings":{"namings":[]}},{"name":"assignment","namings":{"namings":[{"key":"init"}]},"separatorBefore":{"whitespace":true,"optional":false}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"content":null,"namings":{"namings":[]}}]}},"let":{"name":"let","variables":{},"parser":{"patterns":[{"value":"let","wholeWordsOnly":true,"namings":{"namings":[]}},{"content":null,"namings":{"namings":[{"key":"variables"}]},"separatorBefore":{"whitespace":true,"optional":false}},{"value":{"patterns":[{"name":"name","namings":{"namings":[]}},{"name":"assignment","namings":{"namings":[{"key":"init"}]},"separatorBefore":{"whitespace":true,"optional":true}}]},"separator":{"patterns":[{"value":",","wholeWordsOnly":true,"namings":{"namings":[]}}]}},{"content":null,"namings":{"namings":[]}}]}},"const":{"name":"const","variables":{},"parser":{"patterns":[{"value":"const","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"variableDeclarationWithInit","namings":{"namings":[{"key":"variables"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}},"class":{"name":"class","variables":{},"parser":{"patterns":[{"value":"class","wholeWordsOnly":true,"namings":{"namings":[{"key":"members"}]}},{"name":"name","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"},{"value":"{","wholeWordsOnly":true,"namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}},{"value":{"patterns":[{"choices":[{"patterns":[{"name":"variableDeclarationWithInit","namings":{"namings":[{"key":"variable"}]}},{"name":"endOfCommand","namings":{"namings":[]},"separatorBefore":{"whitespace":true,"optional":false}}]},{"patterns":[{"name":"function","namings":{"namings":[{"key":"function"}]}}]}],"namings":{"namings":[]}}]}},{"value":"}","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"instanciation":{"name":"instanciation","variables":{},"parser":{"patterns":[{"value":"new","wholeWordsOnly":true,"namings":{"namings":[]}},{"name":"identifier","namings":{"namings":[{"key":"class"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"},{"name":"functionCall","namings":{"namings":[{"key":"call"}]},"separatorBefore":{"whitespace":true,"optional":false},"declaration":"[circular]"}]}},"command":"[circular]","codeblock":"[circular]"},"globalVariables":{"preOperators":"[circular]","postOperators":"[circular]","precedence":{"name":"precedence","isConstant":false,"parser":{"patterns":[{"choices":[{"patterns":[{"choices":[{"patterns":[{"value":"=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"+=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"-=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"/=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"*=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"%=","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]},{"patterns":[{"choices":[{"patterns":[{"value":"||","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]},{"patterns":[{"choices":[{"patterns":[{"value":"&&","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]},{"patterns":[{"choices":[{"patterns":[{"value":"<","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":">","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"<=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":">=","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"==","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"!=","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]},{"patterns":[{"choices":[{"patterns":[{"value":"*","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"/","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"%","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]},{"patterns":[{"choices":[{"patterns":[{"value":"+","wholeWordsOnly":true,"namings":{"namings":[]}}]},{"patterns":[{"value":"-","wholeWordsOnly":true,"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}],"namings":{"namings":[]}}]}},"allChars":{"name":"allChars","isConstant":false,"parser":{"patterns":[{"regex":{},"namings":{"namings":[]}}]}},"endOfCommand":{"name":"endOfCommand","isConstant":false,"parser":{"patterns":[{"value":";","wholeWordsOnly":true,"namings":{"namings":[]}}]}},"name":"[circular]"}}
+{
+  "definitions": {
+    "import": [
+      {
+        "value": "./tokens",
+        "wholeWordsOnly": true
+      }
+    ],
+    "entrypoint": [
+      {
+        "name": "command"
+      }
+    ]
+  },
+  "functions": {
+    "string": {
+      "name": "string",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "name": "openClose",
+            "namings": {
+              "namings": []
+            },
+            "declaration": {
+              "name": "openClose",
+              "isConstant": true,
+              "parser": {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "\"",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "'",
+                            "wholeWordsOnly": false,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "allChars",
+                  "namings": {
+                    "namings": [
+                      {
+                        "key": "value"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "notEscaped",
+            "namings": {
+              "namings": []
+            },
+            "declaration": {
+              "name": "notEscaped",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "parser": {
+                      "value": "\\\\",
+                      "wholeWordsOnly": true
+                    },
+                    "negated": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  },
+                  {
+                    "name": "openClose",
+                    "namings": {
+                      "namings": []
+                    },
+                    "separatorBefore": {
+                      "whitespace": true,
+                      "optional": false
+                    },
+                    "declaration": "[circular]"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "number": {
+      "name": "number",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "regex": {},
+            "namings": {
+              "namings": [
+                {
+                  "key": "value"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "boolean": {
+      "name": "boolean",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "value": "true",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "value": "false",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "comment": {
+      "name": "comment",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "value": "//",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  },
+                  {
+                    "value": {
+                      "patterns": [
+                        {
+                          "name": "allChars",
+                          "namings": {
+                            "namings": [
+                              {}
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "value": "\\n",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "value": "/*",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  },
+                  {
+                    "value": {
+                      "patterns": [
+                        {
+                          "name": "allChars",
+                          "namings": {
+                            "namings": [
+                              {}
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "value": "*/",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": [
+                {
+                  "key": "content"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "ifCondition": {
+      "name": "ifCondition",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "(",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "expression",
+            "namings": {
+              "namings": [
+                {}
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": {
+              "name": "expression",
+              "variables": {},
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "expr",
+                    "namings": {
+                      "namings": []
+                    },
+                    "declaration": {
+                      "name": "expr",
+                      "isConstant": false,
+                      "parser": {
+                        "patterns": [
+                          {
+                            "choices": [
+                              {
+                                "patterns": [
+                                  {
+                                    "content": {
+                                      "patterns": [
+                                        {
+                                          "name": "operation",
+                                          "namings": {
+                                            "namings": []
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "namings": {
+                                      "namings": [
+                                        {
+                                          "key": "type",
+                                          "value": "operation"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "patterns": [
+                                  {
+                                    "name": "expressionWithoutOperation",
+                                    "namings": {
+                                      "namings": [
+                                        {}
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "namings": {
+                              "namings": [
+                                {}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "value": ")",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            }
+          }
+        ]
+      }
+    },
+    "if": {
+      "name": "if",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "if",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "condition",
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": {
+              "name": "condition",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "ifCondition",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "condition"
+                        }
+                      ]
+                    },
+                    "declaration": "[circular]"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "thenBlock",
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": {
+              "name": "thenBlock",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "command",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "then"
+                        }
+                      ]
+                    },
+                    "declaration": {
+                      "name": "command",
+                      "variables": {},
+                      "parser": {
+                        "patterns": [
+                          {
+                            "choices": [
+                              {
+                                "patterns": [
+                                  {
+                                    "choices": [
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "if",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "functionStandalone",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "class",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "codeblock",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ],
+                                    "namings": {
+                                      "namings": [
+                                        {}
+                                      ]
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "patterns": [
+                                  {
+                                    "choices": [
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "let",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "const",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "patterns": [
+                                          {
+                                            "name": "expression",
+                                            "namings": {
+                                              "namings": []
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ],
+                                    "namings": {
+                                      "namings": [
+                                        {}
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "value": ";",
+                                    "wholeWordsOnly": true,
+                                    "namings": {
+                                      "namings": []
+                                    },
+                                    "separatorBefore": {
+                                      "whitespace": true,
+                                      "optional": false
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "namings": {
+                              "namings": [
+                                {}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "content": {
+              "patterns": [
+                {
+                  "value": "else",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                },
+                {
+                  "name": "elseBlock",
+                  "namings": {
+                    "namings": []
+                  },
+                  "separatorBefore": {
+                    "whitespace": true,
+                    "optional": false
+                  }
+                }
+              ]
+            },
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            }
+          }
+        ]
+      }
+    },
+    "functionCall": {
+      "name": "functionCall",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "(",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": [
+                {
+                  "key": "parameters"
+                }
+              ]
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "expr",
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": ")",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "arrayAccessor": {
+      "name": "arrayAccessor",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "[",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "expression",
+            "namings": {
+              "namings": [
+                {
+                  "key": "index"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "value": "]",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            }
+          }
+        ]
+      }
+    },
+    "accessors": {
+      "name": "accessors",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "name": "functionCall",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "call"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "arrayAccessor",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "index"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": [
+                {}
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "identifier": {
+      "name": "identifier",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "regex": {},
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "chainable": {
+      "name": "chainable",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "name": "key",
+            "namings": {
+              "namings": []
+            },
+            "declaration": {
+              "name": "key",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "identifier",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "key"
+                        }
+                      ]
+                    },
+                    "declaration": "[circular]"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "accessors",
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            },
+            "declaration": {
+              "name": "accessors",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "accessors",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "accessors"
+                        }
+                      ]
+                    },
+                    "declaration": "[circular]"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "chain",
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            },
+            "declaration": {
+              "name": "chain",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "chain",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "chain"
+                        }
+                      ]
+                    },
+                    "declaration": {
+                      "name": "chain",
+                      "variables": {},
+                      "parser": {
+                        "patterns": [
+                          {
+                            "value": ".",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          },
+                          {
+                            "name": "chainable",
+                            "namings": {
+                              "namings": []
+                            },
+                            "separatorBefore": {
+                              "whitespace": true,
+                              "optional": false
+                            },
+                            "declaration": "[circular]"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "chain": "[circular]",
+    "expressionWithoutOperation": {
+      "name": "expressionWithoutOperation",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "name": "instanciation",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "value",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "inBraces",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": [
+                {
+                  "key": "base"
+                }
+              ]
+            }
+          },
+          {
+            "name": "accessors",
+            "namings": {
+              "namings": [
+                {
+                  "key": "accessors"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "name": "chain",
+            "namings": {
+              "namings": [
+                {
+                  "key": "chain"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "expression": "[circular]",
+    "map": {
+      "name": "map",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "{",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": [
+                {
+                  "key": "entries"
+                }
+              ]
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "key",
+                  "namings": {
+                    "namings": []
+                  }
+                },
+                {
+                  "value": ":",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  },
+                  "separatorBefore": {
+                    "whitespace": true,
+                    "optional": false
+                  }
+                },
+                {
+                  "name": "value",
+                  "namings": {
+                    "namings": []
+                  },
+                  "separatorBefore": {
+                    "whitespace": true,
+                    "optional": false
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": "}",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "array": {
+      "name": "array",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "[",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": [
+                {
+                  "key": "entries"
+                }
+              ]
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "expression",
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": "]",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "value": {
+      "name": "value",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "name": "preOperators",
+            "namings": {
+              "namings": [
+                {
+                  "key": "preOperator"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": false,
+              "optional": true
+            },
+            "declaration": {
+              "name": "preOperators",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "+",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "-",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "++",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "--",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "!",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "~",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "name": "number",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "string",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "boolean",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "name": "chainable",
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": [
+                {
+                  "key": "content"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": false,
+              "optional": false
+            }
+          },
+          {
+            "name": "postOperators",
+            "namings": {
+              "namings": [
+                {
+                  "key": "postOperator"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": false,
+              "optional": true
+            },
+            "declaration": {
+              "name": "postOperators",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "++",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "--",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "assignment": {
+      "name": "assignment",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "=",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "expression",
+            "namings": {
+              "namings": [
+                {}
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "argument": {
+      "name": "argument",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "name": "name",
+            "namings": {
+              "namings": []
+            },
+            "declaration": {
+              "name": "name",
+              "isConstant": false,
+              "parser": {
+                "patterns": [
+                  {
+                    "name": "identifier",
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "name"
+                        }
+                      ]
+                    },
+                    "declaration": "[circular]"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "assignment",
+            "namings": {
+              "namings": [
+                {
+                  "key": "default"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": true
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "arguments": {
+      "name": "arguments",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "(",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": [
+                {}
+              ]
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "argument",
+                  "namings": {
+                    "namings": [
+                      {}
+                    ]
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": ")",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "function": {
+      "name": "function",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "name": "name",
+            "namings": {
+              "namings": []
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "name": "arguments",
+            "namings": {
+              "namings": [
+                {
+                  "key": "arguments"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "name": "codeblock",
+            "namings": {
+              "namings": [
+                {
+                  "key": "body"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": {
+              "name": "codeblock",
+              "variables": {},
+              "parser": {
+                "patterns": [
+                  {
+                    "value": "{",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": [
+                        {
+                          "key": "commands"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "value": {
+                      "patterns": [
+                        {
+                          "name": "command",
+                          "namings": {
+                            "namings": []
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "value": "}",
+                    "wholeWordsOnly": true,
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "functionStandalone": {
+      "name": "functionStandalone",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "function",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "function",
+            "namings": {
+              "namings": [
+                {}
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "variableDeclarationWithInit": {
+      "name": "variableDeclarationWithInit",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "content": null,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "name",
+                  "namings": {
+                    "namings": []
+                  }
+                },
+                {
+                  "name": "assignment",
+                  "namings": {
+                    "namings": [
+                      {
+                        "key": "init"
+                      }
+                    ]
+                  },
+                  "separatorBefore": {
+                    "whitespace": true,
+                    "optional": false
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "content": null,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "let": {
+      "name": "let",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "let",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "content": null,
+            "namings": {
+              "namings": [
+                {
+                  "key": "variables"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "name": "name",
+                  "namings": {
+                    "namings": []
+                  }
+                },
+                {
+                  "name": "assignment",
+                  "namings": {
+                    "namings": [
+                      {
+                        "key": "init"
+                      }
+                    ]
+                  },
+                  "separatorBefore": {
+                    "whitespace": true,
+                    "optional": true
+                  }
+                }
+              ]
+            },
+            "separator": {
+              "patterns": [
+                {
+                  "value": ",",
+                  "wholeWordsOnly": true,
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "content": null,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "const": {
+      "name": "const",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "const",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "variableDeclarationWithInit",
+            "namings": {
+              "namings": [
+                {
+                  "key": "variables"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "class": {
+      "name": "class",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "class",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": [
+                {
+                  "key": "members"
+                }
+              ]
+            }
+          },
+          {
+            "name": "name",
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "value": "{",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            }
+          },
+          {
+            "value": {
+              "patterns": [
+                {
+                  "choices": [
+                    {
+                      "patterns": [
+                        {
+                          "name": "variableDeclarationWithInit",
+                          "namings": {
+                            "namings": [
+                              {
+                                "key": "variable"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "name": "endOfCommand",
+                          "namings": {
+                            "namings": []
+                          },
+                          "separatorBefore": {
+                            "whitespace": true,
+                            "optional": false
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "patterns": [
+                        {
+                          "name": "function",
+                          "namings": {
+                            "namings": [
+                              {
+                                "key": "function"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "namings": {
+                    "namings": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": "}",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "instanciation": {
+      "name": "instanciation",
+      "variables": {},
+      "parser": {
+        "patterns": [
+          {
+            "value": "new",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          },
+          {
+            "name": "identifier",
+            "namings": {
+              "namings": [
+                {
+                  "key": "class"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          },
+          {
+            "name": "functionCall",
+            "namings": {
+              "namings": [
+                {
+                  "key": "call"
+                }
+              ]
+            },
+            "separatorBefore": {
+              "whitespace": true,
+              "optional": false
+            },
+            "declaration": "[circular]"
+          }
+        ]
+      }
+    },
+    "command": "[circular]",
+    "codeblock": "[circular]"
+  },
+  "globalVariables": {
+    "preOperators": "[circular]",
+    "postOperators": "[circular]",
+    "precedence": {
+      "name": "precedence",
+      "isConstant": false,
+      "parser": {
+        "patterns": [
+          {
+            "choices": [
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "+=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "-=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "/=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "*=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "%=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "||",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "&&",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "<",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": ">",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "<=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": ">=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "==",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "!=",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "*",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "/",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "%",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              },
+              {
+                "patterns": [
+                  {
+                    "choices": [
+                      {
+                        "patterns": [
+                          {
+                            "value": "+",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "patterns": [
+                          {
+                            "value": "-",
+                            "wholeWordsOnly": true,
+                            "namings": {
+                              "namings": []
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "namings": {
+                      "namings": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "allChars": {
+      "name": "allChars",
+      "isConstant": false,
+      "parser": {
+        "patterns": [
+          {
+            "regex": {},
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "endOfCommand": {
+      "name": "endOfCommand",
+      "isConstant": false,
+      "parser": {
+        "patterns": [
+          {
+            "value": ";",
+            "wholeWordsOnly": true,
+            "namings": {
+              "namings": []
+            }
+          }
+        ]
+      }
+    },
+    "name": "[circular]"
+  }
+}

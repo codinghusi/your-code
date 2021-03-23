@@ -31,7 +31,7 @@ export class Language {
                 cache.push(value);
             }
             return value;
-        });
+        }, 2);
         fs.writeFileSync(path, json);
     }
 }
