@@ -1,26 +1,13 @@
-import { LanguageInputStream } from "../../language-input-stream";
-import { ParserPattern } from './parser-pattern';
-import { Pattern, Type } from "./pattern";
+import { ParserPattern } from '../../tokens/patterns/parser-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
-import { PatternFail } from './pattern-fail';
+import { PatternFail } from '../../tokens/patterns/pattern-fail';
 import { Checkpoint } from "../../input-stream";
-import { TokenCapture } from "../../token-capture";
+import { LanguagePattern } from "../pattern";
 
 
-@Type("choice")
-export class ChoicePattern extends Pattern {
-    constructor(capture: TokenCapture,
-                public choices: ParserPattern[]) {
-        super(capture);
-    }
-
-    static parse(stream: LanguageInputStream) {
-        const capture = stream.startCapture();
-        const result = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse.bind(ParserPattern)) as ParserPattern[];
-        if (!result) {
-            return null;
-        }
-        return new ChoicePattern(capture.finish(), result);
+export class ChoicePattern extends LanguagePattern {
+    constructor(public choices: ParserPattern[]) {
+        super();
     }
 
     parse(stream: CodeInputStream) {

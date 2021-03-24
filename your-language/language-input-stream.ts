@@ -57,7 +57,7 @@ export class LanguageInputStream extends InputStream {
         this.croak(message, tokenCapture.start.line, tokenCapture.start.column, tokenCapture.capture);
     }
 
-    delimitedWithWhitespace<T>(start: string, stop: string, separator: string, parser: (stream: this) => T) {
+    async delimitedWithWhitespace<T>(start: string, stop: string, separator: string, parser: (stream: this) => T | Promise<T>) {
         const list: T[] = [];
         let first = true;
         if (!this.matchNextString(start)) {
@@ -83,7 +83,7 @@ export class LanguageInputStream extends InputStream {
                 break;
             }
             
-            const result = parser(this);
+            const result = await parser(this);
             if (!result) {
                 this.matchWhitespace();
                 if (!this.matchNextString(stop)) {
