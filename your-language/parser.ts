@@ -7,7 +7,7 @@ import { Pattern } from './tokens/patterns/pattern';
 import { VariableDeclarationToken } from './tokens/variable-declaration-token';
 import { VariablePattern } from './tokens/patterns/variable-pattern';
 import { FunctionPattern } from './tokens/patterns/function-pattern';
-import { Definitions, Functions, Language, Variables } from './language';
+import { Declaration, Definitions, Functions, Language, Variables } from './language';
 
 
 
@@ -57,10 +57,10 @@ export class YourLanguageParser {
         return declarations;
     }
 
-    collectDefinitions(declarations: any[]): Definitions {
+    collectDefinitions(declarations: Declaration[]): Definitions {
         const definitions = {};
         declarations.filter(declaration => (declaration instanceof DefinitionToken))
-                    .forEach(definition => {
+                    .forEach((definition: DefinitionToken) => {
                         const name = definition.name;
                         if (!(name in definitions)) {
                             definitions[name] = [];
@@ -70,7 +70,7 @@ export class YourLanguageParser {
         return definitions;
     }
 
-    collectFunctions(declarations: any[]): Functions {
+    collectFunctions(declarations: Declaration[]): Functions {
         const functions = {};
         declarations.filter(declaration => (declaration instanceof FunctionDeclarationToken))
                     .forEach(fn => {
@@ -83,7 +83,7 @@ export class YourLanguageParser {
         return functions;
     }
 
-    collectVariables(declarations: any[]): Variables {
+    collectVariables(declarations: Declaration[]): Variables {
         const variables = {};
         declarations.filter(declaration => (declaration instanceof VariableDeclarationToken))
                     .forEach(variable => {
@@ -110,8 +110,9 @@ export class YourLanguageParser {
             }
             pattern.setDeclaration(variable);
         }
-        else if(pattern instanceof FunctionPattern) {
+        else if (pattern instanceof FunctionPattern) {
             const fn = functions[pattern.name];
+            console.log(pattern);
             if (!fn) {
                 this.stream.croak(`couldn't find function with name '${pattern.name}'`);
             }
@@ -119,26 +120,28 @@ export class YourLanguageParser {
         }
     }
 
-    prepareDelcarations(declarations: any[]) {
+    prepareDelcarations(declarations: Declaration[]) {
         // collegt all things
         const definitions = this.collectDefinitions(declarations);
         const functions = this.collectFunctions(declarations);
-        const variables = this.collectVariables(declarations);
+        const globalVariables = this.collectVariables(declarations);
 
         // prepare variables
-        Object.values(variables).forEach(variable => this.prepareParsePattern(variable.parser, functions, variables));
+        Object.values(globalVariables).forEach(variable => this.prepareParsePattern(variable.parser, functions, globalVariables));
 
         // prepare functions
         Object.values(functions).forEach(fn => {
             const fnVariables = fn.variables.map();
-            const allVariables = { ...variables, ...fnVariables };
+            const allVariables = { ...globalVariables, ...fnVariables };
+            const patterns = Object.values(fnVariables).map(variable => variable.parser);
+            patterns.push(fn.parser)
             Object.values(fnVariables).forEach(variable => this.prepareParsePattern(variable.parser, functions, allVariables));
             return this.prepareParsePattern(fn.parser, functions, allVariables);
         });
 
         // prepare definitions
         Object.values(definitions).forEach(list => list.forEach(definition => {
-            this.preparePattern(definition.value, functions, variables);
+            this.preparePattern(definition.value, functions, globalVariables);
         }));
 
         // required definitions
@@ -148,6 +151,6 @@ export class YourLanguageParser {
             throw new Error(`You need to implement the following definitions: ${missingDefinitions}`);
         }
 
-        return new Language(definitions, functions, variables);
+        return new Language({ definitions, functions, globalVariables });
     }
 }

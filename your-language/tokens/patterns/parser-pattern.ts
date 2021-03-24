@@ -49,13 +49,10 @@ export class ParserPattern extends Pattern {
     }
     
     static parse(stream: LanguageInputStream) {
-        const start = stream.position;
         const patterns: Pattern[] = [];
         while (true) {
             // separation
-
             stream.pushCheckPoint();
-            const ws = stream.matchWhitespace();
             const separator = SeparatorPattern.parse(stream);
             if (!separator) {
                 
@@ -92,7 +89,6 @@ export class ParserPattern extends Pattern {
             patterns.push(pattern);
             stream.applyCheckPoint();
         }
-        const captured = JSON.stringify(stream.input.slice(start, stream.position));
         if (!patterns.length) {
             return null;
         }

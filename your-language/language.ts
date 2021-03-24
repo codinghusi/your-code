@@ -1,4 +1,4 @@
-import { BlockScope } from '../your-code/block-scope';
+import 'reflect-metadata';
 import { DefinitionToken } from './tokens/definition-token';
 import { FunctionDeclarationToken } from './tokens/function-declaration-token';
 import { VariableDeclarationToken } from './tokens/variable-declaration-token';
@@ -12,10 +12,22 @@ export type Definitions = KeyValue<DefinitionToken[]>;
 export type Functions = KeyValue<FunctionDeclarationToken>;
 export type Variables = KeyValue<VariableDeclarationToken>;
 
+export type Declaration = DefinitionToken | FunctionDeclarationToken | VariableDeclarationToken;
+
+interface Params {
+    definitions: Definitions;
+    functions: Functions;
+    globalVariables: Variables;
+}
+
 export class Language {
-    constructor(public definitions: Definitions,
-                public functions: Functions,
-                public globalVariables: Variables) {}
+    definitions: Definitions;
+    functions: Functions;
+    globalVariables: Variables;
+
+    constructor(params: Params) {
+        Object.assign(this, params);
+    }
 
     async saveAsJSON(path: string) {
         const cache = []; // because circular dependencies
