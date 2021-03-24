@@ -5,16 +5,19 @@ import { Token } from "./token";
 import { VariableDeclarationToken } from "./variable-declaration-token";
 import { WhitespaceToken } from "./whitespace-token";
 import { VariableCollection } from '../collections';
+import { TokenCapture } from "../token-capture";
 
 
 export class FunctionDeclarationToken extends Token {
-    constructor(public name: string,
+    constructor(capture: TokenCapture,
+                public name: string,
                 public variables: VariableCollection,
                 public parser: ParserPattern) {
-        super();
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         if (stream.matchNextString('@')) {
             if (stream.hasWhitespace()) {
                 stream.croak(`don't do whitespace between @ and function name`)
@@ -47,13 +50,14 @@ export class FunctionDeclarationToken extends Token {
                     stream.croak(`in a function please declare either a variable or the parser`);
                 }
                 if (fnParser) {
+                    console.log("parser:", parser.tokenCapture.capture);
                     stream.croak(`the parser was already declared, you can't create more than one`);
                 }
                 fnParser = parser;
             }
 
             const variableCollection = new VariableCollection(variables);
-            return new FunctionDeclarationToken(name, variableCollection, fnParser);
+            return new FunctionDeclarationToken(capture.finish(), name, variableCollection, fnParser);
         }
         return null;
     }

@@ -2,20 +2,23 @@ import { ParserPattern } from "./parser-pattern";
 import { Pattern } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
+import { TokenCapture } from "../../token-capture";
 
 
 export class ConcludePattern extends Pattern {
-    constructor(public content: ParserPattern) {
-        super();
+    constructor(capture: TokenCapture,
+                public content: ParserPattern) {
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         if (stream.matchNextString('(')) {
             const content = ParserPattern.parse(stream);
             if (!stream.matchNextString(')')) {
                 stream.croak(`missing closing )`);
             }
-            return new ConcludePattern(content);
+            return new ConcludePattern(capture.finish(), content);
         }
     }
 

@@ -76,7 +76,7 @@ export class YourLanguageParser {
                     .forEach(fn => {
                         const name = fn.name;
                         if (name in functions) {
-                            this.stream.croak(`function with name ${name} does already exist`);
+                            this.stream.croakWithTokenCapture(`function with name ${name} does already exist`, fn.tokenCapture);
                         }
                         functions[name] = fn;
                     });
@@ -89,7 +89,7 @@ export class YourLanguageParser {
                     .forEach(variable => {
                         const name = variable.name;
                         if (name in variables) {
-                            this.stream.croak(`variable with name ${name} does already exist`);
+                            this.stream.croakWithTokenCapture(`variable with name ${name} does already exist`, variable.tokenCapture);
                         }
                         variables[name] = variable;
                     });
@@ -106,14 +106,14 @@ export class YourLanguageParser {
         if (pattern instanceof VariablePattern) {
             const variable = variables[pattern.name];
             if (!variable) {
-                this.stream.croak(`couldn't find variable with name '${pattern.name}'`);
+                this.stream.croakWithTokenCapture(`couldn't find variable with name '${pattern.name}'`, pattern.tokenCapture);
             }
             pattern.setDeclaration(variable);
         }
         else if(pattern instanceof FunctionPattern) {
             const fn = functions[pattern.name];
             if (!fn) {
-                this.stream.croak(`couldn't find function with name '${pattern.name}'`);
+                this.stream.croakWithTokenCapture(`couldn't find function with name '${pattern.name}'`, pattern.tokenCapture);
             }
             pattern.setDeclaration(fn);
         }

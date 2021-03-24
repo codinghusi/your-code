@@ -4,17 +4,20 @@ import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
 import { StringPattern } from './string-pattern';
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
+import { TokenCapture } from "../../token-capture";
 
 
 // TODO: add support for more complex parsers (fixed length, PatternParser)
 
 export class LookbackMatchingPattern extends Pattern {
-    constructor(public parser: StringPattern,
+    constructor(capture: TokenCapture,
+                public parser: StringPattern,
                 public negated: boolean) {
-        super();
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         const check = stream.matchNextString('<=') ?? stream.matchNextString('<!=');
         if (!check) {
             return null;
@@ -24,7 +27,7 @@ export class LookbackMatchingPattern extends Pattern {
         if (!stream.matchNextString('>')) {
             stream.croak(`missing closing '>'`);
         }
-        return new LookbackMatchingPattern(parser, negated);
+        return new LookbackMatchingPattern(capture.finish(), parser, negated);
     }
 
     parse(stream: CodeInputStream) {

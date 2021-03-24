@@ -4,19 +4,22 @@ import { Pattern } from "./pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
 import { Checkpoint } from "../../input-stream";
+import { TokenCapture } from "../../token-capture";
 
 
 export class ChoicePattern extends Pattern {
-    constructor(public choices: ParserPattern[]) {
-        super();
+    constructor(capture: TokenCapture,
+                public choices: ParserPattern[]) {
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         const result = stream.delimitedWithWhitespace('[', ']', ',', ParserPattern.parse.bind(ParserPattern)) as ParserPattern[];
         if (!result) {
             return null;
         }
-        return new ChoicePattern(result);
+        return new ChoicePattern(capture.finish(), result);
     }
 
     parse(stream: CodeInputStream) {
@@ -27,7 +30,7 @@ export class ChoicePattern extends Pattern {
         let partiallyWorked: any;
         let partialCheckPoint: Checkpoint;
         for (const choice of this.choices) {
-            stream.pushCheckPoint();
+            stream.pushCheckpoint();
             try {
                 const result = choice.parse(stream);
                 if (stream.checkNextPattern()) {
@@ -38,10 +41,10 @@ export class ChoicePattern extends Pattern {
                     partiallyWorked = result;
                 }
             } catch(e) { }
-            stream.popCheckPoint();
+            stream.popCheckpoint();
         }
         if (partiallyWorked) {
-            stream.pushCheckPoint(partialCheckPoint);
+            stream.pushCheckpoint(partialCheckPoint);
             return partiallyWorked;
         }
         throw new PatternFail();

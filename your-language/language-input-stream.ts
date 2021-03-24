@@ -1,4 +1,5 @@
 import { InputStream } from "./input-stream";
+import { TokenCapture } from "./token-capture";
 import { CommentToken } from "./tokens/comment-token";
 
 export class LanguageInputStream extends InputStream {
@@ -50,6 +51,10 @@ export class LanguageInputStream extends InputStream {
             }
         });
         return result;
+    }
+
+    croakWithTokenCapture(message: string, tokenCapture: TokenCapture) {
+        this.croak(message, tokenCapture.start.line, tokenCapture.start.column, tokenCapture.capture);
     }
 
     delimitedWithWhitespace<T>(start: string, stop: string, separator: string, parser: (stream: this) => T) {

@@ -3,22 +3,25 @@ import { LanguageInputStream } from "../../language-input-stream";
 import { NameToken } from "../name-token";
 import { Pattern } from "./pattern";
 import { VariableDeclarationToken } from '../variable-declaration-token';
+import { TokenCapture } from "../../token-capture";
 
 export class VariablePattern extends Pattern {
     protected declaration: VariableDeclarationToken;
 
-    constructor(public name: string) {
-        super();
+    constructor(capture: TokenCapture,
+                public name: string) {
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         if (stream.matchNextString('$')) {
             const result = NameToken.parse(stream);
             if (!result) {
                 stream.croak(`after '$' a variable name must follow`);
             }
             const name = result.name;
-            return new VariablePattern(name);
+            return new VariablePattern(capture.finish(), name);
         }
         return null;
     }

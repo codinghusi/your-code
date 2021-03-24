@@ -4,6 +4,7 @@ import { Pattern } from './patterns/pattern';
 import { NameToken } from './name-token';
 import { StringPattern } from './patterns/string-pattern';
 import { FunctionPattern } from './patterns/function-pattern';
+import { TokenCapture } from '../token-capture';
 
 interface TypeParsers {
     [key: string]: TypeParser
@@ -20,12 +21,15 @@ const TYPE_PARSERS: TypeParsers = {
 };
 
 export class DefinitionToken extends Token {
-    constructor(public name: string,
+    constructor(capture: TokenCapture,
+                public name: string,
                 public value: Pattern) {
-        super();
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
+        
         if (!stream.matchNextString('!')) {
             return;
         }
@@ -53,6 +57,6 @@ export class DefinitionToken extends Token {
             stream.croak(`missing closing ')'`)
         }
 
-        return new DefinitionToken(name, result);
+        return new DefinitionToken(capture.finish(), name, result);
     }
 }

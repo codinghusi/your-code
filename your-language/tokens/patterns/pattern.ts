@@ -3,9 +3,11 @@ import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from "./pattern-fail";
 import { SeparatorPattern } from './separator-pattern';
+import { TokenCapture } from "../../token-capture";
+import { Token } from "../token";
 
 
-export abstract class Pattern {
+export abstract class Pattern extends Token {
     protected namings: Namings;
     protected lookbacks: LookbackMatchingPattern[];
     public lastError: PatternFail;

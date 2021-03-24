@@ -11,6 +11,7 @@ import { StringPattern } from "./string-pattern";
 import { VariablePattern } from "./variable-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
+import { TokenCapture } from "../../token-capture";
 
 export class ParserPattern extends Pattern {
     static parsers = [
@@ -24,8 +25,9 @@ export class ParserPattern extends Pattern {
     ];
     
     // TODO: fill
-    constructor(public patterns: Pattern[]) {
-        super();
+    constructor(capture: TokenCapture,
+                public patterns: Pattern[]) {
+        super(capture);
     }
     
     static parsePattern(stream: LanguageInputStream) {
@@ -42,17 +44,17 @@ export class ParserPattern extends Pattern {
     }
     
     static parse(stream: LanguageInputStream) {
-        const start = stream.position;
+        const capture = stream.startCapture();
         const patterns: Pattern[] = [];
         while (true) {
             // separation
-
-            stream.pushCheckPoint();
-            const ws = stream.matchWhitespace();
+            stream.pushCheckpoint();
+            stream.matchWhitespace();
             const separator = SeparatorPattern.parse(stream);
             if (!separator) {
                 
                 // delimiter
+                stream.matchWhitespace();
                 const delimiter = DelimiterPattern.parse(stream);
                 if (delimiter) {
                     patterns.push(delimiter);
@@ -63,13 +65,13 @@ export class ParserPattern extends Pattern {
                     if (patterns.length) {
                         // TODO: add 'latest error'. If nothing works, that can be displayed
                         // example for error: 'you need to separate patterns' (maybe)
-                        stream.popCheckPoint();
+                        stream.popCheckpoint();
                         break;
                     }               
                 }
             }
 
-            stream.pushCheckPoint();
+            stream.pushCheckpoint();
             stream.matchWhitespace();
             
             const pattern = this.parsePattern(stream);
@@ -77,7 +79,7 @@ export class ParserPattern extends Pattern {
                 if (separator) {
                     stream.croak(`trailing separators aren't allowed`);
                 }
-                stream.popCheckPoint();
+                stream.popCheckpoint();
                 break;
             }
 
@@ -85,11 +87,10 @@ export class ParserPattern extends Pattern {
             patterns.push(pattern);
             stream.applyCheckPoint();
         }
-        const captured = JSON.stringify(stream.input.slice(start, stream.position));
         if (!patterns.length) {
             return null;
         }
-        return new ParserPattern(patterns);
+        return new ParserPattern(capture.finish(), patterns);
     }
 
     
@@ -112,7 +113,7 @@ export class ParserPattern extends Pattern {
                     let previousNextCheck: boolean;
                     if (optional) {
                         previousNextCheck = stream.checkNextPattern();
-                        stream.pushCheckPoint();
+                        stream.pushCheckpoint();
                         pushedCheckPoint = true;
                     }
                     
@@ -121,7 +122,7 @@ export class ParserPattern extends Pattern {
                     
                     // if optional pattern destroyed flow, discard it
                     if (optional && previousNextCheck && !stream.checkNextPattern()) {
-                        stream.popCheckPoint();
+                        stream.popCheckpoint();
                         pushedCheckPoint = false;
                         return;
                     }
@@ -133,7 +134,7 @@ export class ParserPattern extends Pattern {
                 });
             } catch(e) {
                 if (pushedCheckPoint) {
-                    stream.popCheckPoint();
+                    stream.popCheckpoint();
                 }
                 if (!optional) {
                     throw e;

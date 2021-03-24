@@ -1,17 +1,20 @@
 import { LanguageInputStream } from "../language-input-stream";
+import { TokenCapture } from "../token-capture";
 import { NameToken } from "./name-token";
 import { ParserPattern } from "./patterns/parser-pattern";
 import { Token } from "./token";
 
 
 export class VariableDeclarationToken extends Token {
-    constructor(public name: string,
+    constructor(capture: TokenCapture,
+                public name: string,
                 public isConstant: boolean,
                 public parser: ParserPattern) {
-        super();
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
         if (stream.matchNextString('#')) {
             if (stream.hasWhitespace()) {
                 stream.croak(`you aren't allowed to put whitespace here`);
@@ -32,7 +35,7 @@ export class VariableDeclarationToken extends Token {
             if (!parser) {
                 stream.croak(`you need to define a parser as the variable value`);
             }
-            return new VariableDeclarationToken(name, isConstant, parser);
+            return new VariableDeclarationToken(capture.finish(), name, isConstant, parser);
         }
         return null;
     }

@@ -2,16 +2,19 @@ import { Pattern } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
-import { PatternFail } from './pattern-fail';
+import { TokenCapture } from "../../token-capture";
 
 
 export class DelimiterPattern extends Pattern {
-    constructor(public value: ParserPattern,
+    constructor(capture: TokenCapture,
+                public value: ParserPattern,
                 public separator?: ParserPattern) {
-        super();
+        super(capture);
     }
 
     static parse(stream: LanguageInputStream) {
+        const capture = stream.startCapture();
+
         // check if it delimiter
         if (!stream.matchNextString('=>')) {
             return null;
@@ -42,7 +45,7 @@ export class DelimiterPattern extends Pattern {
             stream.croak(`you need to end the delimiter with a <= plus a stop parser`);
         }
 
-        return new DelimiterPattern(valueParser, separator);
+        return new DelimiterPattern(capture.finish(), valueParser, separator);
     }
 
     parse(stream: CodeInputStream) {

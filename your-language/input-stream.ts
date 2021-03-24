@@ -1,3 +1,4 @@
+import { TokenCapture } from "./token-capture";
 import { CommentToken } from "./tokens/comment-token";
 import { RegexPattern } from './tokens/patterns/regex-pattern';
 
@@ -44,13 +45,20 @@ export class InputStream {
     set column(column: number) {
         this.checkpoint.column = column;
     }
-    
-    pushCheckPoint(checkpoint?: Checkpoint) {
-        checkpoint = checkpoint ?? new Checkpoint(this.position, this.line, this.column);
-        this.checkpoints.push(checkpoint);
+
+    grabCheckpoint() {
+        return new Checkpoint(this.position, this.line, this.column);
     }
 
-    popCheckPoint() {
+    startCapture() {
+        return new TokenCapture(this);
+    }
+    
+    pushCheckpoint(checkpoint?: Checkpoint) {
+        this.checkpoints.push(checkpoint ?? this.grabCheckpoint());
+    }
+
+    popCheckpoint() {
         this.checkpoints.pop();
     }
 
@@ -60,10 +68,10 @@ export class InputStream {
     }
 
     testOut<T>(parser: (stream: InputStream) => T | null, successfullSkip = true): T {
-        this.pushCheckPoint();
+        this.pushCheckpoint();
         const result = parser(this);
         if (!result || !successfullSkip) {
-            this.popCheckPoint();
+            this.popCheckpoint();
         } else {
             this.applyCheckPoint();
         }
@@ -175,7 +183,7 @@ export class InputStream {
         return this.position >= this.input.length;
     }
 
-    croak(message: string) {
-        throw new Error(`${message} (${this.line}:${this.column}), near ${JSON.stringify(this.input.substr(this.position, 10))}`);
+    croak(message: string, line?: number, column?: number, at?: string) {
+        throw new Error(`${message} (${line ?? this.line}:${column ?? this.column}), at ${JSON.stringify(at ?? this.input.substr(this.position, 10))}`);
     }
 }

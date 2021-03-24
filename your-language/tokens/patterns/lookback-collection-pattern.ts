@@ -2,13 +2,17 @@ import { Pattern } from './pattern';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LanguageInputStream } from '../../language-input-stream';
+import { TokenCapture } from '../../token-capture';
 
 
-export class LookbackCollection {
+export class LookbackCollectionPattern extends Pattern {
     protected worked = true;
 
-    constructor(protected lookbacks: Pattern[],
-                protected parent?: LookbackCollection) { }
+    constructor(capture: TokenCapture,
+                protected patterns: Pattern[],
+                protected parent?: LookbackCollectionPattern) {
+        super(capture);
+    }
 
     static parseList(stream: LanguageInputStream) {
         let lookback: Pattern;
@@ -22,10 +26,20 @@ export class LookbackCollection {
     }
 
     static parse(stream: LanguageInputStream) {
-        return new LookbackCollection(this.parseList(stream));
+        const capture = stream.startCapture();
+        const list = this.parseList(stream);
+        return new LookbackCollectionPattern(capture.finish(), list);
     }
 
-    setParent(parent: LookbackCollection) {
+    parse(stream: CodeInputStream) {
+        return this.patterns.every(lookback => !!lookback.parse(stream));
+    }
+    
+    checkFirstWorking(stream: CodeInputStream): boolean {
+        return !!this.patterns[0]?.parse(stream);
+    }
+
+    setParent(parent: LookbackCollectionPattern) {
         this.parent = parent;
         return this;
     }
@@ -36,7 +50,7 @@ export class LookbackCollection {
 
     test(stream: CodeInputStream) {
         const self = this;
-        const myCheck = stream.testOut(() => self.lookbacks.every(lookback => lookback.parse(stream)));
+        const myCheck = stream.testOut(() => self.patterns.every(lookback => lookback.parse(stream)));
         this.worked = myCheck && this.parent?.test(stream);
         return this.worked;
     }
