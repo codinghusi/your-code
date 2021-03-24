@@ -1,12 +1,14 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
 import { NameToken } from "../name-token";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { VariableDeclarationToken } from '../variable-declaration-token';
 import { TokenCapture } from "../../token-capture";
 
+
+@Type("variable")
 export class VariablePattern extends Pattern {
-    protected declaration: VariableDeclarationToken;
+    protected reference: VariableDeclarationToken;
 
     constructor(capture: TokenCapture,
                 public name: string) {
@@ -26,16 +28,22 @@ export class VariablePattern extends Pattern {
         return null;
     }
 
+    toJSON() {
+        const data: any = {...this};
+        delete data.reference;
+        return data;
+    }
+
     setDeclaration(variable: VariableDeclarationToken) {
-        this.declaration = variable;
+        this.reference = variable;
         return this;
     }
 
     parse(stream: CodeInputStream) {
-        return this.namings.onToResult(this.declaration.parser.parse(stream), true);
+        return this.namings.onToResult(this.reference.parser.parse(stream), true);
     }
     
     checkFirstWorking(stream: CodeInputStream): boolean {
-        return this.declaration.parser.checkFirstWorking(stream);
+        return this.reference.parser.checkFirstWorking(stream);
     }
 }

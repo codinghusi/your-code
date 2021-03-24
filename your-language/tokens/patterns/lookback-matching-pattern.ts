@@ -1,5 +1,5 @@
 import { InputStream } from "../../input-stream";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
 import { StringPattern } from './string-pattern';
@@ -9,6 +9,7 @@ import { TokenCapture } from "../../token-capture";
 
 // TODO: add support for more complex parsers (fixed length, PatternParser)
 
+@Type("lookback-matching")
 export class LookbackMatchingPattern extends Pattern {
     constructor(capture: TokenCapture,
                 public parser: StringPattern,

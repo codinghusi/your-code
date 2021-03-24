@@ -1,9 +1,10 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
 import { TokenCapture } from "../../token-capture";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 
 
+@Type("regex")
 export class RegexPattern extends Pattern {
     constructor(capture: TokenCapture,
                 public regex: RegExp) {

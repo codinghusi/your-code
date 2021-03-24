@@ -1,4 +1,3 @@
-import { BlockScope } from '../your-code/block-scope';
 import { DefinitionToken } from './tokens/definition-token';
 import { FunctionDeclarationToken } from './tokens/function-declaration-token';
 import { VariableDeclarationToken } from './tokens/variable-declaration-token';
@@ -20,20 +19,7 @@ export class Language {
                 public globalVariables: Variables) {}
 
     async saveAsJSON(path: string) {
-        const cache = []; // because circular dependencies
-        const json = JSON.stringify({
-            definitions: this.definitions,
-            functions: this.functions,
-            globalVariables: this.globalVariables
-        }, (key, value) => {
-            if (value && typeof(value) === "object") {
-                if (cache.includes(value)) {
-                    return "[circular]";
-                }
-                cache.push(value);
-            }
-            return value;
-        }, 2);
+        const json = JSON.stringify(this, null, 2);
         fs.writeFileSync(path, json);
     }
 }

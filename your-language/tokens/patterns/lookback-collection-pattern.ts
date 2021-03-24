@@ -1,10 +1,11 @@
-import { Pattern } from './pattern';
+import { Pattern, Type } from './pattern';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LanguageInputStream } from '../../language-input-stream';
 import { TokenCapture } from '../../token-capture';
 
 
+@Type("lookback-collection")
 export class LookbackCollectionPattern extends Pattern {
     protected worked = true;
 

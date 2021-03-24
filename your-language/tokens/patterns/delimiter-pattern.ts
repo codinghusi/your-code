@@ -1,10 +1,11 @@
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from "./parser-pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { TokenCapture } from "../../token-capture";
 
 
+@Type("delimiter")
 export class DelimiterPattern extends Pattern {
     constructor(capture: TokenCapture,
                 public value: ParserPattern,

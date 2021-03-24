@@ -1,6 +1,5 @@
-import * as fs from 'fs';
-import { InputStream } from '../your-language/input-stream';
 import { YourLanguageParser } from '../your-language/parser';
+import "reflect-metadata";
 
 const outputFile = 'output.json';
 const inputFile = 'input.ycl';

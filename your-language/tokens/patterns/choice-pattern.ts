@@ -1,12 +1,13 @@
 import { LanguageInputStream } from "../../language-input-stream";
 import { ParserPattern } from './parser-pattern';
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { PatternFail } from './pattern-fail';
 import { Checkpoint } from "../../input-stream";
 import { TokenCapture } from "../../token-capture";
 
 
+@Type("choice")
 export class ChoicePattern extends Pattern {
     constructor(capture: TokenCapture,
                 public choices: ParserPattern[]) {

@@ -1,9 +1,10 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { TokenCapture } from "../../token-capture";
 
 
+@Type("separator")
 export class SeparatorPattern extends Pattern {
     constructor(public capture: TokenCapture,
                 public whitespace: boolean,

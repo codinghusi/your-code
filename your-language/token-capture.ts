@@ -15,4 +15,8 @@ export class TokenCapture {
         this.capture = this.stream.input.slice(this.start.position, this.end.position);
         return this;
     }
+
+    toJSON() {
+        return;
+    }
 }

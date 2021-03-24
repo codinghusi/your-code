@@ -1,10 +1,11 @@
 import { ParserPattern } from "./parser-pattern";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { LanguageInputStream } from "../../language-input-stream";
 import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { TokenCapture } from "../../token-capture";
 
 
+@Type("conclude")
 export class ConcludePattern extends Pattern {
     constructor(capture: TokenCapture,
                 public content: ParserPattern) {

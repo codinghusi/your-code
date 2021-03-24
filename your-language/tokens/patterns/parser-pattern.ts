@@ -4,7 +4,7 @@ import { ConcludePattern } from "./conclude-pattern";
 import { DelimiterPattern } from "./delimiter-pattern";
 import { FunctionPattern } from "./function-pattern";
 import { Namings } from "./namings";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 import { RegexPattern } from "./regex-pattern";
 import { SeparatorPattern } from "./separator-pattern";
 import { StringPattern } from "./string-pattern";
@@ -13,6 +13,8 @@ import { CodeInputStream } from '../../../your-parser/code-input-stream';
 import { LookbackMatchingPattern } from './lookback-matching-pattern';
 import { TokenCapture } from "../../token-capture";
 
+
+@Type("parser")
 export class ParserPattern extends Pattern {
     static parsers = [
         StringPattern.parse,

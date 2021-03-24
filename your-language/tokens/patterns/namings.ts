@@ -113,6 +113,10 @@ export class Namings {
             }
         }
 
+        if (!namings.length) {
+            return null;
+        }
+        
         return new Namings(namings);
     }
 }

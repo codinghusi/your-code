@@ -1,9 +1,10 @@
 import { CodeInputStream } from "../../../your-parser/code-input-stream";
 import { LanguageInputStream } from "../../language-input-stream";
 import { TokenCapture } from "../../token-capture";
-import { Pattern } from "./pattern";
+import { Pattern, Type } from "./pattern";
 
 
+@Type("string")
 export class StringPattern extends Pattern {
     static type = 'string';
 
