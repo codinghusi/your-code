@@ -7,7 +7,7 @@ import { Pattern } from './tokens/patterns/pattern';
 import { VariableDeclarationToken } from './tokens/variable-declaration-token';
 import { VariablePattern } from './tokens/patterns/variable-pattern';
 import { FunctionPattern } from './tokens/patterns/function-pattern';
-import { Definitions, Functions, Language, Variables } from './language';
+import { Declaration, Definitions, Functions, Language, Variables } from './language';
 
 
 
@@ -57,10 +57,10 @@ export class YourLanguageParser {
         return declarations;
     }
 
-    collectDefinitions(declarations: any[]): Definitions {
+    collectDefinitions(declarations: Declaration[]): Definitions {
         const definitions = {};
         declarations.filter(declaration => (declaration instanceof DefinitionToken))
-                    .forEach(definition => {
+                    .forEach((definition: DefinitionToken) => {
                         const name = definition.name;
                         if (!(name in definitions)) {
                             definitions[name] = [];
@@ -70,7 +70,7 @@ export class YourLanguageParser {
         return definitions;
     }
 
-    collectFunctions(declarations: any[]): Functions {
+    collectFunctions(declarations: Declaration[]): Functions {
         const functions = {};
         declarations.filter(declaration => (declaration instanceof FunctionDeclarationToken))
                     .forEach(fn => {
@@ -83,7 +83,7 @@ export class YourLanguageParser {
         return functions;
     }
 
-    collectVariables(declarations: any[]): Variables {
+    collectVariables(declarations: Declaration[]): Variables {
         const variables = {};
         declarations.filter(declaration => (declaration instanceof VariableDeclarationToken))
                     .forEach(variable => {
@@ -119,7 +119,7 @@ export class YourLanguageParser {
         }
     }
 
-    prepareDelcarations(declarations: any[]) {
+    prepareDelcarations(declarations: Declaration[]) {
         // collegt all things
         const definitions = this.collectDefinitions(declarations);
         const functions = this.collectFunctions(declarations);

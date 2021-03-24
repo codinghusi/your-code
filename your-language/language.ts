@@ -12,6 +12,8 @@ export type Definitions = KeyValue<DefinitionToken[]>;
 export type Functions = KeyValue<FunctionDeclarationToken>;
 export type Variables = KeyValue<VariableDeclarationToken>;
 
+export type Declaration = DefinitionToken | FunctionDeclarationToken | VariableDeclarationToken;
+
 export class Language {
     constructor(public definitions: Definitions,
                 public functions: Functions,
