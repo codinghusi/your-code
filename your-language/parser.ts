@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import { Declaration, Definitions, Functions, Language, Variables } from './language';
 import { LanguageInputStream } from './language-input-stream';
-import { LanguagePattern } from './new/pattern/pattern';
-import { FunctionPattern } from './new/pattern/patterns/function-pattern';
-import { PatternChainPattern } from './new/pattern/patterns/pattern-chain-pattern';
-import { VariablePattern } from './new/pattern/patterns/variable-pattern';
-import { Tokens } from './new/token/parsers/all-token-parsers';
-import { DefinitionToken } from './new/token/tokens/definition-token';
-import { FunctionDeclarationToken } from './new/token/tokens/function-declaration-token';
-import { VariableDeclarationToken } from './new/token/tokens/variable-declaration-token';
+import { VariablePattern } from './parsers/pattern/variable/variable-pattern';
+import { Tokens } from './parsers/token/all-token-parsers';
+import { PatternChainPattern } from './parsers/pattern/chained/pattern-chain-pattern';
+import { FunctionPattern } from './parsers/pattern/function/function-pattern';
+import { DefinitionToken } from './parsers/token/definition/definition-token';
+import { FunctionDeclarationToken } from './parsers/token/function/function-declaration-token';
+import { VariableDeclarationToken } from './parsers/token/variable/variable-declaration-token';
+import { LanguagePattern } from './parsers/language-pattern';
 
 export class YourLanguageParser {
 
@@ -131,7 +131,7 @@ export class YourLanguageParser {
 
         // prepare functions
         Object.values(functions).forEach(fn => {
-            const fnVariables = fn.variables.map();
+            const fnVariables = fn.variables.map() as Variables;
             const allVariables = { ...variables, ...fnVariables };
             Object.values(fnVariables).forEach(variable => this.prepareParsePattern(variable.parser, functions, allVariables));
             return this.prepareParsePattern(fn.parser, functions, allVariables);
