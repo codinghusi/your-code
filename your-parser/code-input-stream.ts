@@ -1,14 +1,14 @@
-import { InputStream } from "../your-language/input-stream";
-import { Pattern } from '../your-language/tokens/patterns/pattern';
-import { PatternFail } from '../your-language/tokens/patterns/pattern-fail';
 import { BlockScope } from '../your-code/block-scope';
-import { VariableDeclarationToken } from '../your-language/tokens/variable-declaration-token';
-import { FunctionDeclarationToken } from '../your-language/tokens/function-declaration-token';
+import { FunctionDeclarationToken } from '../your-language/new/token/tokens/function-declaration-token';
+import { InputStream } from "../your-language/input-stream";
+import { LanguagePattern } from "../your-language/new/pattern/pattern";
+import { Pattern } from '../your-language/tokens/patterns/pattern';
+import { VariableDeclarationToken } from '../your-language/new/token/tokens/variable-declaration-token';
 
 type StreamCallback<T> = (stream: CodeInputStream) => T
 
 export class CodeInputStream extends InputStream {
-    nextPattern: Pattern;
+    nextPattern: LanguagePattern;
     
 
     // FIXME: this isn't just a stream anymore
@@ -48,7 +48,7 @@ export class CodeInputStream extends InputStream {
         return result;
     }
 
-    tempNextPattern<T>(nextPattern: Pattern, callback: StreamCallback<T>) {
+    tempNextPattern<T>(nextPattern: LanguagePattern, callback: StreamCallback<T>) {
         // swap the blockscope to current function scope
         const previously = this.nextPattern;
         this.nextPattern = nextPattern;
@@ -61,6 +61,6 @@ export class CodeInputStream extends InputStream {
     }
 
     fail(message?: string) {
-        return new PatternFail(message);
+        return new Error(message);
     }
 }

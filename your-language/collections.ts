@@ -1,5 +1,5 @@
-import { FunctionDeclarationToken } from './tokens/function-declaration-token';
-import { VariableDeclarationToken } from './tokens/variable-declaration-token';
+import { FunctionDeclarationToken } from './new/token/tokens/function-declaration-token';
+import { VariableDeclarationToken } from './new/token/tokens/variable-declaration-token';
 
 interface Named {
     name: string;

@@ -1,6 +1,4 @@
 import { TokenCapture } from "./token-capture";
-import { CommentToken } from "./tokens/comment-token";
-import { RegexPattern } from './tokens/patterns/regex-pattern';
 
 export class Checkpoint {
     constructor(public position: number,
@@ -67,15 +65,22 @@ export class InputStream {
         this.checkpoints.splice(-2, 2, checkpoint);
     }
 
-    testOut<T>(parser: (stream: InputStream) => T | null, successfullSkip = true): T {
+    testOut<T>(parser: (stream: InputStream) => Promise<T> | T, successfullSkip = true): Promise<T> | T {
         this.pushCheckpoint();
-        const result = parser(this);
-        if (!result || !successfullSkip) {
-            this.popCheckpoint();
-        } else {
-            this.applyCheckPoint();
+        const resultRaw = parser(this);
+        if (resultRaw instanceof Promise) {
+            return resultRaw.then(async (result) => endIt(result));
         }
-        return result;
+        return endIt(resultRaw);
+        
+        function endIt(result: T) {
+            if (!result || !successfullSkip) {
+                this.popCheckpoint();
+            } else {
+                this.applyCheckPoint();
+            }
+            return result;
+        }
     }
 
     seek(offset = 1) {

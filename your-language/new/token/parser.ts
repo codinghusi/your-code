@@ -1,7 +1,8 @@
-import { LanguageInputStream } from "../language-input-stream";
-import { ParserResult } from "./parser-result";
+import { LanguageInputStream } from "../../language-input-stream";
+import { LanguageToken } from "./token";
+import { Parser } from "../parser";
 
-export abstract class Parser<T extends ParserResult> {
+export abstract class LanguageTokenParser<T extends LanguageToken> extends Parser<T> {
     protected abstract parseIntern(stream: LanguageInputStream): Promise<T>;
 
     async parse(stream: LanguageInputStream) {

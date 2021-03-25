@@ -1,6 +1,6 @@
 import { InputStream } from "./input-stream";
 import { TokenCapture } from "./token-capture";
-import { CommentToken } from "./tokens/comment-token";
+import { Tokens } from "./new/token/parsers/token-parsers";
 
 export class LanguageInputStream extends InputStream {
 
@@ -19,7 +19,7 @@ export class LanguageInputStream extends InputStream {
                 whitespaces += whitespace;
                 continue;
             }
-            if (CommentToken.parse(this)) {
+            if (Tokens.comment(this)) {
                 continue;
             }
             break;
