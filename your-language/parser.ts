@@ -1,15 +1,14 @@
 import * as fs from 'fs';
-import { DefinitionToken } from './tokens/definition-token';
-import { FunctionDeclarationToken } from './tokens/function-declaration-token';
-import { LanguageInputStream } from './language-input-stream';
-import { ParserPattern } from './tokens/patterns/parser-pattern';
-import { Pattern } from './tokens/patterns/pattern';
-import { VariableDeclarationToken } from './tokens/variable-declaration-token';
-import { VariablePattern } from './tokens/patterns/variable-pattern';
-import { FunctionPattern } from './tokens/patterns/function-pattern';
 import { Declaration, Definitions, Functions, Language, Variables } from './language';
-
-
+import { LanguageInputStream } from './language-input-stream';
+import { LanguagePattern } from './new/pattern/pattern';
+import { FunctionPattern } from './new/pattern/patterns/function-pattern';
+import { PatternChainPattern } from './new/pattern/patterns/pattern-chain-pattern';
+import { VariablePattern } from './new/pattern/patterns/variable-pattern';
+import { Tokens } from './new/token/parsers/token-parsers';
+import { DefinitionToken } from './new/token/tokens/definition-token';
+import { FunctionDeclarationToken } from './new/token/tokens/function-declaration-token';
+import { VariableDeclarationToken } from './new/token/tokens/variable-declaration-token';
 
 export class YourLanguageParser {
 
@@ -34,9 +33,9 @@ export class YourLanguageParser {
 
     parseRawDeclarations() {
         const mainParsers = [
-            DefinitionToken.parse,
-            VariableDeclarationToken.parse,
-            FunctionDeclarationToken.parse
+            Tokens.definition,
+            Tokens.variable,
+            Tokens.function,
         ];
 
         const declarations = [];
@@ -96,13 +95,13 @@ export class YourLanguageParser {
         return variables;
     }
 
-    prepareParsePattern(parser: ParserPattern, functions: Functions, variables: Variables) {
+    prepareParsePattern(parser: PatternChainPattern, functions: Functions, variables: Variables) {
         parser.patterns.forEach(pattern => {
             this.preparePattern(pattern, functions, variables);
         });
     }
 
-    preparePattern(pattern: Pattern, functions: Functions, variables: Variables) {
+    preparePattern(pattern: LanguagePattern, functions: Functions, variables: Variables) {
         if (pattern instanceof VariablePattern) {
             const variable = variables[pattern.name];
             if (!variable) {
@@ -126,7 +125,9 @@ export class YourLanguageParser {
         const variables = this.collectVariables(declarations);
 
         // prepare variables
-        Object.values(variables).forEach(variable => this.prepareParsePattern(variable.parser, functions, variables));
+        Object.values(variables)
+            .map(variable => variable.parser)
+            .forEach(parser => this.prepareParsePattern(parser, functions, variables));
 
         // prepare functions
         Object.values(functions).forEach(fn => {

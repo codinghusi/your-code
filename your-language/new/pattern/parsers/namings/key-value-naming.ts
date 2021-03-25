@@ -1,7 +1,7 @@
 import { KeyValueNaming } from "../../result/namings/key-value-naming";
 import { LanguageInputStream } from "../../../../language-input-stream";
 import { NamingParser } from "./naming-parser";
-import { Patterns } from "../parsers";
+import { Patterns } from "../patterns";
 import { Tokens } from "../../../token/parsers/token-parsers";
 
 // example: {mykey: 'myvalue'}

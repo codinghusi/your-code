@@ -1,6 +1,4 @@
 import { LanguageInputStream } from "../../../language-input-stream";
-import { TokenCapture } from "../../../token-capture";
-import { Token } from "../../../tokens/token";
 import { NameToken } from "../tokens/name-token";
 import { LanguageTokenParser } from "../parser";
 

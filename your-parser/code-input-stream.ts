@@ -2,7 +2,6 @@ import { BlockScope } from '../your-code/block-scope';
 import { FunctionDeclarationToken } from '../your-language/new/token/tokens/function-declaration-token';
 import { InputStream } from "../your-language/input-stream";
 import { LanguagePattern } from "../your-language/new/pattern/pattern";
-import { Pattern } from '../your-language/tokens/patterns/pattern';
 import { VariableDeclarationToken } from '../your-language/new/token/tokens/variable-declaration-token';
 
 type StreamCallback<T> = (stream: CodeInputStream) => T

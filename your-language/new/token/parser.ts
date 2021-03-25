@@ -6,6 +6,7 @@ export abstract class LanguageTokenParser<T extends LanguageToken> extends Parse
     protected abstract parseIntern(stream: LanguageInputStream): Promise<T>;
 
     async parse(stream: LanguageInputStream) {
+        await stream.waitInQueue();
         const capture = stream.startCapture();
         const result = await this.parseIntern(stream);
         result.setCapture(capture.finish());

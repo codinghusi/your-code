@@ -12,4 +12,4 @@ export const Tokens = {
     function: new FunctionDeclarationTokenParser().parse,
     whitespace: new WhitespaceTokenParser().parse,
     comment: new CommentTokenParser().parse
-}
+};

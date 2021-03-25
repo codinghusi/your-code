@@ -1,11 +1,13 @@
 import { LanguageInputStream } from "../../../language-input-stream";
-import { LanguageParser } from "../patterns/parser";
+import { Tokens } from "../../token/parsers/token-parsers";
+import { LanguageParser } from "../parser";
+import { VariablePattern } from "../patterns/variable-pattern";
 
 
-export class VariableParser extends LanguageParser {
-    parseIntern(stream: LanguageInputStream) {
+export class VariableParser extends LanguageParser<VariablePattern> {
+    async parseIntern(stream: LanguageInputStream) {
         if (stream.matchNextString('$')) {
-            const result = NameToken.parse(stream);
+            const result = await Tokens.name(stream);
             if (!result) {
                 stream.croak(`after '$' a variable name must follow`);
             }

@@ -6,4 +6,4 @@ export const Namings = {
     key: new KeyNamingParser().parse,
     keyValue: new KeyValueNamingParser().parse,
     flatten: new FlattenNamingParser().parse
-}
+};

@@ -1,7 +1,7 @@
-import { DefinitionToken } from './tokens/definition-token';
-import { FunctionDeclarationToken } from './tokens/function-declaration-token';
-import { VariableDeclarationToken } from './tokens/variable-declaration-token';
 import * as fs from 'fs';
+import { DefinitionToken } from './new/token/tokens/definition-token';
+import { FunctionDeclarationToken } from './new/token/tokens/function-declaration-token';
+import { VariableDeclarationToken } from './new/token/tokens/variable-declaration-token';
 
 interface KeyValue<TValue> {
     [key: string]: TValue;

@@ -1,6 +1,6 @@
 import { VariableCollection } from "../../../collections";
 import { LanguageInputStream } from "../../../language-input-stream";
-import { Patterns } from "../../pattern/parsers/parsers";
+import { Patterns } from "../../pattern/parsers/patterns";
 import { PatternChainParser } from "../../pattern/parsers/pattern-chain-parser";
 import { PatternChainPattern } from "../../pattern/patterns/pattern-chain-pattern";
 import { LanguageToken } from "../token";

@@ -2,7 +2,7 @@ import { ChoicePattern } from "../patterns/choice-pattern";
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
 import { PatternChainPattern } from "../patterns/pattern-chain-pattern";
-import { Patterns } from "./parsers";
+import { Patterns } from "./patterns";
 
 export class ChoiceParser extends LanguageParser<ChoicePattern> {
     async parseIntern(stream: LanguageInputStream) {

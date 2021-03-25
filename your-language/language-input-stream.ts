@@ -3,6 +3,13 @@ import { TokenCapture } from "./token-capture";
 import { Tokens } from "./new/token/parsers/token-parsers";
 
 export class LanguageInputStream extends InputStream {
+    queuedParsers = [];
+
+    async waitInQueue() {
+        console.log("pushing...", this.queuedParsers);
+        await new Promise(resolve => this.queuedParsers.push(resolve));
+        return;
+    }
 
     hasWhitespace() {
         return this.testOut(() => {

@@ -1,9 +1,10 @@
 import { Checkpoint } from "../../../input-stream";
 import { CodeInputStream } from '../../../../your-parser/code-input-stream';
 import { LanguagePattern } from '../pattern';
+import { PatternChainPattern } from "./pattern-chain-pattern";
 
 export class ChoicePattern extends LanguagePattern {
-    constructor(public choices: ParserPattern[]) {
+    constructor(public choices: PatternChainPattern[]) {
         super();
     }
 
@@ -32,7 +33,7 @@ export class ChoicePattern extends LanguagePattern {
             stream.pushCheckpoint(partialCheckPoint);
             return partiallyWorked;
         }
-        throw new PatternFail();
+        throw new Error();
     }
 
     checkFirstWorking(stream: CodeInputStream) {

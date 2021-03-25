@@ -66,14 +66,7 @@ export class InputStream {
     }
 
     testOut<T>(parser: (stream: InputStream) => Promise<T> | T, successfullSkip = true): Promise<T> | T {
-        this.pushCheckpoint();
-        const resultRaw = parser(this);
-        if (resultRaw instanceof Promise) {
-            return resultRaw.then(async (result) => endIt(result));
-        }
-        return endIt(resultRaw);
-        
-        function endIt(result: T) {
+        const finish = (result: T) => {
             if (!result || !successfullSkip) {
                 this.popCheckpoint();
             } else {
@@ -81,6 +74,13 @@ export class InputStream {
             }
             return result;
         }
+
+        this.pushCheckpoint();
+        const resultRaw = parser(this);
+        if (resultRaw instanceof Promise) {
+            return resultRaw.then(async (result) => finish(result));
+        }
+        return finish(resultRaw);
     }
 
     seek(offset = 1) {

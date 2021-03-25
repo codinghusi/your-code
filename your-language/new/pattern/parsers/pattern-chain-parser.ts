@@ -2,24 +2,27 @@ import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
 import { LanguagePattern } from "../pattern";
 import { PatternChainPattern } from "../patterns/pattern-chain-pattern";
-import { Patterns } from "./parsers";
+import { NamingCollectionParser } from "./namings/naming-collection-parser";
+import { Patterns } from "./patterns";
 
 export class PatternChainParser extends LanguageParser<PatternChainPattern> {
-    // static parsers = [
-    //     StringPattern.parse,
-    //     RegexPattern.parse,
-    //     VariablePattern.parse,
-    //     FunctionPattern.parse,
-    //     ConcludePattern.parse,
-    //     ChoicePattern.parse,
-    //     LookbackMatchingPattern.parse
-    // ];
+    namingCollectionParser = new NamingCollectionParser();
     
-    parsePattern(stream: LanguageInputStream) {
-        const namings = Namings.parse(stream);
+    async parsePattern(stream: LanguageInputStream) {
+        const parsers = [
+            Patterns.string,
+            Patterns.regex,
+            Patterns.variable,
+            Patterns.function,
+            Patterns.conclude,
+            Patterns.choice,
+            Patterns.lookback
+        ];
+
+        const namings = await this.namingCollectionParser.parse(stream);
         stream.matchWhitespace();
-        for (const parser of this.parsers) {
-            const pattern = parser(stream);
+        for (const parser of parsers) {
+            const pattern = await parser(stream);
             if (pattern) {
                 pattern.setNamings(namings);
                 return pattern;
@@ -58,7 +61,7 @@ export class PatternChainParser extends LanguageParser<PatternChainPattern> {
             stream.pushCheckpoint();
             stream.matchWhitespace();
             
-            const pattern = this.parsePattern(stream);
+            const pattern = await this.parsePattern(stream);
             if (!pattern) {
                 if (separator) {
                     stream.croak(`trailing separators aren't allowed`);

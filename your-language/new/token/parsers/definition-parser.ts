@@ -1,5 +1,5 @@
 import { LanguageInputStream } from "../../../language-input-stream";
-import { Patterns } from "../../pattern/parsers/parsers";
+import { Patterns } from "../../pattern/parsers/patterns";
 import { DefinitionToken } from "../tokens/definition-token";
 import { LanguageTokenParser } from "../parser";
 import { Tokens } from "./token-parsers";
