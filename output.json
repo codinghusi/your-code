@@ -1,10 +1,16 @@
 {
   "definitions": {
     "import": [
-      {}
+      {
+        "type": "string",
+        "value": "./tokens",
+        "wholeWordsOnly": true
+      }
     ],
     "entrypoint": [
-      {}
+      {
+        "name": "command"
+      }
     ]
   },
   "functions": {

@@ -29,7 +29,7 @@ export class DefinitionTokenParser extends LanguageTokenParser<DefinitionToken> 
             stream.croak(`there is no definition called ${name}`);
         }
 
-        const result = parser(stream);
+        const result = await parser(stream);
         if (!result) {
             stream.croak(`expected a value of type ${parser.type}`);
         }
