@@ -1,12 +1,20 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
+import { Type } from "../../parser-result";
 import { VariableDeclarationToken } from "../../token/tokens/variable-declaration-token";
 import { LanguagePattern } from "../pattern";
 
+@Type("variable")
 export class VariablePattern extends LanguagePattern {
     protected reference: VariableDeclarationToken;
 
     constructor(public name: string) {
         super();
+    }
+
+    toJSON() {
+        const data = {...this};
+        delete data.reference;
+        return data;
     }
 
     setDeclaration(variable: VariableDeclarationToken) {

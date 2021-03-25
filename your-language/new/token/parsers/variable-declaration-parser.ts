@@ -1,8 +1,8 @@
 import { LanguageInputStream } from "../../../language-input-stream";
-import { Patterns } from "../../pattern/parsers/patterns";
+import { Patterns } from "../../pattern/parsers/all-patterns";
 import { VariableDeclarationToken } from "../tokens/variable-declaration-token";
 import { LanguageTokenParser } from "../parser";
-import { Tokens } from "./token-parsers";
+import { Tokens } from "./all-token-parsers";
 
 export class VariableDeclarationTokenParser extends LanguageTokenParser<VariableDeclarationToken> {
     async parseIntern(stream: LanguageInputStream) {

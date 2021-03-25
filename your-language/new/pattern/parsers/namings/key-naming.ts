@@ -1,7 +1,7 @@
 import { KeyNaming } from "../../result/namings/key-naming";
 import { LanguageInputStream } from "../../../../language-input-stream";
 import { NamingParser } from "./naming-parser";
-import { Tokens } from "../../../token/parsers/token-parsers";
+import { Tokens } from "../../../token/parsers/all-token-parsers";
 
 export class KeyNamingParser extends NamingParser<KeyNaming> {
     async parseIntern(stream: LanguageInputStream) {

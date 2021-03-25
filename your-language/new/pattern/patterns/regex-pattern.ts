@@ -1,6 +1,8 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
-import { LanguagePattern } from "../pattern";
+import { LanguagePattern } from '../pattern';
+import { Type } from "../../parser-result";
 
+@Type("regex")
 export class RegexPattern extends LanguagePattern {
     constructor(public regex: RegExp) {
         super();

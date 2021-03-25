@@ -1,8 +1,8 @@
 import { KeyValueNaming } from "../../result/namings/key-value-naming";
 import { LanguageInputStream } from "../../../../language-input-stream";
 import { NamingParser } from "./naming-parser";
-import { Patterns } from "../patterns";
-import { Tokens } from "../../../token/parsers/token-parsers";
+import { Patterns } from "../all-patterns";
+import { Tokens } from "../../../token/parsers/all-token-parsers";
 
 // example: {mykey: 'myvalue'}
 export class KeyValueNamingParser extends NamingParser<KeyValueNaming> {

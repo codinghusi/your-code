@@ -7,7 +7,7 @@ export abstract class Parser<T extends ParserResult> {
     async parse(stream: LanguageInputStream) {
         const capture = stream.startCapture();
         const result = await this.parseIntern(stream);
-        result.setCapture(capture.finish());
+        result?.setCapture(capture.finish());
         return result;
     }
 }

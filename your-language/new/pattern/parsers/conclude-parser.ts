@@ -1,7 +1,7 @@
 import { ConcludePattern } from "../patterns/conclude-pattern";
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
-import { Patterns } from "./patterns";
+import { Patterns } from "./all-patterns";
 
 export class ConcludeParser extends LanguageParser<ConcludePattern> {
     async parseIntern(stream: LanguageInputStream) {

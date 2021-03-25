@@ -2,7 +2,7 @@ import { DelimiterPattern } from "../patterns/delimiter-pattern";
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
 import { PatternChainPattern } from "../patterns/pattern-chain-pattern";
-import { Patterns } from "./patterns";
+import { Patterns } from "./all-patterns";
 
 export class DelimiterParser extends LanguageParser<DelimiterPattern> {
     async parseIntern(stream: LanguageInputStream) {

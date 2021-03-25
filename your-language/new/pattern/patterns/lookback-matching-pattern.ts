@@ -1,9 +1,11 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
-import { LanguagePattern } from "../pattern";
+import { LanguagePattern } from '../pattern';
+import { Type } from "../../parser-result";
 import { StringPattern } from "./string-pattern";
 
 // TODO: add support for more complex parsers (fixed length, PatternParser)
 
+@Type("lookback")
 export class LookbackMatchingPattern extends LanguagePattern {
     constructor(public parser: StringPattern,
                 public negated: boolean) {

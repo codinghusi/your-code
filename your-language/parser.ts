@@ -5,7 +5,7 @@ import { LanguagePattern } from './new/pattern/pattern';
 import { FunctionPattern } from './new/pattern/patterns/function-pattern';
 import { PatternChainPattern } from './new/pattern/patterns/pattern-chain-pattern';
 import { VariablePattern } from './new/pattern/patterns/variable-pattern';
-import { Tokens } from './new/token/parsers/token-parsers';
+import { Tokens } from './new/token/parsers/all-token-parsers';
 import { DefinitionToken } from './new/token/tokens/definition-token';
 import { FunctionDeclarationToken } from './new/token/tokens/function-declaration-token';
 import { VariableDeclarationToken } from './new/token/tokens/variable-declaration-token';
@@ -26,12 +26,12 @@ export class YourLanguageParser {
     }
 
     async parse() {
-        const declarations = this.parseRawDeclarations();
-        const language = this.prepareDelcarations(declarations);
+        const declarations = await this.parseRawDeclarations();
+        const language = await this.prepareDelcarations(declarations);
         return language;
     }
 
-    parseRawDeclarations() {
+    async parseRawDeclarations() {
         const mainParsers = [
             Tokens.definition,
             Tokens.variable,
@@ -44,7 +44,7 @@ export class YourLanguageParser {
         while(!this.stream.eof()) {
             this.stream.matchWhitespace();
             for (const parser of mainParsers) {
-                const declaration = parser(this.stream);
+                const declaration = await parser(this.stream);
                 if (declaration) {
                     declarations.push(declaration);
                     continue mainLoop;
@@ -118,7 +118,7 @@ export class YourLanguageParser {
         }
     }
 
-    prepareDelcarations(declarations: Declaration[]) {
+    async prepareDelcarations(declarations: Declaration[]) {
         // collegt all things
         const definitions = this.collectDefinitions(declarations);
         const functions = this.collectFunctions(declarations);

@@ -2,14 +2,13 @@ import { LanguageInputStream } from "../../language-input-stream";
 import { LanguageToken } from "./token";
 import { Parser } from "../parser";
 
-export abstract class LanguageTokenParser<T extends LanguageToken> extends Parser<T> {
-    protected abstract parseIntern(stream: LanguageInputStream): Promise<T>;
-
-    async parse(stream: LanguageInputStream) {
-        await stream.waitInQueue();
-        const capture = stream.startCapture();
-        const result = await this.parseIntern(stream);
-        result.setCapture(capture.finish());
-        return result;
+export function bindMapParserContexts(destination: any, contexts: any) {
+    for (const key in destination) {
+        const parser = destination[key];
+        const context = contexts[key];
+        destination[key] = parser.bind(context);
     }
+}
+
+export abstract class LanguageTokenParser<T extends LanguageToken> extends Parser<T> {
 }

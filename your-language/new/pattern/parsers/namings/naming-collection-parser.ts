@@ -1,7 +1,8 @@
 import { LanguageInputStream } from "../../../../language-input-stream";
 import { NamingCollection } from "../../result/namings/naming-collection";
 import { NamingParser } from "./naming-parser";
-import { Namings } from "./namings";
+import { Namings } from "./all-namings";
+import { NamingResult } from "../../result/namings/naming-result";
 
 export class NamingCollectionParser extends NamingParser<NamingCollection> {
     parsers = [
@@ -11,7 +12,7 @@ export class NamingCollectionParser extends NamingParser<NamingCollection> {
     ];
 
     async parseIntern(stream: LanguageInputStream) {
-        const namings = [];
+        const namings: NamingResult[] = [];
         let worked = true;
 
         // collect as many namings as possible
@@ -20,7 +21,7 @@ export class NamingCollectionParser extends NamingParser<NamingCollection> {
 
             // test for all possible namings
             for (const parser of this.parsers) {
-                const naming = parser(stream);
+                const naming = await parser(stream);
                 if (naming) {
                     namings.push(naming);
                     worked = true;

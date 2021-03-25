@@ -1,8 +1,10 @@
 import { Checkpoint } from "../../../input-stream";
 import { CodeInputStream } from '../../../../your-parser/code-input-stream';
 import { LanguagePattern } from '../pattern';
+import { Type } from "../../parser-result";
 import { PatternChainPattern } from "./pattern-chain-pattern";
 
+@Type("choice")
 export class ChoicePattern extends LanguagePattern {
     constructor(public choices: PatternChainPattern[]) {
         super();

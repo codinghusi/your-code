@@ -1,7 +1,7 @@
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
 import { LookbackMatchingPattern } from "../patterns/lookback-matching-pattern";
-import { Patterns } from "./patterns";
+import { Patterns } from "./all-patterns";
 
 // TODO: add support for more complex parsers (fixed length, PatternParser)
 

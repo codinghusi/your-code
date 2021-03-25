@@ -3,7 +3,7 @@ import { LanguageParser } from "../parser";
 import { LanguagePattern } from "../pattern";
 import { PatternChainPattern } from "../patterns/pattern-chain-pattern";
 import { NamingCollectionParser } from "./namings/naming-collection-parser";
-import { Patterns } from "./patterns";
+import { Patterns } from "./all-patterns";
 
 export class PatternChainParser extends LanguageParser<PatternChainPattern> {
     namingCollectionParser = new NamingCollectionParser();

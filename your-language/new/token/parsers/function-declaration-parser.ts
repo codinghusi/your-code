@@ -1,10 +1,10 @@
 import { VariableCollection } from "../../../collections";
 import { LanguageInputStream } from "../../../language-input-stream";
-import { Patterns } from "../../pattern/parsers/patterns";
+import { Patterns } from "../../pattern/parsers/all-patterns";
 import { PatternChainPattern } from "../../pattern/patterns/pattern-chain-pattern";
 import { FunctionDeclarationToken } from "../tokens/function-declaration-token";
 import { LanguageTokenParser } from "../parser";
-import { Tokens } from "./token-parsers";
+import { Tokens } from "./all-token-parsers";
 import { VariableDeclarationToken } from "../tokens/variable-declaration-token";
 
 

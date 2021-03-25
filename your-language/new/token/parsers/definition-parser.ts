@@ -1,8 +1,8 @@
 import { LanguageInputStream } from "../../../language-input-stream";
-import { Patterns } from "../../pattern/parsers/patterns";
+import { Patterns } from "../../pattern/parsers/all-patterns";
 import { DefinitionToken } from "../tokens/definition-token";
 import { LanguageTokenParser } from "../parser";
-import { Tokens } from "./token-parsers";
+import { Tokens } from "./all-token-parsers";
 
 const TYPE_PARSERS = {
     import: Patterns.string,
@@ -29,7 +29,7 @@ export class DefinitionTokenParser extends LanguageTokenParser<DefinitionToken> 
             stream.croak(`there is no definition called ${name}`);
         }
 
-        const result = parser.parse(stream);
+        const result = parser(stream);
         if (!result) {
             stream.croak(`expected a value of type ${parser.type}`);
         }

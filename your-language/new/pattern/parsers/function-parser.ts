@@ -1,7 +1,7 @@
 import { FunctionPattern } from "../patterns/function-pattern";
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../parser";
-import { Tokens } from "../../token/parsers/token-parsers";
+import { Tokens } from "../../token/parsers/all-token-parsers";
 
 export class FunctionParser extends LanguageParser<FunctionPattern> {
     async parseIntern(stream: LanguageInputStream) {

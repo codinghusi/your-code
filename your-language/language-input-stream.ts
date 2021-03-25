@@ -1,20 +1,17 @@
 import { InputStream } from "./input-stream";
 import { TokenCapture } from "./token-capture";
-import { Tokens } from "./new/token/parsers/token-parsers";
+import { Tokens } from "./new/token/parsers/all-token-parsers";
 
 export class LanguageInputStream extends InputStream {
-    queuedParsers = [];
-
-    async waitInQueue() {
-        console.log("pushing...", this.queuedParsers);
-        await new Promise(resolve => this.queuedParsers.push(resolve));
-        return;
-    }
 
     hasWhitespace() {
         return this.testOut(() => {
             return !!this.matchWhitespace();
         }, false);
+    }
+
+    matchComment() {
+        return this.matchNextRegex(/\/\/.*/);
     }
 
     matchWhitespace() {
@@ -26,7 +23,7 @@ export class LanguageInputStream extends InputStream {
                 whitespaces += whitespace;
                 continue;
             }
-            if (Tokens.comment(this)) {
+            if (this.matchComment()) {
                 continue;
             }
             break;

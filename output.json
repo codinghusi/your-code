@@ -1,17 +1,10 @@
 {
   "definitions": {
     "import": [
-      {
-        "type": "string",
-        "value": "./tokens",
-        "wholeWordsOnly": true
-      }
+      {}
     ],
     "entrypoint": [
-      {
-        "type": "function",
-        "name": "command"
-      }
+      {}
     ]
   },
   "functions": {
@@ -19,10 +12,9 @@
       "name": "string",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "openClose",
             "namings": null,
             "separatorBefore": null
@@ -30,14 +22,14 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "variable",
                   "name": "allChars",
                   "namings": {
                     "namings": [
                       {
+                        "type": "key-naming",
                         "key": "value"
                       }
                     ]
@@ -48,7 +40,6 @@
             }
           },
           {
-            "type": "variable",
             "name": "notEscaped",
             "namings": null,
             "separatorBefore": null
@@ -60,7 +51,7 @@
       "name": "number",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "regex",
@@ -68,6 +59,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "value"
                 }
               ]
@@ -81,13 +73,13 @@
       "name": "boolean",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -99,7 +91,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -121,13 +113,13 @@
       "name": "comment",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -139,14 +131,15 @@
                   {
                     "type": "delimiter",
                     "value": {
-                      "type": "parser",
+                      "type": "chained",
                       "patterns": [
                         {
-                          "type": "variable",
                           "name": "allChars",
                           "namings": {
                             "namings": [
-                              {}
+                              {
+                                "type": "flatten-naming"
+                              }
                             ]
                           },
                           "separatorBefore": null
@@ -164,7 +157,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -176,14 +169,15 @@
                   {
                     "type": "delimiter",
                     "value": {
-                      "type": "parser",
+                      "type": "chained",
                       "patterns": [
                         {
-                          "type": "variable",
                           "name": "allChars",
                           "namings": {
                             "namings": [
-                              {}
+                              {
+                                "type": "flatten-naming"
+                              }
                             ]
                           },
                           "separatorBefore": null
@@ -204,6 +198,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "content"
                 }
               ]
@@ -217,7 +212,7 @@
       "name": "ifCondition",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -227,11 +222,12 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "expression",
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": {
@@ -258,7 +254,7 @@
       "name": "if",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -268,7 +264,6 @@
             "separatorBefore": null
           },
           {
-            "type": "variable",
             "name": "condition",
             "namings": null,
             "separatorBefore": {
@@ -278,7 +273,6 @@
             }
           },
           {
-            "type": "variable",
             "name": "thenBlock",
             "namings": null,
             "separatorBefore": {
@@ -290,7 +284,7 @@
           {
             "type": "conclude",
             "content": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -300,7 +294,6 @@
                   "separatorBefore": null
                 },
                 {
-                  "type": "variable",
                   "name": "elseBlock",
                   "namings": null,
                   "separatorBefore": {
@@ -325,7 +318,7 @@
       "name": "functionCall",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -334,6 +327,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "parameters"
                 }
               ]
@@ -343,10 +337,9 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "variable",
                   "name": "expr",
                   "namings": null,
                   "separatorBefore": null
@@ -354,7 +347,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -380,7 +373,7 @@
       "name": "arrayAccessor",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -390,11 +383,11 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "expression",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "index"
                 }
               ]
@@ -423,20 +416,20 @@
       "name": "accessors",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "functionCall",
                     "namings": {
                       "namings": [
                         {
+                          "type": "key-naming",
                           "key": "call"
                         }
                       ]
@@ -446,14 +439,14 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "arrayAccessor",
                     "namings": {
                       "namings": [
                         {
+                          "type": "key-naming",
                           "key": "index"
                         }
                       ]
@@ -465,7 +458,9 @@
             ],
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": null
@@ -477,7 +472,7 @@
       "name": "identifier",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "regex",
@@ -492,16 +487,14 @@
       "name": "chainable",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "key",
             "namings": null,
             "separatorBefore": null
           },
           {
-            "type": "variable",
             "name": "accessors",
             "namings": null,
             "separatorBefore": {
@@ -511,7 +504,6 @@
             }
           },
           {
-            "type": "variable",
             "name": "chain",
             "namings": null,
             "separatorBefore": {
@@ -527,7 +519,7 @@
       "name": "chain",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -537,7 +529,6 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "chainable",
             "namings": null,
             "separatorBefore": {
@@ -553,16 +544,15 @@
       "name": "expressionWithoutOperation",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "instanciation",
                     "namings": null,
                     "separatorBefore": null
@@ -570,10 +560,9 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "value",
                     "namings": null,
                     "separatorBefore": null
@@ -581,10 +570,9 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "variable",
                     "name": "inBraces",
                     "namings": null,
                     "separatorBefore": null
@@ -595,6 +583,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "base"
                 }
               ]
@@ -602,11 +591,11 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "accessors",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "accessors"
                 }
               ]
@@ -618,11 +607,11 @@
             }
           },
           {
-            "type": "function",
             "name": "chain",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "chain"
                 }
               ]
@@ -640,10 +629,9 @@
       "name": "expression",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "expr",
             "namings": null,
             "separatorBefore": null
@@ -655,7 +643,7 @@
       "name": "map",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -664,6 +652,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "entries"
                 }
               ]
@@ -673,10 +662,9 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "variable",
                   "name": "key",
                   "namings": null,
                   "separatorBefore": null
@@ -693,7 +681,6 @@
                   }
                 },
                 {
-                  "type": "variable",
                   "name": "value",
                   "namings": null,
                   "separatorBefore": {
@@ -705,7 +692,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -731,7 +718,7 @@
       "name": "array",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -740,6 +727,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "entries"
                 }
               ]
@@ -749,10 +737,9 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "function",
                   "name": "expression",
                   "namings": null,
                   "separatorBefore": null
@@ -760,7 +747,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -786,14 +773,14 @@
       "name": "value",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "preOperators",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "preOperator"
                 }
               ]
@@ -808,10 +795,9 @@
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "number",
                     "namings": null,
                     "separatorBefore": null
@@ -819,10 +805,9 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "string",
                     "namings": null,
                     "separatorBefore": null
@@ -830,10 +815,9 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "boolean",
                     "namings": null,
                     "separatorBefore": null
@@ -841,10 +825,9 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
-                    "type": "function",
                     "name": "chainable",
                     "namings": null,
                     "separatorBefore": null
@@ -855,6 +838,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "content"
                 }
               ]
@@ -866,11 +850,11 @@
             }
           },
           {
-            "type": "variable",
             "name": "postOperators",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "postOperator"
                 }
               ]
@@ -888,7 +872,7 @@
       "name": "assignment",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -898,11 +882,12 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "expression",
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": {
@@ -918,20 +903,19 @@
       "name": "argument",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "name",
             "namings": null,
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "assignment",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "default"
                 }
               ]
@@ -949,7 +933,7 @@
       "name": "arguments",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -957,7 +941,9 @@
             "wholeWordsOnly": true,
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": null
@@ -965,14 +951,15 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "function",
                   "name": "argument",
                   "namings": {
                     "namings": [
-                      {}
+                      {
+                        "type": "flatten-naming"
+                      }
                     ]
                   },
                   "separatorBefore": null
@@ -980,7 +967,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -1006,20 +993,19 @@
       "name": "function",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "variable",
             "name": "name",
             "namings": null,
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "arguments",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "arguments"
                 }
               ]
@@ -1031,11 +1017,11 @@
             }
           },
           {
-            "type": "function",
             "name": "codeblock",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "body"
                 }
               ]
@@ -1053,7 +1039,7 @@
       "name": "functionStandalone",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1063,11 +1049,12 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "function",
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": {
@@ -1083,7 +1070,7 @@
       "name": "variableDeclarationWithInit",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "conclude",
@@ -1094,20 +1081,19 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "variable",
                   "name": "name",
                   "namings": null,
                   "separatorBefore": null
                 },
                 {
-                  "type": "function",
                   "name": "assignment",
                   "namings": {
                     "namings": [
                       {
+                        "type": "key-naming",
                         "key": "init"
                       }
                     ]
@@ -1121,7 +1107,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -1146,7 +1132,7 @@
       "name": "let",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1161,6 +1147,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "variables"
                 }
               ]
@@ -1174,20 +1161,19 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "variable",
                   "name": "name",
                   "namings": null,
                   "separatorBefore": null
                 },
                 {
-                  "type": "function",
                   "name": "assignment",
                   "namings": {
                     "namings": [
                       {
+                        "type": "key-naming",
                         "key": "init"
                       }
                     ]
@@ -1201,7 +1187,7 @@
               ]
             },
             "separator": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "string",
@@ -1226,7 +1212,7 @@
       "name": "const",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1236,11 +1222,11 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "variableDeclarationWithInit",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "variables"
                 }
               ]
@@ -1258,7 +1244,7 @@
       "name": "class",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1267,6 +1253,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "members"
                 }
               ]
@@ -1274,7 +1261,6 @@
             "separatorBefore": null
           },
           {
-            "type": "variable",
             "name": "name",
             "namings": null,
             "separatorBefore": {
@@ -1297,20 +1283,20 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
                   "type": "choice",
                   "choices": [
                     {
-                      "type": "parser",
+                      "type": "chained",
                       "patterns": [
                         {
-                          "type": "function",
                           "name": "variableDeclarationWithInit",
                           "namings": {
                             "namings": [
                               {
+                                "type": "key-naming",
                                 "key": "variable"
                               }
                             ]
@@ -1318,7 +1304,6 @@
                           "separatorBefore": null
                         },
                         {
-                          "type": "variable",
                           "name": "endOfCommand",
                           "namings": null,
                           "separatorBefore": {
@@ -1330,14 +1315,14 @@
                       ]
                     },
                     {
-                      "type": "parser",
+                      "type": "chained",
                       "patterns": [
                         {
-                          "type": "function",
                           "name": "function",
                           "namings": {
                             "namings": [
                               {
+                                "type": "key-naming",
                                 "key": "function"
                               }
                             ]
@@ -1367,7 +1352,7 @@
       "name": "instanciation",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1377,11 +1362,11 @@
             "separatorBefore": null
           },
           {
-            "type": "function",
             "name": "identifier",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "class"
                 }
               ]
@@ -1393,11 +1378,11 @@
             }
           },
           {
-            "type": "function",
             "name": "functionCall",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "call"
                 }
               ]
@@ -1415,22 +1400,21 @@
       "name": "command",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "if",
                             "namings": null,
                             "separatorBefore": null
@@ -1438,10 +1422,9 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "functionStandalone",
                             "namings": null,
                             "separatorBefore": null
@@ -1449,10 +1432,9 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "class",
                             "namings": null,
                             "separatorBefore": null
@@ -1460,10 +1442,9 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "codeblock",
                             "namings": null,
                             "separatorBefore": null
@@ -1473,7 +1454,9 @@
                     ],
                     "namings": {
                       "namings": [
-                        {}
+                        {
+                          "type": "flatten-naming"
+                        }
                       ]
                     },
                     "separatorBefore": null
@@ -1481,16 +1464,15 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "let",
                             "namings": null,
                             "separatorBefore": null
@@ -1498,10 +1480,9 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "const",
                             "namings": null,
                             "separatorBefore": null
@@ -1509,10 +1490,9 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
-                            "type": "function",
                             "name": "expression",
                             "namings": null,
                             "separatorBefore": null
@@ -1522,7 +1502,9 @@
                     ],
                     "namings": {
                       "namings": [
-                        {}
+                        {
+                          "type": "flatten-naming"
+                        }
                       ]
                     },
                     "separatorBefore": null
@@ -1543,7 +1525,9 @@
             ],
             "namings": {
               "namings": [
-                {}
+                {
+                  "type": "flatten-naming"
+                }
               ]
             },
             "separatorBefore": null
@@ -1555,7 +1539,7 @@
       "name": "codeblock",
       "variables": {},
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -1564,6 +1548,7 @@
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "commands"
                 }
               ]
@@ -1573,10 +1558,9 @@
           {
             "type": "delimiter",
             "value": {
-              "type": "parser",
+              "type": "chained",
               "patterns": [
                 {
-                  "type": "function",
                   "name": "command",
                   "namings": null,
                   "separatorBefore": null
@@ -1600,13 +1584,13 @@
       "name": "preOperators",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1618,7 +1602,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1630,7 +1614,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1642,7 +1626,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1654,7 +1638,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1666,7 +1650,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1688,13 +1672,13 @@
       "name": "postOperators",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1706,7 +1690,7 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "string",
@@ -1728,19 +1712,19 @@
       "name": "precedence",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "choice",
             "choices": [
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1752,7 +1736,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1764,7 +1748,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1776,7 +1760,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1788,7 +1772,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1800,7 +1784,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1818,13 +1802,13 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1842,13 +1826,13 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1866,13 +1850,13 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1884,7 +1868,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1896,7 +1880,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1908,7 +1892,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1920,7 +1904,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1932,7 +1916,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1950,13 +1934,13 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1968,7 +1952,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1980,7 +1964,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -1998,13 +1982,13 @@
                 ]
               },
               {
-                "type": "parser",
+                "type": "chained",
                 "patterns": [
                   {
                     "type": "choice",
                     "choices": [
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -2016,7 +2000,7 @@
                         ]
                       },
                       {
-                        "type": "parser",
+                        "type": "chained",
                         "patterns": [
                           {
                             "type": "string",
@@ -2044,7 +2028,7 @@
       "name": "allChars",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "regex",
@@ -2059,7 +2043,7 @@
       "name": "endOfCommand",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
             "type": "string",
@@ -2075,14 +2059,14 @@
       "name": "name",
       "isConstant": false,
       "parser": {
-        "type": "parser",
+        "type": "chained",
         "patterns": [
           {
-            "type": "function",
             "name": "identifier",
             "namings": {
               "namings": [
                 {
+                  "type": "key-naming",
                   "key": "name"
                 }
               ]
