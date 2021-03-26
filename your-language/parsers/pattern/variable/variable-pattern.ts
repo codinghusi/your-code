@@ -1,9 +1,9 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 import { VariableDeclarationToken } from "../../token/variable/variable-declaration-token";
 
-@Type("variable")
+@PatternType("variable")
 export class VariablePattern extends LanguagePattern {
     protected reference: VariableDeclarationToken;
 

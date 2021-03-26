@@ -1,9 +1,9 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 
-@Type("delimiter")
+@PatternType("delimiter")
 export class DelimiterPattern extends LanguagePattern {
     constructor(public value: PatternChainPattern,
                 public separator?: PatternChainPattern) {

@@ -3,7 +3,7 @@ import { TokenCapture } from "../token-capture";
 const patterns = {};
 const typeSymbol = Symbol("pattern-type");
 
-export function Type(name: string) {
+export function PatternType(name: string) {
     return (constructor: Function) => {
         Reflect.defineMetadata(typeSymbol, name, constructor);
         patterns[name] = constructor;

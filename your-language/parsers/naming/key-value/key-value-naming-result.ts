@@ -1,8 +1,8 @@
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 import { NamingResult } from "../naming-result";
 
 // example: {mykey: 'myvalue'}
-@Type("key-value-naming")
+@PatternType("key-value-naming")
 export class KeyValueNaming extends NamingResult {
     constructor(protected key: string,
                 protected value: string) {

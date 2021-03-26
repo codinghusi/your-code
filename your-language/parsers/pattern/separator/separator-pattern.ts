@@ -1,8 +1,8 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 
-@Type("separator")
+@PatternType("separator")
 export class SeparatorPattern extends LanguagePattern {
     constructor(public whitespace: boolean,
                 public optional: boolean) {

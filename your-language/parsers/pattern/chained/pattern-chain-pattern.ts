@@ -1,8 +1,8 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 
-@Type("chained")
+@PatternType("chained")
 export class PatternChainPattern extends LanguagePattern {
     constructor(public patterns: LanguagePattern[]) {
         super();

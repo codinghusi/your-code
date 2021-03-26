@@ -1,10 +1,10 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { Type } from "../../parser-result";
+import { PatternType } from "../../parser-result";
 import { FunctionDeclarationToken } from "../../token/function/function-declaration-token";
 
 // TODO: how to work with references
-@Type("function")
+@PatternType("function")
 export class FunctionPattern extends LanguagePattern {
     static type = "function";
     reference: FunctionDeclarationToken;
