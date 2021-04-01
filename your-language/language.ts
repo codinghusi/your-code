@@ -14,9 +14,17 @@ export type Variables = KeyValue<VariableDeclarationToken>;
 export type Declaration = DefinitionToken | FunctionDeclarationToken | VariableDeclarationToken;
 
 export class Language {
-    constructor(public definitions: Definitions,
-                public functions: Functions,
-                public globalVariables: Variables) {}
+    public definitions: Definitions;
+    public functions: Functions;
+    public globalVariables: Variables;
+
+    constructor(definitions: Definitions,
+                functions: Functions,
+                globalVariables: Variables) {
+        this.definitions = definitions;
+        this.functions = functions;
+        this.globalVariables = globalVariables;
+    }
 
     async saveAsJSON(path: string) {
         const json = JSON.stringify(this, null, 2);
