@@ -2,9 +2,11 @@ import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../../language-parser";
 import { LanguagePattern } from "../../language-pattern";
 import { NamingCollectionParser } from "../../naming/collection/naming-collection-parser";
+import { ParserType } from "../../parser";
 import { Patterns } from "../all-patterns";
 import { PatternChainPattern } from "./pattern-chain-pattern";
 
+@ParserType("chained")
 export class PatternChainParser extends LanguageParser<PatternChainPattern> {
     namingCollectionParser = new NamingCollectionParser();
     

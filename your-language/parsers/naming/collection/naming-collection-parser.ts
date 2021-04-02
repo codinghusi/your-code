@@ -2,7 +2,7 @@ import { LanguageInputStream } from "../../../language-input-stream";
 import { Namings } from "../all-namings";
 import { NamingParser } from "../naming-parser";
 import { NamingResult } from "../naming-result";
-import { NamingCollection } from "./naming-collection";
+import { NamingCollection } from "./naming-collection-result";
 
 export class NamingCollectionParser extends NamingParser<NamingCollection> {
     parsers = [

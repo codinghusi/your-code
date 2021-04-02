@@ -1,7 +1,9 @@
 import { SeparatorPattern } from './separator-pattern';
 import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../../language-parser";
+import { ParserType } from "../../parser";
 
+@ParserType("separator")
 export class SeparatorParser extends LanguageParser<SeparatorPattern> {
     async parseIntern(stream: LanguageInputStream) {
         let whitespace: boolean = null;

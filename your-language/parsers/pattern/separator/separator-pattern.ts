@@ -1,15 +1,20 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 
-@PatternType("separator")
+@ResultType("separator")
 export class SeparatorPattern extends LanguagePattern {
     constructor(public whitespace: boolean,
                 public optional: boolean) {
         super();
     }
 
-    parse(stream: CodeInputStream) {
+    toString() {
+        return this.optional ? '~' : '-' +
+               this.whitespace ? '>' : ''
+    }
+
+    async parse(stream: CodeInputStream) {
         // FIXME: not finished
         if (this.whitespace) {
             return stream.matchWhitespace();
@@ -17,7 +22,7 @@ export class SeparatorPattern extends LanguagePattern {
         return;
     }
     
-    checkFirstWorking(stream: CodeInputStream): boolean {
-        return !!this.parse(stream);
+    async checkFirstWorking(stream: CodeInputStream) {
+        return !!(await this.parse(stream));
     }
 }

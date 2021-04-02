@@ -3,7 +3,9 @@ import { LanguageParser } from "../../language-parser";
 import { Patterns } from "../all-patterns";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 import { DelimiterPattern } from "./delimiter-pattern";
+import { ParserType } from "../../parser";
 
+@ParserType("delimiter")
 export class DelimiterParser extends LanguageParser<DelimiterPattern> {
     async parseIntern(stream: LanguageInputStream) {
         // check if it delimiter

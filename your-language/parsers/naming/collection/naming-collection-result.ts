@@ -5,6 +5,10 @@ export class NamingCollection extends NamingResult {
         super();
     }
 
+    toString() {
+        return this.namings.join(' ');
+    }
+
     onToResult(result: any, keepResultAsDefault = false) {
         if (this.available() || !keepResultAsDefault) {
             return this.namings.reduce((finished, naming) => ({ ...finished, ...naming.onToResult(result) }));

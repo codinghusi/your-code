@@ -1,5 +1,5 @@
 import { bindMapParserContexts } from "../token/parser";
-import { FlattenNamingParser } from "./flatten/flatten-naming";
+import { FlattenNamingParser } from "./flatten/flatten-naming-parser";
 import { KeyValueNamingParser } from "./key-value/key-value-naming-parser";
 import { KeyNamingParser } from "./key/key-naming-parser";
 

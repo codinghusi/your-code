@@ -1,16 +1,19 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { FunctionDeclarationToken } from "../../token/function/function-declaration-token";
 
 // TODO: how to work with references
-@PatternType("function")
+@ResultType("function")
 export class FunctionPattern extends LanguagePattern {
-    static type = "function";
     reference: FunctionDeclarationToken;
 
     constructor(public name: string) {
         super();
+    }
+
+    toString() {
+        return `${this.name}`;
     }
 
     toJSON() {
@@ -24,15 +27,15 @@ export class FunctionPattern extends LanguagePattern {
         return this;
     }
 
-    parse(stream: CodeInputStream) {
-        const result = this.reference.parser.parse(stream);
+    async parse(stream: CodeInputStream) {
+        const result = await this.reference.parser.parse(stream);
         return {
             type: this.name,
             ...result
         };
     }
 
-    checkFirstWorking(stream: CodeInputStream): boolean {
+    checkFirstWorking(stream: CodeInputStream) {
         return this.reference.parser.checkFirstWorking(stream);
     }
 }

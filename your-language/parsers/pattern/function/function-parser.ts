@@ -2,7 +2,9 @@ import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../../language-parser";
 import { Tokens } from "../../token/all-token-parsers";
 import { FunctionPattern } from "./function-pattern";
+import { ParserType } from "../../parser";
 
+@ParserType("function")
 export class FunctionParser extends LanguageParser<FunctionPattern> {
     async parseIntern(stream: LanguageInputStream) {
         const result = await Tokens.name(stream);

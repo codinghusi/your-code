@@ -1,6 +1,5 @@
 import { InputStream } from "./input-stream";
 import { TokenCapture } from "./token-capture";
-import { Tokens } from "./parsers/token/all-token-parsers";
 
 export class LanguageInputStream extends InputStream {
 

@@ -1,11 +1,15 @@
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { NamingResult } from "../naming-result";
 
 
-@PatternType("key-naming")
+@ResultType("key-naming")
 export class KeyNaming extends NamingResult {
     constructor(protected key: string) {
         super();
+    }
+
+    toString() {
+        return `{${this.key}}`;
     }
 
     onToResult(result: any) {

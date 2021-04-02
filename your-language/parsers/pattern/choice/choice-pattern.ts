@@ -1,27 +1,32 @@
 import { Checkpoint } from "../../../input-stream";
 import { CodeInputStream } from '../../../../your-parser/code-input-stream';
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 import { LanguagePattern } from "../../language-pattern";
+import { CodeError } from "../../../../your-parser/errors/code-error";
 
-@PatternType("choice")
+@ResultType("choice")
 export class ChoicePattern extends LanguagePattern {
     constructor(public choices: PatternChainPattern[]) {
         super();
     }
 
-    parse(stream: CodeInputStream) {
-        return this.namings.onToResult(this.parseRaw(stream));
+    toString() {
+        return `[ ${this.choices.join(', ')} ]`;
     }
 
-    protected parseRaw(stream: CodeInputStream) {
+    async parse(stream: CodeInputStream) {
+        return this.namings.onToResult(await this.parseRaw(stream));
+    }
+
+    protected async parseRaw(stream: CodeInputStream) {
         let partiallyWorked: any;
         let partialCheckPoint: Checkpoint;
         for (const choice of this.choices) {
             stream.pushCheckpoint();
             try {
-                const result = choice.parse(stream);
-                if (stream.checkNextPattern()) {
+                const result = await choice.parse(stream);
+                if (await stream.checkNextPattern()) {
                     return result;
                 }
                 if (!partiallyWorked) {
@@ -35,10 +40,15 @@ export class ChoicePattern extends LanguagePattern {
             stream.pushCheckpoint(partialCheckPoint);
             return partiallyWorked;
         }
-        throw new Error();
+        throw new CodeError(`choice didn't work: ${this.toString()}`);
     }
 
-    checkFirstWorking(stream: CodeInputStream) {
-        return this.choices.some(choice => choice.checkFirstWorking(stream));
+    async checkFirstWorking(stream: CodeInputStream) {
+        for (const choice of this.choices) {
+            if (await choice.checkFirstWorking(stream)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

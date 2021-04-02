@@ -14,12 +14,12 @@ export class YourLanguageParser {
 
     constructor(protected stream: LanguageInputStream) { }
 
-    static onFile(path: string) {
+    static async onFile(path: string) {
         const code = fs.readFileSync(path, { encoding: 'utf-8' });
         return this.onCode(code);
     }
 
-    static async onCode(code: string) {
+    static onCode(code: string) {
         const stream = new LanguageInputStream(code);
         const parser = new YourLanguageParser(stream);
         return parser;
@@ -64,7 +64,7 @@ export class YourLanguageParser {
                         if (!(name in definitions)) {
                             definitions[name] = [];
                         }
-                        definitions[name].push(definition.value);
+                        definitions[name].push(definition);
                     });
         return definitions;
     }
@@ -115,6 +115,7 @@ export class YourLanguageParser {
                 this.stream.croakWithTokenCapture(`couldn't find function with name '${pattern.name}'`, pattern.tokenCapture);
             }
             pattern.setDeclaration(fn);
+        } else {
         }
     }
 

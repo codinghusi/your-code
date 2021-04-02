@@ -1,20 +1,30 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 
-@PatternType("delimiter")
+@ResultType("delimiter")
 export class DelimiterPattern extends LanguagePattern {
     constructor(public value: PatternChainPattern,
                 public separator?: PatternChainPattern) {
         super();
     }
 
-    parse(stream: CodeInputStream) {
+    toString() {
+        let result = `=> `;
+        result += this.value.toString();
+        if (this.separator) {
+            result += " | " + this.separator.toString();
+        }
+        result += " <=";
+        return result;
+    }
+
+    async parse(stream: CodeInputStream) {
         const values = [];
         let first = true;
 
-        stream.tempNextPattern(this.separator, () => {
+        await stream.tempNextPattern(this.separator, async () => {
             
             // collect values
             while (true) {
@@ -29,7 +39,7 @@ export class DelimiterPattern extends LanguagePattern {
                 }
                 
                 // value
-                const value = this.value.softParse(stream);
+                const value = await this.value.softParse(stream);
                 if (!value) {
                     break;
                 }
@@ -52,7 +62,7 @@ export class DelimiterPattern extends LanguagePattern {
         return result;
     }
 
-    checkFirstWorking(stream: CodeInputStream) {
-        return !!this.value.softParse(stream);
+    async checkFirstWorking(stream: CodeInputStream) {
+        return !!(await this.value.softParse(stream));
     }
 }

@@ -1,40 +1,53 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 
-@PatternType("chained")
+@ResultType("chained")
 export class PatternChainPattern extends LanguagePattern {
     constructor(public patterns: LanguagePattern[]) {
         super();
     }
     
-    parse(stream: CodeInputStream) {
+    toString() {
+        let result = " ";
+        this.patterns.forEach(pattern => {
+            if (pattern.separatorBefore) {
+                result += " " + pattern.separatorBefore.toString() + " ";
+            }
+            const namings = pattern.getNamings() ? pattern.getNamings() + " " : "";
+            result += `${namings}${pattern}`;
+        });
+        return result;
+    }
+
+    async parse(stream: CodeInputStream) {
         let results = {};
 
-        this.patterns.forEach((pattern, i) => {
+        let i = 0;
+        for (const pattern of this.patterns) {
             const separator = pattern.separatorBefore;
             const optional = separator?.optional;
-            separator?.parse(stream);
+            await separator?.parse(stream);
             
             let pushedCheckPoint = false;
             
             try {
                 // set the next pattern
-                const nextPattern = this.patterns[i + 1];
-                stream.tempNextPattern(nextPattern, () => {
+                const nextPattern = this.patterns[++i];
+                await stream.tempNextPattern(nextPattern, async () => {
                     // check for later, if the optional pattern fits in
                     let previousNextCheck: boolean;
                     if (optional) {
-                        previousNextCheck = stream.checkNextPattern();
+                        previousNextCheck = await stream.checkNextPattern();
                         stream.pushCheckpoint();
                         pushedCheckPoint = true;
                     }
                     
                     // parse current pattern
-                    const result = pattern.parse(stream);
+                    const result = await pattern.parse(stream);
                     
                     // if optional pattern destroyed flow, discard it
-                    if (optional && previousNextCheck && !stream.checkNextPattern()) {
+                    if (optional && previousNextCheck && !(await stream.checkNextPattern())) {
                         stream.popCheckpoint();
                         pushedCheckPoint = false;
                         return;
@@ -53,18 +66,15 @@ export class PatternChainPattern extends LanguagePattern {
                     throw e;
                 }
             }
-        });
+        }
         
         return results;
     }
     
-    checkFirstWorking(stream: CodeInputStream) {
-        if (!this.patterns.length) {
-            return;
-        }
+    async checkFirstWorking(stream: CodeInputStream) {
         const pattern = this.patterns[0];
-        pattern.separatorBefore?.parse(stream);
-        return !!pattern.parse(stream);
+        await pattern.separatorBefore?.parse(stream);
+        return !!(await pattern.parse(stream));
     }
 
 }

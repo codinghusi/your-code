@@ -3,7 +3,9 @@ import { LanguageInputStream } from "../../../language-input-stream";
 import { LanguageParser } from "../../language-parser";
 import { Patterns } from "../all-patterns";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
+import { ParserType } from "../../parser";
 
+@ParserType("choice")
 export class ChoiceParser extends LanguageParser<ChoicePattern> {
     async parseIntern(stream: LanguageInputStream) {
         const choices = await stream.delimitedWithWhitespace('[', ']', ',', Patterns.chained) as PatternChainPattern[];

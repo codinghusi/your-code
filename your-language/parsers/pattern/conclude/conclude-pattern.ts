@@ -1,16 +1,20 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 
-@PatternType("conclude")
+@ResultType("conclude")
 export class ConcludePattern extends LanguagePattern {
     constructor(public content: PatternChainPattern) {
         super();
     }
 
-    parse(stream: CodeInputStream) {
-        return this.namings.onToResult(this.content.parse(stream), true);
+    toString() {
+        return `(${this.content})`;
+    }
+
+    async parse(stream: CodeInputStream) {
+        return this.namings.onToResult(await this.content.parse(stream), true);
     }
 
     checkFirstWorking(stream: CodeInputStream) {

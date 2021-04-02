@@ -1,10 +1,14 @@
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 import { NamingResult } from "../naming-result";
 
-@PatternType("flatten-naming")
+@ResultType("flatten-naming")
 export class FlattenNaming extends NamingResult {
     onToResult(result: any) {
         return result;
+    }
+
+    toString() {
+        return "{}";
     }
 }
 

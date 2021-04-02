@@ -11,33 +11,37 @@ export class CodeInputStream extends InputStream {
     
 
     // FIXME: this isn't just a stream anymore
-    constructor(code: string,
-                protected variables: BlockScope<VariableDeclarationToken>,
-                protected functions: BlockScope<FunctionDeclarationToken>) {
+    // constructor(code: string,
+    //             protected variables: BlockScope<VariableDeclarationToken>,
+    //             protected functions: BlockScope<FunctionDeclarationToken>) {
+    //     super(code);
+    // }
+
+    // getVariable(name: string) {
+    //     return this.variables.get(name);
+    // }
+
+    // getFunction(name: string) {
+    //     return this.functions.get(name);
+    // }
+
+    constructor(code: string) {
         super(code);
     }
 
-    getVariable(name: string) {
-        return this.variables.get(name);
-    }
+    // tempScope<T>(variables: BlockScope<VariableDeclarationToken>, callback: StreamCallback<T>) {
+    //     // swap the blockscope to current function scope
+    //     const previously = this.variables;
+    //     const parent = previously.parent;
+    //     variables.setParent(parent);
+    //     this.variables = variables;
 
-    getFunction(name: string) {
-        return this.functions.get(name);
-    }
+    //     const result = callback(this);
 
-    tempScope<T>(variables: BlockScope<VariableDeclarationToken>, callback: StreamCallback<T>) {
-        // swap the blockscope to current function scope
-        const previously = this.variables;
-        const parent = previously.parent;
-        variables.setParent(parent);
-        this.variables = variables;
+    //     this.variables = previously;
 
-        const result = callback(this);
-
-        this.variables = previously;
-
-        return result;
-    }
+    //     return result;
+    // }
 
     checkNextPattern() {
         const nextPattern = this.nextPattern;
@@ -47,12 +51,12 @@ export class CodeInputStream extends InputStream {
         return result;
     }
 
-    tempNextPattern<T>(nextPattern: LanguagePattern, callback: StreamCallback<T>) {
+    async tempNextPattern<T>(nextPattern: LanguagePattern, callback: StreamCallback<Promise<T>>) {
         // swap the blockscope to current function scope
         const previously = this.nextPattern;
         this.nextPattern = nextPattern;
 
-        const result = callback(this);
+        const result = await callback(this);
 
         this.nextPattern = previously;
 

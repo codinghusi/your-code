@@ -1,20 +1,34 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
-import { PatternType } from "../../parser-result";
+import { ResultType } from "../../parser-result";
 
-@PatternType("string")
+@ResultType("string")
 export class StringPattern extends LanguagePattern {
     constructor(public value: string,
                 public wholeWordsOnly: boolean) {
         super();
     }
 
-    parse(stream: CodeInputStream) {
+    toString() {
+        let char = '"'
+        if (this.wholeWordsOnly) {
+            char = "'";
+        }
+        return `${char}${this.value}${char}`;
+    }
+
+    async parse(stream: CodeInputStream) {
+        // FIXME: wholeWordsOnly is ignored!
         const raw = stream.matchNextString(this.value);
-        return this.namings.onToResult(raw); 
+        if (raw) {
+            console.log("could parse: " + this.value);
+            return this.namings.onToResult(raw); 
+        }
+        console.log("didn't work: " + this.value);
+        return null;
     }
     
-    checkFirstWorking(stream: CodeInputStream): boolean {
-        return !!this.parse(stream);
+    async checkFirstWorking(stream: CodeInputStream) {
+        return !!(await this.parse(stream));
     }
 }
