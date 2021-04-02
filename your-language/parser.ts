@@ -95,9 +95,10 @@ export class YourLanguageParser {
         return variables;
     }
 
-    prepareParsePattern(parser: PatternChainPattern, functions: Functions, variables: Variables) {
-        parser.patterns.forEach(pattern => {
-            this.preparePattern(pattern, functions, variables);
+    preparePatterns(pattern: LanguagePattern, functions: Functions, variables: Variables) {
+        console.log(`collected: ${pattern.collectVariablesAndFunctions().map(p => p.name)}`)
+        pattern.collectVariablesAndFunctions().forEach(p => {
+            this.preparePattern(p, functions, variables);
         });
     }
 
@@ -116,6 +117,7 @@ export class YourLanguageParser {
             }
             pattern.setDeclaration(fn);
         } else {
+            throw "lol its not a function or variable";
         }
     }
 
@@ -126,21 +128,28 @@ export class YourLanguageParser {
         const variables = this.collectVariables(declarations);
 
         // prepare variables
+        console.log("--- setting up variables ---");
         Object.values(variables)
             .map(variable => variable.parser)
-            .forEach(parser => this.prepareParsePattern(parser, functions, variables));
-
+            .forEach(parser => this.preparePatterns(parser, functions, variables));
+        
         // prepare functions
+        console.log("--- setting up functions ---");
         Object.values(functions).forEach(fn => {
+            console.log("@ " + fn.name);
             const fnVariables = fn.variables.map() as Variables;
             const allVariables = { ...variables, ...fnVariables };
-            Object.values(fnVariables).forEach(variable => this.prepareParsePattern(variable.parser, functions, allVariables));
-            return this.prepareParsePattern(fn.parser, functions, allVariables);
-        });
 
+            // prepare fn member variables
+            Object.values(fnVariables).forEach(variable => this.preparePatterns(variable.parser, functions, allVariables));
+            // prepare parser
+            this.preparePatterns(fn.parser, functions, allVariables);
+        });
+        
         // prepare definitions
+        console.log("--- setting up definitions ---");
         Object.values(definitions).forEach(list => list.forEach(definition => {
-            this.preparePattern(definition.value, functions, variables);
+            this.preparePatterns(definition.value, functions, variables);
         }));
 
         // required definitions

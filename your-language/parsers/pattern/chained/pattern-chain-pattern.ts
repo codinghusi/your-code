@@ -1,6 +1,8 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
 import { ResultType } from "../../parser-result";
+import { FunctionPattern } from "../function/function-pattern";
+import { VariablePattern } from "../variable/variable-pattern";
 
 @ResultType("chained")
 export class PatternChainPattern extends LanguagePattern {
@@ -75,6 +77,10 @@ export class PatternChainPattern extends LanguagePattern {
         const pattern = this.patterns[0];
         await pattern.separatorBefore?.parse(stream);
         return !!(await pattern.parse(stream));
+    }
+
+    collectVariablesAndFunctions() {
+        return [].concat(...this.patterns.map(pattern => pattern.collectVariablesAndFunctions()));
     }
 
 }

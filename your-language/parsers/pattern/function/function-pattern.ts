@@ -13,6 +13,7 @@ export class FunctionPattern extends LanguagePattern {
     }
 
     toString() {
+        // return `${this.name}: ${this.reference.parser}`;
         return `${this.name}`;
     }
 
@@ -23,6 +24,7 @@ export class FunctionPattern extends LanguagePattern {
     }
     
     setDeclaration(declaration: FunctionDeclarationToken) {
+        console.log("set declaration for " + this.name);
         this.reference = declaration;
         return this;
     }
@@ -37,5 +39,9 @@ export class FunctionPattern extends LanguagePattern {
 
     checkFirstWorking(stream: CodeInputStream) {
         return this.reference.parser.checkFirstWorking(stream);
+    }
+
+    collectVariablesAndFunctions() {
+        return [this];
     }
 }

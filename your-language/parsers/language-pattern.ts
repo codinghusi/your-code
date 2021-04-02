@@ -1,9 +1,12 @@
+import { FunctionPattern } from './pattern/function/function-pattern';
 import "reflect-metadata";
 import { CodeInputStream } from "../../your-parser/code-input-stream";
 import { ParserResult } from "./parser-result";
 import { NamingCollection } from "./naming/collection/naming-collection-result";
 import { LookbackMatchingPattern } from "./pattern/lookback/lookback-matching-pattern";
 import { SeparatorPattern } from "./pattern/separator/separator-pattern";
+import { logIdent, logUnident } from "./logging";
+import { VariablePattern } from './pattern/variable/variable-pattern';
 
 let ident = 0;
 
@@ -19,17 +22,12 @@ export abstract class LanguagePattern extends ParserResult {
         Promise.resolve().then(() => {
             const oldParse = self.parse;
             self.parse = async (...args: Parameters<typeof oldParse>) => {
-                if (ident < 50)
-                    console.log(' '.repeat(ident) + "> " + self.type + " " + self);
-                else 
-                    return new Promise(() => {}); // halt
-                ident += 2;
-                const result = await oldParse.call(self, ...args);
-                if (!result) {
-                    console.log("failed");
-                }
-                console.log("yoyoyoyoyo");
-                ident -= 2;
+                logIdent("> " + self.type + " " + self);
+                let result: ReturnType<typeof oldParse>;
+                try {
+                    result = await oldParse.call(self, ...args);
+                } catch(e) { }
+                logUnident();
                 return result;
             }
         })
@@ -58,6 +56,8 @@ export abstract class LanguagePattern extends ParserResult {
     abstract parse(stream: CodeInputStream): Promise<Generator<any> | any>;
 
     abstract checkFirstWorking(stream: CodeInputStream): Promise<boolean>;
+
+    abstract collectVariablesAndFunctions(): (VariablePattern | FunctionPattern)[]
 
     async softParse(stream: CodeInputStream) {
         return await stream.testOut(async () => {

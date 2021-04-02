@@ -22,6 +22,7 @@ export class VariablePattern extends LanguagePattern {
     }
 
     setDeclaration(variable: VariableDeclarationToken) {
+        console.log("set declaration for $" + this.name);
         this.reference = variable;
         return this;
     }
@@ -32,5 +33,9 @@ export class VariablePattern extends LanguagePattern {
     
     checkFirstWorking(stream: CodeInputStream) {
         return this.reference.parser.checkFirstWorking(stream);
+    }
+
+    collectVariablesAndFunctions() {
+        return [this];
     }
 }

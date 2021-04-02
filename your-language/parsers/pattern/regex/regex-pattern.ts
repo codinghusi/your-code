@@ -20,4 +20,8 @@ export class RegexPattern extends LanguagePattern {
     async checkFirstWorking(stream: CodeInputStream) {
         return !!(await this.parse(stream));
     }
+
+    collectVariablesAndFunctions() {
+        return [];
+    }
 }

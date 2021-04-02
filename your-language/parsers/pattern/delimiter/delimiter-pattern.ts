@@ -31,7 +31,7 @@ export class DelimiterPattern extends LanguagePattern {
 
                 // separator
                 if (this.separator) {
-                    const separator = this.separator.softParse(stream);
+                    const separator = await this.separator.softParse(stream);
                     if (!separator && !first) {
                         break;
                     }
@@ -64,5 +64,12 @@ export class DelimiterPattern extends LanguagePattern {
 
     async checkFirstWorking(stream: CodeInputStream) {
         return !!(await this.value.softParse(stream));
+    }
+
+    collectVariablesAndFunctions() {
+        return [
+            ...this.value.collectVariablesAndFunctions(),
+            ...(this.separator?.collectVariablesAndFunctions() ?? [])
+        ]
     }
 }

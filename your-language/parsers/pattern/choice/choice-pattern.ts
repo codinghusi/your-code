@@ -4,6 +4,8 @@ import { ResultType } from "../../parser-result";
 import { PatternChainPattern } from "../chained/pattern-chain-pattern";
 import { LanguagePattern } from "../../language-pattern";
 import { CodeError } from "../../../../your-parser/errors/code-error";
+import { FunctionPattern } from "../function/function-pattern";
+import { VariablePattern } from "../variable/variable-pattern";
 
 @ResultType("choice")
 export class ChoicePattern extends LanguagePattern {
@@ -27,6 +29,7 @@ export class ChoicePattern extends LanguagePattern {
             try {
                 const result = await choice.parse(stream);
                 if (await stream.checkNextPattern()) {
+                    stream.applyCheckPoint();
                     return result;
                 }
                 if (!partiallyWorked) {
@@ -40,7 +43,7 @@ export class ChoicePattern extends LanguagePattern {
             stream.pushCheckpoint(partialCheckPoint);
             return partiallyWorked;
         }
-        throw new CodeError(`choice didn't work: ${this.toString()}`);
+        throw new CodeError(`choice didn't work: ${this}`);
     }
 
     async checkFirstWorking(stream: CodeInputStream) {
@@ -50,5 +53,9 @@ export class ChoicePattern extends LanguagePattern {
             }
         }
         return false;
+    }
+
+    collectVariablesAndFunctions() {
+        return [].concat(...this.choices.map(pattern => pattern.collectVariablesAndFunctions()));
     }
 }

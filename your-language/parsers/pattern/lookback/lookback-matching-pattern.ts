@@ -26,4 +26,8 @@ export class LookbackMatchingPattern extends LanguagePattern {
     checkFirstWorking(stream: CodeInputStream) {
         return this.parse(stream);
     }
+
+    collectVariablesAndFunctions() {
+        return this.parser.collectVariablesAndFunctions();
+    }
 }

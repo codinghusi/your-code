@@ -20,4 +20,8 @@ export class ConcludePattern extends LanguagePattern {
     checkFirstWorking(stream: CodeInputStream) {
         return this.content.checkFirstWorking(stream);
     }
+
+    collectVariablesAndFunctions() {
+        return this.content?.collectVariablesAndFunctions() ?? [];
+    }
 }

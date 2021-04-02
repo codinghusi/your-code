@@ -21,14 +21,16 @@ export class StringPattern extends LanguagePattern {
         // FIXME: wholeWordsOnly is ignored!
         const raw = stream.matchNextString(this.value);
         if (raw) {
-            console.log("could parse: " + this.value);
             return this.namings.onToResult(raw); 
         }
-        console.log("didn't work: " + this.value);
         return null;
     }
     
     async checkFirstWorking(stream: CodeInputStream) {
         return !!(await this.parse(stream));
+    }
+
+    collectVariablesAndFunctions() {
+        return [];
     }
 }

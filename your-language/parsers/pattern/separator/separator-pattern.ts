@@ -10,8 +10,8 @@ export class SeparatorPattern extends LanguagePattern {
     }
 
     toString() {
-        return this.optional ? '~' : '-' +
-               this.whitespace ? '>' : ''
+        return (this.optional ? '~' : '-') +
+               (this.whitespace ? '>' : '')
     }
 
     async parse(stream: CodeInputStream) {
@@ -24,5 +24,9 @@ export class SeparatorPattern extends LanguagePattern {
     
     async checkFirstWorking(stream: CodeInputStream) {
         return !!(await this.parse(stream));
+    }
+
+    collectVariablesAndFunctions() {
+        return [];
     }
 }
