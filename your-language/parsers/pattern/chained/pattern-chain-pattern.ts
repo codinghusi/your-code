@@ -1,8 +1,6 @@
 import { CodeInputStream } from "../../../../your-parser/code-input-stream";
 import { LanguagePattern } from "../../language-pattern";
 import { ResultType } from "../../parser-result";
-import { FunctionPattern } from "../function/function-pattern";
-import { VariablePattern } from "../variable/variable-pattern";
 
 @ResultType("chained")
 export class PatternChainPattern extends LanguagePattern {
@@ -22,7 +20,7 @@ export class PatternChainPattern extends LanguagePattern {
         return result;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         let results = {};
 
         let i = 0;

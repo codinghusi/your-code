@@ -12,7 +12,7 @@ export class RegexPattern extends LanguagePattern {
         return `${this.regex}`;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         const raw = stream.matchNextRegex(this.regex);
         return this.namings.onToResult(raw); 
     }

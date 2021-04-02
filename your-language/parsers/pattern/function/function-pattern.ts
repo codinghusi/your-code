@@ -29,7 +29,7 @@ export class FunctionPattern extends LanguagePattern {
         return this;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         const result = await this.reference.parser.parse(stream);
         return {
             type: this.name,

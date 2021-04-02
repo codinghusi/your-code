@@ -17,11 +17,11 @@ export class StringPattern extends LanguagePattern {
         return `${char}${this.value}${char}`;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         // FIXME: wholeWordsOnly is ignored!
         const raw = stream.matchNextString(this.value);
         if (raw) {
-            return this.namings.onToResult(raw); 
+            return this.namings?.onToResult(raw); 
         }
         return null;
     }

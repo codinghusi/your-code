@@ -96,7 +96,6 @@ export class YourLanguageParser {
     }
 
     preparePatterns(pattern: LanguagePattern, functions: Functions, variables: Variables) {
-        console.log(`collected: ${pattern.collectVariablesAndFunctions().map(p => p.name)}`)
         pattern.collectVariablesAndFunctions().forEach(p => {
             this.preparePattern(p, functions, variables);
         });

@@ -17,7 +17,7 @@ export class ChoicePattern extends LanguagePattern {
         return `[ ${this.choices.join(', ')} ]`;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         return this.namings.onToResult(await this.parseRaw(stream));
     }
 

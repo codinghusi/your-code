@@ -1,11 +1,12 @@
+import { AlreadyVisitedError } from './../../your-parser/errors/already-visited-error';
+import { CodeInputStream } from './../../your-parser/code-input-stream';
 import { FunctionPattern } from './pattern/function/function-pattern';
 import "reflect-metadata";
-import { CodeInputStream } from "../../your-parser/code-input-stream";
 import { ParserResult } from "./parser-result";
 import { NamingCollection } from "./naming/collection/naming-collection-result";
 import { LookbackMatchingPattern } from "./pattern/lookback/lookback-matching-pattern";
 import { SeparatorPattern } from "./pattern/separator/separator-pattern";
-import { logIdent, logUnident } from "./logging";
+import { log, logIdent, logUnident } from "./logging";
 import { VariablePattern } from './pattern/variable/variable-pattern';
 
 let ident = 0;
@@ -15,6 +16,7 @@ export abstract class LanguagePattern extends ParserResult {
     protected lookbacks: LookbackMatchingPattern[];
     lastError: Error;
     separatorBefore: SeparatorPattern;
+    visitedPosition: number;
 
     constructor() {
         super();
@@ -26,7 +28,13 @@ export abstract class LanguagePattern extends ParserResult {
                 let result: ReturnType<typeof oldParse>;
                 try {
                     result = await oldParse.call(self, ...args);
+                    if (result) {
+                        log("= " + JSON.stringify(result));
+                    }
                 } catch(e) { }
+                if (!result) {
+                    log("# error");
+                }
                 logUnident();
                 return result;
             }
@@ -53,7 +61,15 @@ export abstract class LanguagePattern extends ParserResult {
     }
 
     // Iterator for multiple parsing choices (one next() gives one option (not one parsed pattern))
-    abstract parse(stream: CodeInputStream): Promise<Generator<any> | any>;
+    abstract parseIntern(stream: CodeInputStream): Promise<Generator<any> | any>;
+
+    async parse(stream: CodeInputStream) {
+        if (this.visitedPosition == stream.position) {
+            throw new AlreadyVisitedError();
+        }
+        this.visitedPosition = stream.position;
+        return this.parseIntern(stream);
+    }
 
     abstract checkFirstWorking(stream: CodeInputStream): Promise<boolean>;
 

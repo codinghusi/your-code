@@ -20,7 +20,7 @@ export class DelimiterPattern extends LanguagePattern {
         return result;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         const values = [];
         let first = true;
 

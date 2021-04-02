@@ -13,7 +13,7 @@ export class ConcludePattern extends LanguagePattern {
         return `(${this.content})`;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         return this.namings.onToResult(await this.content.parse(stream), true);
     }
 

@@ -14,7 +14,7 @@ export class SeparatorPattern extends LanguagePattern {
                (this.whitespace ? '>' : '')
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         // FIXME: not finished
         if (this.whitespace) {
             return stream.matchWhitespace();

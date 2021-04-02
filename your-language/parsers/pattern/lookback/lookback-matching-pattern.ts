@@ -16,7 +16,7 @@ export class LookbackMatchingPattern extends LanguagePattern {
         return `<=${this.parser}>`;
     }
 
-    async parse(stream: CodeInputStream) {
+    async parseIntern(stream: CodeInputStream) {
         return await stream.testOut(async () => {
             stream.position -= this.parser.value.length;
             return await this.parser.softParse(stream);
