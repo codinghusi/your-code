@@ -65,10 +65,10 @@ export abstract class LanguagePattern extends ParserResult {
 
     async parse(stream: CodeInputStream) {
         if (this.visitedPosition == stream.position) {
-            throw new AlreadyVisitedError();
+            throw new AlreadyVisitedError(stream);
         }
         this.visitedPosition = stream.position;
-        return this.parseIntern(stream);
+        return this.namings?.onToResult(this.parseIntern(stream));
     }
 
     abstract checkFirstWorking(stream: CodeInputStream): Promise<boolean>;

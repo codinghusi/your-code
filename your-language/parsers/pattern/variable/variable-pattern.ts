@@ -28,7 +28,7 @@ export class VariablePattern extends LanguagePattern {
     }
 
     async parseIntern(stream: CodeInputStream) {
-        return this.namings.onToResult(await this.reference.parser.parse(stream), true);
+        return await this.reference.parser.parse(stream);
     }
     
     checkFirstWorking(stream: CodeInputStream) {

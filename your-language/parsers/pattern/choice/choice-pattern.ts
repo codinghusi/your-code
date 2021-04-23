@@ -1,3 +1,4 @@
+import { PropagateError } from './../../../../your-parser/errors/propagate-error';
 import { Checkpoint } from "../../../input-stream";
 import { CodeInputStream } from '../../../../your-parser/code-input-stream';
 import { ResultType } from "../../parser-result";
@@ -18,12 +19,9 @@ export class ChoicePattern extends LanguagePattern {
     }
 
     async parseIntern(stream: CodeInputStream) {
-        return this.namings.onToResult(await this.parseRaw(stream));
-    }
-
-    protected async parseRaw(stream: CodeInputStream) {
         let partiallyWorked: any;
         let partialCheckPoint: Checkpoint;
+        const errors = [];
         for (const choice of this.choices) {
             stream.pushCheckpoint();
             try {
@@ -36,14 +34,20 @@ export class ChoicePattern extends LanguagePattern {
                     partialCheckPoint = stream.checkpoint;
                     partiallyWorked = result;
                 }
-            } catch(e) { }
+            } catch(e) {
+                if (e instanceof CodeError) {
+                    errors.push(e);
+                } else {
+                    throw e;
+                }
+            }
             stream.popCheckpoint();
         }
         if (partiallyWorked) {
             stream.pushCheckpoint(partialCheckPoint);
             return partiallyWorked;
         }
-        throw new CodeError(`choice didn't work: ${this}`);
+        throw new PropagateError(errors);
     }
 
     async checkFirstWorking(stream: CodeInputStream) {

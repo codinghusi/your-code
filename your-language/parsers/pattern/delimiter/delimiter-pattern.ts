@@ -31,6 +31,7 @@ export class DelimiterPattern extends LanguagePattern {
 
                 // separator
                 if (this.separator) {
+                    // TODO: maybe add an error
                     const separator = await this.separator.softParse(stream);
                     if (!separator && !first) {
                         break;

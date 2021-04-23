@@ -1,5 +1,6 @@
+import { SpecificCodeError } from "./specific-code-error";
 
 
-export class AlreadyVisitedError extends Error {
-    
+export class AlreadyVisitedError extends SpecificCodeError {
+
 }

@@ -25,8 +25,12 @@ export class YourCodeParser {
         const entrypoint = (this.language.definitions.entrypoint[0].value as FunctionPattern).reference;
         while (!this.stream.eof()) {
             console.log(this.stream.debugPeekLength(30));
-            const result = await entrypoint.parser.parse(this.stream);
-            results.push(result);
+            try {
+                const result = await entrypoint.parser.parse(this.stream);
+                results.push(result);
+            } catch(e) {
+                throw e;
+            }
         }
         return results;
     }

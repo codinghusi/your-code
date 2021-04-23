@@ -13,8 +13,8 @@ export class RegexPattern extends LanguagePattern {
     }
 
     async parseIntern(stream: CodeInputStream) {
-        const raw = stream.matchNextRegex(this.regex);
-        return this.namings.onToResult(raw); 
+        // TODO: throw an error on fail
+        return stream.matchNextRegex(this.regex);
     }
     
     async checkFirstWorking(stream: CodeInputStream) {

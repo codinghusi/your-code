@@ -76,11 +76,16 @@ export class InputStream {
         }
 
         this.pushCheckpoint();
-        const resultRaw = parser(this);
-        if (resultRaw instanceof Promise) {
-            return resultRaw.then(async (result) => finish(result));
+        try {
+            const resultRaw = parser(this);
+            if (resultRaw instanceof Promise) {
+                return resultRaw.then(async (result) => finish(result))
+            }
+            return finish(resultRaw);
+        } catch(e) {
+            this.popCheckpoint();
+            throw e;
         }
-        return finish(resultRaw);
     }
 
     seek(offset = 1) {

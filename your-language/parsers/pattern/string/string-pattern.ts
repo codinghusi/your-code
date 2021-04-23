@@ -19,11 +19,8 @@ export class StringPattern extends LanguagePattern {
 
     async parseIntern(stream: CodeInputStream) {
         // FIXME: wholeWordsOnly is ignored!
-        const raw = stream.matchNextString(this.value);
-        if (raw) {
-            return this.namings?.onToResult(raw); 
-        }
-        return null;
+        // TODO: throw an error on fail
+        return stream.matchNextString(this.value);
     }
     
     async checkFirstWorking(stream: CodeInputStream) {

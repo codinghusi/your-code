@@ -14,7 +14,7 @@ export class ConcludePattern extends LanguagePattern {
     }
 
     async parseIntern(stream: CodeInputStream) {
-        return this.namings.onToResult(await this.content.parse(stream), true);
+        return await this.content.parse(stream);
     }
 
     checkFirstWorking(stream: CodeInputStream) {
